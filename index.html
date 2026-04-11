@@ -10,23 +10,24 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--bg); color: var(--text); font-family: 'Barlow', sans-serif; min-height: 100vh; }
   
-  .header { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 20px; display: flex; align-items: center; justify-content: space-between; }
+  .header { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; }
   .header-left { display: flex; align-items: center; gap: 12px; }
-  .icon { width: 48px; height: 48px; background: var(--green); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
-  .header h1 { font-family: 'Russo One', sans-serif; font-size: 20px; }
+  .icon { width: 44px; height: 44px; background: var(--green); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+  .header h1 { font-family: 'Russo One', sans-serif; font-size: 18px; }
   .btn-nuevo { background: var(--green); color: #fff; padding: 10px 16px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; }
+
+  .conectar-box { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 600; margin-top: 4px; }
+  .conectar-box .punto { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+  .conectar-box.error .punto { background: var(--rojo); }
+  .conectar-box.error { color: #fca5a5; }
 
   .tabs { background: var(--bg2); padding: 12px 20px; display: flex; gap: 8px; overflow-x: auto; }
   .tab { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 10px 16px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
   .tab:hover { background: var(--bg4); }
   .tab.active { background: var(--green); color: #fff; }
 
-  .toolbar { background: var(--bg2); padding: 12px 20px; display: flex; gap: 12px; align-items: center; border-bottom: 1px solid var(--border); }
+  .toolbar { background: var(--bg2); padding: 12px 20px; display: flex; gap: 12px; border-bottom: 1px solid var(--border); }
   .buscar { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 10px 14px; width: 250px; }
-  .btn { padding: 10px 16px; border-radius: 8px; border: none; cursor: pointer; font-size: 12px; font-weight: 600; }
-  .btn-primary { background: var(--green); color: #fff; }
-  .btn-sec { background: var(--bg4); color: var(--text); border: 1px solid var(--border); }
-  .btn-danger { background: var(--rojo); color: #fff; }
 
   .main { padding: 20px; }
   .estado { display: none; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; }
@@ -36,11 +37,6 @@
   .estado.success { background: rgba(29,126,39,0.15); color: var(--accent); }
   .spinner { width: 14px; height: 14px; border: 2px solid rgba(29,126,39,0.3); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
-
-  .conectar { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; }
-  .conectar.ok { background: rgba(29,126,39,0.2); color: var(--accent); }
-  .conectar.error { background: rgba(220,38,38,0.2); color: #fca5a5; }
-  .conectar .punto { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
 
   .tabla { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
   .tabla-head { display: flex; gap: 10px; padding: 12px 16px; background: var(--bg3); border-bottom: 1px solid var(--border); font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--muted); }
@@ -57,14 +53,19 @@
   .badge.ok { background: rgba(29,126,39,0.2); color: var(--accent); }
   .badge.falta { background: rgba(220,38,38,0.2); color: #fca5a5; }
   .badge.incompleto { background: rgba(245,166,35,0.2); color: var(--gold); }
+  .badge.completo { background: rgba(29,126,39,0.2); color: var(--accent); }
 
+  .btn { padding: 10px 16px; border-radius: 8px; border: none; cursor: pointer; font-size: 12px; font-weight: 600; }
+  .btn-primary { background: var(--green); color: #fff; }
+  .btn-sec { background: var(--bg4); color: var(--text); border: 1px solid var(--border); }
+  .btn-danger { background: var(--rojo); color: #fff; }
   .btn-sm { padding: 6px 12px; font-size: 11px; }
 
   .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 100; align-items: center; justify-content: center; }
   .modal.show { display: flex; }
-  .modal-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; max-width: 600px; width: 95%; max-height: 85vh; overflow-y: auto; }
+  .modal-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; max-width: 700px; width: 95%; max-height: 85vh; overflow-y: auto; }
   .modal-head { display: flex; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border); }
-  .modal-head h3 { font-family: 'Russo One', sans-serif; }
+  .modal-head h3 { font-family: 'Russo One', sans-serif; font-size: 14px; }
   .modal-close { background: none; border: none; color: var(--text); font-size: 22px; cursor: pointer; }
   .modal-body { padding: 20px; }
 
@@ -75,7 +76,11 @@
 
   .semana { background: var(--bg3); border-radius: 8px; padding: 10px; margin-bottom: 8px; }
   .semana-title { font-size: 10px; color: var(--accent); margin-bottom: 6px; }
-  .semana-checks { display: flex; gap: 16px; }
+  .semana-checks { display: flex; gap: 16px; flex-wrap: wrap; }
+  .semana-status { font-size: 10px; margin-left: 10px; }
+  .semana-status.ok { color: var(--accent); }
+  .semana-status.incompleto { color: var(--gold); }
+  .semana-status.falta { color: #fca5a5; }
   .check-item { display: flex; align-items: center; gap: 5px; }
   .check-item label { font-size: 10px; color: var(--muted); }
   .check { width: 18px; height: 18px; accent-color: var(--green); }
@@ -102,7 +107,7 @@
     <div class="icon">🏉</div>
     <div>
       <h1>Liceo Rugby Club</h1>
-      <div class="conectar" id="conectar" style="margin-top:4px;">
+      <div class="conectar-box" id="conectar">
         <span class="punto"></span>
         <span>Conectando...</span>
       </div>
@@ -112,10 +117,10 @@
 </div>
 
 <div class="tabs" id="tabs">
-  <div class="tab active" data-tab="jugadores">Jugadores</div>
-  <div class="tab" data-tab="asistencia">Asistencia</div>
-  <div class="tab" data-tab="club">Cuotas Club</div>
-  <div class="tab" data-tab="union">Cuotas Unión</div>
+  <div class="tab active" data-tab="jugadores">👥 Jugadores</div>
+  <div class="tab" data-tab="asistencia">🏉 Asistencia</div>
+  <div class="tab" data-tab="club">💳 Cuotas Club</div>
+  <div class="tab" data-tab="union">🏛️ Cuotas Unión</div>
 </div>
 
 <div class="toolbar">
@@ -235,12 +240,12 @@
 
 <!-- MODAL ASISTENCIA -->
 <div class="modal" id="modalAsist">
-  <div class="modal-box" style="max-width: 700px;">
+  <div class="modal-box" style="max-width: 650px;">
     <div class="modal-head">
-      <h3>Asistencia - <span id="nombreAsist"></span></h3>
+      <h3>🏉 Asistencia - <span id="nombreAsist"></span></h3>
       <button class="modal-close" onclick="cerrar()">×</button>
     </div>
-    <div class="modal-body">
+    <div class="modal-body" id="modalAsistBody">
       <div id="semanas"></div>
       <div class="actions">
         <button class="btn btn-sec" onclick="cerrar()">Cerrar</button>
@@ -254,7 +259,7 @@
 <div class="modal" id="modalClub">
   <div class="modal-box">
     <div class="modal-head">
-      <h3>Cuotas Club - <span id="nombreClub"></span></h3>
+      <h3>💳 Cuotas Club - <span id="nombreClub"></span></h3>
       <button class="modal-close" onclick="cerrar()">×</button>
     </div>
     <div class="modal-body">
@@ -272,7 +277,7 @@
 <div class="modal" id="modalUnion">
   <div class="modal-box">
     <div class="modal-head">
-      <h3>Cuotas Unión - <span id="nombreUnion"></span></h3>
+      <h3>🏛️ Cuotas Unión - <span id="nombreUnion"></span></h3>
       <button class="modal-close" onclick="cerrar()">×</button>
     </div>
     <div class="modal-body">
@@ -301,10 +306,9 @@
 </div>
 
 <script>
-var API = "https://script.google.com/macros/s/AKfycbzL5B_zqd2Cd0lmqx8iEdtcfK1MQCxJAsLFz34QA2r8q5GlBKqUDpuQmRqoZEo0LgM/exec";
+var API = "https://script.google.com/macros/s/AKfycbznnGLg0mwKFfSOa3S-KjE8qnqFG_-nG2MhUa_gPonr_aWuIXfvuV8hWbf_1AbeTV_S/exec";
 var tab = "jugadores";
-var datos = [];
-var headers = [];
+var datos = { jugadores: [], asistencia: [], club: [], union: [] };
 var actual = null;
 var editar = null;
 
@@ -319,45 +323,14 @@ function showMsg(msg, tipo) {
   if (tipo !== 'loading') setTimeout(function() { e.className = 'estado'; }, 3000);
 }
 
-function showConectar(ok, msg) {
+function setConectar(ok, msg) {
   var c = document.getElementById('conectar');
-  c.className = 'conectar ' + (ok ? 'ok' : 'error');
+  c.className = 'conectar-box' + (ok ? '' : ' error');
   c.innerHTML = '<span class="punto"></span><span>' + msg + '</span>';
 }
 
-async function cargar() {
-  showMsg('Cargando datos...', 'loading');
-  showConectar(true, 'Cargando...');
-  
-  try {
-    var resp = await fetch(API);
-    var text = await resp.text();
-    
-    try {
-      var json = JSON.parse(text);
-    } catch(e) {
-      showConectar(false, 'Error JSON');
-      showMsg('Error al parsear respuesta', 'error');
-      return;
-    }
-    
-    if (json.error) {
-      showConectar(false, json.error);
-      showMsg(json.error, 'error');
-      return;
-    }
-    
-    datos = json.datos || [];
-    headers = json.headers || [];
-    
-    showConectar(true, 'Conectado (' + datos.length + ')');
-    showMsg('Cargado: ' + datos.length + ' jugadores', 'success');
-    render();
-  } catch(err) {
-    console.error(err);
-    showConectar(false, 'Sin conexión');
-    showMsg('Error: ' + err.message, 'error');
-  }
+function getVal(row, idx) {
+  return row["c" + idx] || "";
 }
 
 function esBool(v) {
@@ -366,22 +339,48 @@ function esBool(v) {
   return ["TRUE", "VERDADERO", "1", "SI"].includes(s);
 }
 
-function getVal(row, idx) {
-  return row["c" + idx] || "";
+async function cargar() {
+  showMsg('Cargando datos...', 'loading');
+  setConectar(false, 'Cargando...');
+  
+  try {
+    var resp = await fetch(API);
+    var json = await resp.json();
+    
+    if (json.error) {
+      setConectar(false, json.error);
+      showMsg(json.error, 'error');
+      return;
+    }
+    
+    datos = json.datos || {};
+    var total = (datos.jugadores || []).length;
+    
+    setConectar(true, 'Conectado (' + total + ')');
+    showMsg('Cargado: ' + total + ' jugadores', 'success');
+    render();
+  } catch(err) {
+    console.error(err);
+    setConectar(false, 'Sin conexión');
+    showMsg('Error: ' + err.message, 'error');
+  }
 }
 
 function render() {
   var busq = document.getElementById('buscar').value.toLowerCase();
-  var filt = datos.filter(function(j) {
-    return !busq || (getVal(j,1)||"").toLowerCase().includes(busq) || (getVal(j,0)||"").includes(busq);
-  });
-  
   var t = document.getElementById('tabla');
   var html = "";
   
   if (tab === "jugadores") {
+    var lista = (datos.jugadores || []).filter(function(j) {
+      return !busq || (getVal(j,1)||"").toLowerCase().includes(busq) || (getVal(j,0)||"").includes(busq);
+    });
+    if (lista.length === 0) {
+      t.innerHTML = '<div style="padding:40px; text-align:center; color:var(--muted);"><p>Sin jugadores</p></div>';
+      return;
+    }
     html = '<div class="tabla-head"><div style="width:36px;"></div><div class="dato">Jugador</div><div style="width:80px;">Puestos</div><div style="width:60px;"></div></div><div class="tabla-body">';
-    filt.forEach(function(j) {
+    lista.forEach(function(j) {
       var nom = getVal(j,1) || "";
       var ini = nom.charAt(0) || "?";
       var p1 = getVal(j,4) || "-";
@@ -389,32 +388,55 @@ function render() {
       html += '<div class="fila"><div class="avatar">' + ini + '</div><div class="dato"><div>' + nom + '</div><div>DNI: ' + (getVal(j,0)||"") + '</div></div><div><span class="badge">' + p1 + (p2 ? ", " + p2 : "") + '</span></div><div><button class="btn btn-sm btn-sec" onclick="ver(\'' + getVal(j,0) + '\')">Ver</button></div></div>';
     });
   } else if (tab === "asistencia") {
-    html = '<div class="tabla-head"><div style="width:36px;"></div><div class="dato">Jugador</div><div style="width:60px;">Estado</div><div style="width:60px;"></div></div><div class="tabla-body">';
-    filt.forEach(function(j) {
+    var lista = (datos.asistencia || []).filter(function(j) {
+      return !busq || (getVal(j,1)||"").toLowerCase().includes(busq) || (getVal(j,0)||"").includes(busq);
+    });
+    if (lista.length === 0) {
+      t.innerHTML = '<div style="padding:40px; text-align:center; color:var(--muted);"><p>Sin datos de asistencia</p></div>';
+      return;
+    }
+    html = '<div class="tabla-head"><div style="width:36px;"></div><div class="dato">Jugador</div><div style="width:100px;">Estado</div><div style="width:60px;"></div></div><div class="tabla-body">';
+    lista.forEach(function(j) {
       var nom = getVal(j,1) || "";
       var ini = nom.charAt(0) || "?";
+      var cols = j.slice(2);
       var pres = 0;
-      for (var i = 2; i < 14; i++) if (esBool(getVal(j,i))) pres++;
-      var estado = pres >= 10 ? "ok" : (pres > 0 ? "incompleto" : "falta");
-      html += '<div class="fila"><div class="avatar">' + ini + '</div><div class="dato"><div>' + nom + '</div><div>DNI: ' + (getVal(j,0)||"") + '</div></div><div><span class="badge ' + estado + '">' + pres + "/12</span></div><div><button class="btn btn-sm btn-primary" onclick=\"abrAsist('" + getVal(j,0) + "','" + nom.replace(/'/g,"\\'") + "')\">Editar</button></div></div>";
+      for (var i = 0; i < cols.length && i < 36; i++) if (esBool(cols[i])) pres++;
+      var estado = pres >= 36 ? "ok" : (pres > 0 ? "incompleto" : "falta");
+      var label = pres >= 36 ? "COMPLETO" : (pres > 0 ? pres + "/36" : "NO ASIST");
+      html += '<div class="fila"><div class="avatar">' + ini + '</div><div class="dato"><div>' + nom + '</div><div>DNI: ' + (getVal(j,0)||"") + '</div></div><div><span class="badge ' + estado + '">' + label + '</span></div><div><button class="btn btn-sm btn-primary" onclick="abrAsist(\'' + getVal(j,0) + '\', \'' + nom.replace(/'/g,"\\'") + '\')">Editar</button></div></div>';
     });
   } else if (tab === "club") {
+    var lista = (datos.club || []).filter(function(j) {
+      return !busq || (getVal(j,1)||"").toLowerCase().includes(busq) || (getVal(j,0)||"").includes(busq);
+    });
+    if (lista.length === 0) {
+      t.innerHTML = '<div style="padding:40px; text-align:center; color:var(--muted);"><p>Sin datos de cuotas</p></div>';
+      return;
+    }
     html = '<div class="tabla-head"><div style="width:36px;"></div><div class="dato">Jugador</div><div style="width:80px;">Cuotas</div><div style="width:60px;"></div></div><div class="tabla-body">';
-    filt.forEach(function(j) {
+    lista.forEach(function(j) {
       var nom = getVal(j,1) || "";
       var ini = nom.charAt(0) || "?";
       var cuotas = 0;
       for (var i = 2; i < 14; i++) if (esBool(getVal(j,i))) cuotas++;
-      html += '<div class="fila"><div class="avatar">' + ini + '</div><div class="dato"><div>' + nom + '</div><div>DNI: ' + (getVal(j,0)||"") + '</div></div><div><span class="badge ' + (cuotas >= 10 ? "ok" : (cuotas > 0 ? "incompleto" : "falta")) + '">' + cuotas + '/12</span></div><div><button class="btn btn-sm btn-primary" onclick=\"abrClub('" + getVal(j,0) + "','" + nom.replace(/'/g,"\\'") + "')\">Editar</button></div></div>";
+      html += '<div class="fila"><div class="avatar">' + ini + '</div><div class="dato"><div>' + nom + '</div><div>DNI: ' + (getVal(j,0)||"") + '</div></div><div><span class="badge ' + (cuotas >= 10 ? "ok" : (cuotas > 0 ? "incompleto" : "falta")) + '">' + cuotas + '/12</span></div><div><button class="btn btn-sm btn-primary" onclick="abrClub(\'' + getVal(j,0) + '\', \'' + nom.replace(/'/g,"\\'") + '\')">Editar</button></div></div>';
     });
   } else if (tab === "union") {
+    var lista = (datos.union || []).filter(function(j) {
+      return !busq || (getVal(j,1)||"").toLowerCase().includes(busq) || (getVal(j,0)||"").includes(busq);
+    });
+    if (lista.length === 0) {
+      t.innerHTML = '<div style="padding:40px; text-align:center; color:var(--muted);"><p>Sin datos de cuotas</p></div>';
+      return;
+    }
     html = '<div class="tabla-head"><div style="width:36px;"></div><div class="dato">Jugador</div><div style="width:50px;">C1</div><div style="width:50px;">C2</div><div style="width:60px;"></div></div><div class="tabla-body">';
-    filt.forEach(function(j) {
+    lista.forEach(function(j) {
       var nom = getVal(j,1) || "";
       var ini = nom.charAt(0) || "?";
       var c1 = esBool(getVal(j,2));
       var c2 = esBool(getVal(j,3));
-      html += '<div class="fila"><div class="avatar">' + ini + '</div><div class="dato"><div>' + nom + '</div><div>DNI: ' + (getVal(j,0)||"") + '</div></div><div><span class="badge ' + (c1?"ok":"falta") + '">' + (c1?"✓":"✗") + '</span></div><div><span class="badge ' + (c2?"ok":"falta") + '">' + (c2?"✓":"✗") + '</span></div><div><button class="btn btn-sm btn-primary" onclick=\"abrUnion('" + getVal(j,0) + "','" + nom.replace(/'/g,"\\'") + "')\">Editar</button></div></div>";
+      html += '<div class="fila"><div class="avatar">' + ini + '</div><div class="dato"><div>' + nom + '</div><div>DNI: ' + (getVal(j,0)||"") + '</div></div><div><span class="badge ' + (c1?"ok":"falta") + '">' + (c1?"✓":"✗") + '</span></div><div><span class="badge ' + (c2?"ok":"falta") + '">' + (c2?"✓":"✗") + '</span></div><div><button class="btn btn-sm btn-primary" onclick="abrUnion(\'' + getVal(j,0) + '\', \'' + nom.replace(/'/g,"\\'") + '\')">Editar</button></div></div>';
     });
   }
   
@@ -433,7 +455,7 @@ function abrirModal(dni, nom) {
 }
 
 function ver(dni) {
-  var j = datos.find(function(x) { return x.c0 === dni; });
+  var j = (datos.jugadores || []).find(function(x) { return x.c0 === dni; });
   if (!j) return;
   
   var html = "<p><strong>DNI:</strong> " + (getVal(j,0)||"-") + "</p>" +
@@ -445,11 +467,7 @@ function ver(dni) {
     "<p><strong>Puesto 3:</strong> " + (getVal(j,6)||"-") + "</p>";
   
   document.getElementById('detalle').innerHTML = html;
-  editar = {
-    dni: getVal(j,0), nombre: getVal(j,1), 
-    celular: getVal(j,2), correo: getVal(j,3), 
-    p1: getVal(j,4), p2: getVal(j,5), p3: getVal(j,6)
-  };
+  editar = { dni: getVal(j,0), nombre: getVal(j,1), celular: getVal(j,2), correo: getVal(j,3), p1: getVal(j,4), p2: getVal(j,5), p3: getVal(j,6) };
   document.getElementById('modalVer').classList.add('show');
 }
 
@@ -466,15 +484,23 @@ function editarDesdeVer() {
 function abrAsist(dni, nom) {
   actual = { dni: dni, nombre: nom };
   document.getElementById('nombreAsist').textContent = nom;
-  var j = datos.find(function(x) { return x.c0 === dni; });
+  var j = (datos.asistencia || []).find(function(x) { return x.c0 === dni; });
+  var cols = j ? j.slice(2) : [];
   
   var html = "";
   for (var s = 0; s < 12; s++) {
-    var i = s * 3 + 2;
-    html += '<div class="semana"><div class="semana-title">Semana ' + (s+1) + '</div><div class="semana-checks">' +
-      '<div class="check-item"><input type="checkbox" class="check" data-idx="' + s + '" ' + (esBool(getVal(j,i))?'checked':'') + '><label>D1</label></div>' +
-      '<div class="check-item"><input type="checkbox" class="check" data-idx="' + s + '" ' + (esBool(getVal(j,i+1))?'checked':'') + '><label>D2</label></div>' +
-      '<div class="check-item"><input type="checkbox" class="check" data-idx="' + s + '" ' + (esBool(getVal(j,i+2))?'checked':'') + '><label>D3</label></div>' +
+    var base = s * 3;
+    var d1 = esBool(getVal(j, base + 2));
+    var d2 = esBool(getVal(j, base + 3));
+    var d3 = esBool(getVal(j, base + 4));
+    var cant = (d1?1:0) + (d2?1:0) + (d3?1:0);
+    var estado = cant === 3 ? "ok" : (cant > 0 ? "incompleto" : "falta");
+    var estadoLabel = cant === 3 ? "COMPLETO" : (cant > 0 ? cant + "/3" : "NO ASIST");
+    
+    html += '<div class="semana"><div class="semana-title">Semana ' + (s+1) + ' <span class="semana-status ' + estado + '">' + estadoLabel + '</span></div><div class="semana-checks">' +
+      '<div class="check-item"><input type="checkbox" class="check" data-idx="' + base + '" ' + (d1?'checked':'') + '><label>D1</label></div>' +
+      '<div class="check-item"><input type="checkbox" class="check" data-idx="' + (base+1) + '" ' + (d2?'checked':'') + '><label>D2</label></div>' +
+      '<div class="check-item"><input type="checkbox" class="check" data-idx="' + (base+2) + '" ' + (d3?'checked':'') + '><label>D3</label></div>' +
     '</div></div>';
   }
   
@@ -485,12 +511,12 @@ function abrAsist(dni, nom) {
 function abrClub(dni, nom) {
   actual = { dni: dni, nombre: nom };
   document.getElementById('nombreClub').textContent = nom;
-  var j = datos.find(function(x) { return x.c0 === dni; });
+  var j = (datos.club || []).find(function(x) { return x.c0 === dni; });
   
   var meses = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
   var html = "";
   meses.forEach(function(m, i) {
-    html += '<div class="mes"><input type="checkbox" class="check" data-idx="' + i + '" ' + (esBool(getVal(j,i+2))?'checked':'') + '><label>' + m + '</label></div>';
+    html += '<div class="mes"><input type="checkbox" class="check" data-idx="' + i + '" ' + (esBool(getVal(j, i+2))?'checked':'') + '><label>' + m + '</label></div>';
   });
   
   document.getElementById('meses').innerHTML = html;
@@ -500,7 +526,7 @@ function abrClub(dni, nom) {
 function abrUnion(dni, nom) {
   actual = { dni: dni, nombre: nom };
   document.getElementById('nombreUnion').textContent = nom;
-  var j = datos.find(function(x) { return x.c0 === dni; });
+  var j = (datos.union || []).find(function(x) { return x.c0 === dni; });
   document.getElementById('cuota1').checked = esBool(getVal(j,2));
   document.getElementById('cuota2').checked = esBool(getVal(j,3));
   document.getElementById('modalUnion').classList.add('show');
