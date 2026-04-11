@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Liceo Rugby Club - Gestión</title>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&family=Russo+One&display=swap" rel="stylesheet"/>
+<title>Liceo Rugby Club</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Russo+One&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
 <style>
   :root {
-    --rugby-green: #1D4E27;
-    --rugby-green-light: #2D7A3A;
+    --green: #1D4E27;
+    --green-light: #2D7A3A;
     --accent: #4ADE80;
     --bg: #0a0a0a;
     --bg2: #131313;
@@ -17,92 +17,97 @@
     --bg4: #222222;
     --border: rgba(255,255,255,0.06);
     --text: #F5F5F5;
-    --text-muted: #888888;
+    --muted: #888888;
     --gold: #F5A623;
     --orange: #FF6B35;
     --rojo: #DC2626;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--bg); color: var(--text); font-family: 'Barlow', sans-serif; min-height: 100vh; }
-  .header { background: linear-gradient(135deg, var(--bg2), var(--bg3)); border-bottom: 1px solid var(--border); padding: 20px 30px; display: flex; align-items: center; justify-content: space-between; }
-  .header-left { display: flex; align-items: center; gap: 16px; }
-  .header-icon { width: 52px; height: 52px; background: linear-gradient(145deg, var(--rugby-green), var(--rugby-green-light)); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 28px; }
-  .header-text h1 { font-family: 'Russo One', sans-serif; font-size: 22px; background: linear-gradient(90deg, var(--text), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-  .header-text p { font-size: 13px; color: var(--text-muted); }
-  .btn-header { background: var(--rugby-green); color: #fff; padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; }
+  
+  .header { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 20px; display: flex; align-items: center; justify-content: space-between; }
+  .header-left { display: flex; align-items: center; gap: 12px; }
+  .icon { width: 48px; height: 48px; background: var(--green); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+  .header h1 { font-family: 'Russo One', sans-serif; font-size: 20px; }
+  .btn-nuevo { background: var(--green); color: #fff; padding: 10px 16px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; }
 
-  .menu-wrap { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 16px 30px; overflow-x: auto; }
-  .menu-tabs { display: flex; gap: 10px; white-space: nowrap; }
-  .menu-tab { background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; color: var(--text); padding: 12px 20px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s; }
-  .menu-tab:hover { background: var(--bg4); border-color: var(--rugby-green); }
-  .menu-tab.active { background: var(--rugby-green); color: #fff; }
+  .tabs { background: var(--bg2); padding: 12px 20px; display: flex; gap: 8px; overflow-x: auto; }
+  .tab { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 10px 16px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+  .tab:hover { background: var(--bg4); }
+  .tab.active { background: var(--green); color: #fff; }
 
-  .search-wrap { padding: 16px 30px; background: var(--bg2); border-bottom: 1px solid var(--border); display: flex; gap: 12px; align-items: center; }
-  .search-input { background: var(--bg3); border: 2px solid var(--border); border-radius: 10px; color: var(--text); padding: 12px 16px; font-size: 14px; outline: none; width: 300px; }
+  .toolbar { background: var(--bg2); padding: 12px 20px; display: flex; gap: 12px; align-items: center; border-bottom: 1px solid var(--border); }
+  .buscar { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 10px 14px; width: 250px; }
+  .btn { padding: 10px 16px; border-radius: 8px; border: none; cursor: pointer; font-size: 12px; font-weight: 600; }
+  .btn-primary { background: var(--green); color: #fff; }
+  .btn-sec { background: var(--bg4); color: var(--text); border: 1px solid var(--border); }
+  .btn-warning { background: var(--orange); color: #fff; }
+  .btn-danger { background: var(--rojo); color: #fff; }
 
-  .main { padding: 24px 30px; }
-  .estado { display: none; align-items: center; gap: 12px; padding: 16px 20px; border-radius: 12px; margin-bottom: 20px; }
-  .estado.loading { display: flex; background: rgba(29,126,39,0.15); border: 1px solid rgba(29,126,39,0.3); color: var(--accent); }
-  .estado.error { display: flex; background: rgba(220,38,38,0.15); border: 1px solid rgba(220,38,38,0.3); color: #fca5a5; }
-  .estado.success { display: flex; background: rgba(29,126,39,0.15); border: 1px solid rgba(29,126,39,0.3); color: var(--accent); }
-  .spinner { width: 16px; height: 16px; border: 2px solid rgba(29,126,39,0.3); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  .main { padding: 20px; }
+  .estado { display: none; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; }
+  .estado.show { display: flex; align-items: center; gap: 10px; }
+  .estado.loading { background: rgba(29,126,39,0.15); color: var(--accent); }
+  .estado.error { background: rgba(220,38,38,0.15); color: #fca5a5; }
+  .estado.success { background: rgba(29,126,39,0.15); color: var(--accent); }
+  .spinner { width: 14px; height: 14px; border: 2px solid rgba(29,126,39,0.3); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  .tabla-container { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; margin-bottom: 20px; }
-  .tabla-header { display: flex; gap: 10px; padding: 14px 20px; background: var(--bg3); border-bottom: 1px solid var(--border); font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); align-items: center; }
-  .tabla-body { max-height: calc(100vh - 350px); overflow-y: auto; }
-  .jugador-row { display: flex; gap: 10px; padding: 14px 20px; border-bottom: 1px solid var(--border); align-items: center; }
-  .jugador-row:hover { background: var(--bg3); }
+  .conectar { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+  .conectar.ok { background: rgba(29,126,39,0.2); color: var(--accent); }
+  .conectar.error { background: rgba(220,38,38,0.2); color: #fca5a5; }
+  .conectar .punto { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
 
-  .avatar { width: 40px; height: 40px; background: var(--rugby-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Russo One', sans-serif; font-size: 14px; color: #fff; flex-shrink: 0; }
-  .nombre { flex: 1; text-align: left; }
-  .nombre div:first-child { font-weight: 600; }
-  .nombre div:last-child { font-size: 12px; color: var(--text-muted); }
+  .tabla { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .tabla-head { display: flex; gap: 10px; padding: 12px 16px; background: var(--bg3); border-bottom: 1px solid var(--border); font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--muted); }
+  .tabla-body { max-height: calc(100vh - 320px); overflow-y: auto; }
+  .fila { display: flex; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--border); align-items: center; }
+  .fila:hover { background: var(--bg3); }
 
-  .badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+  .avatar { width: 36px; height: 36px; background: var(--green); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Russo One', sans-serif; font-size: 13px; color: #fff; flex-shrink: 0; }
+  .dato { flex: 1; }
+  .dato div:first-child { font-weight: 600; }
+  .dato div:last-child { font-size: 11px; color: var(--muted); }
+
+  .badge { padding: 4px 8px; border-radius: 12px; font-size: 10px; font-weight: 600; }
   .badge.ok { background: rgba(29,126,39,0.2); color: var(--accent); }
   .badge.falta { background: rgba(220,38,38,0.2); color: #fca5a5; }
   .badge.incompleto { background: rgba(245,166,35,0.2); color: var(--gold); }
 
-  .btn { padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer; font-size: 12px; font-weight: 600; }
-  .btn-primary { background: var(--rugby-green); color: #fff; }
-  .btn-warning { background: var(--orange); color: #fff; }
-  .btn-danger { background: var(--rojo); color: #fff; }
-  .btn-secondary { background: var(--bg4); color: var(--text); border: 1px solid var(--border); }
   .btn-sm { padding: 6px 12px; font-size: 11px; }
-  .btn-check { width: 20px; height: 20px; accent-color: var(--rugby-green); cursor: pointer; }
 
-  .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; }
-  .modal-overlay.visible { display: flex; }
-  .modal { background: var(--bg2); border: 1px solid var(--border); border-radius: 20px; max-width: 800px; width: 95%; max-height: 90vh; overflow-y: auto; }
-  .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; border-bottom: 1px solid var(--border); }
-  .modal-header h3 { font-family: 'Russo One', sans-serif; font-size: 16px; }
-  .modal-close { background: none; border: none; color: var(--text); font-size: 24px; cursor: pointer; }
-  .modal-body { padding: 24px; }
+  .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 100; align-items: center; justify-content: center; }
+  .modal.show { display: flex; }
+  .modal-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; max-width: 600px; width: 95%; max-height: 85vh; overflow-y: auto; }
+  .modal-head { display: flex; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border); }
+  .modal-head h3 { font-family: 'Russo One', sans-serif; }
+  .modal-close { background: none; border: none; color: var(--text); font-size: 22px; cursor: pointer; }
+  .modal-body { padding: 20px; }
 
-  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .form-group { margin-bottom: 16px; }
-  .form-group label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
-  .form-group input, .form-group select { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 12px; font-size: 14px; }
+  .form-group { margin-bottom: 14px; }
+  .form-group label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 5px; }
+  .form-group input, .form-group select { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; color: var(--text); padding: 10px; font-size: 13px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
-  .semana-box { background: var(--bg3); border-radius: 10px; padding: 12px; margin-bottom: 10px; }
-  .semana-header { font-size: 11px; font-weight: 600; color: var(--accent); margin-bottom: 8px; }
-  .semana-checks { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
-  .semana-check { display: flex; align-items: center; gap: 6px; }
-  .semana-check label { font-size: 11px; color: var(--text-muted); }
+  .semana { background: var(--bg3); border-radius: 8px; padding: 10px; margin-bottom: 8px; }
+  .semana-title { font-size: 10px; color: var(--accent); margin-bottom: 6px; }
+  .semana-checks { display: flex; gap: 16px; }
+  .check-item { display: flex; align-items: center; gap: 5px; }
+  .check-item label { font-size: 10px; color: var(--muted); }
+  .check { width: 18px; height: 18px; accent-color: var(--green); }
 
-  .meses-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-  .mes-item { display: flex; align-items: center; gap: 6px; background: var(--bg3); padding: 8px; border-radius: 6px; }
-  .mes-item label { font-size: 11px; color: var(--text-muted); }
+  .meses { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .mes { display: flex; align-items: center; gap: 5px; background: var(--bg3); padding: 6px; border-radius: 4px; }
+  .mes label { font-size: 10px; color: var(--muted); }
 
-  .actions-row { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); }
+  .detalle { background: var(--bg3); border-radius: 8px; padding: 14px; }
+  .detalle p { font-size: 12px; margin-bottom: 6px; }
+  .detalle strong { color: var(--accent); }
 
-  .detalle-info { background: var(--bg3); border-radius: 10px; padding: 16px; margin-bottom: 16px; }
-  .detalle-info p { margin-bottom: 8px; font-size: 13px; }
-  .detalle-info strong { color: var(--accent); }
+  .actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border); }
 
-  @media (max-width: 900px) {
-    .tabla-header, .jugador-row { display: grid; grid-template-columns: 40px 1fr 80px; }
+  @media (max-width: 700px) {
+    .tabla-head, .fila { display: grid; grid-template-columns: 36px 1fr 60px; }
   }
 </style>
 </head>
@@ -110,74 +115,71 @@
 
 <div class="header">
   <div class="header-left">
-    <div class="header-icon">🏉</div>
-    <div class="header-text">
+    <div class="icon">🏉</div>
+    <div>
       <h1>Liceo Rugby Club</h1>
-      <p>Gestión - Google Sheets</p>
     </div>
   </div>
-  <button class="btn-header" onclick="abrirModalJugador()">
-    <i class="fas fa-plus"></i> Nuevo Jugador
-  </button>
-</div>
-
-<div class="menu-wrap">
-  <div class="menu-tabs" id="menuTabs">
-    <div class="menu-tab active" data-hoja="jugadores">👥 Jugadores</div>
-    <div class="menu-tab" data-hoja="asistencia">🏉 Asistencia</div>
-    <div class="menu-tab" data-hoja="club">💳 Cuotas Club</div>
-    <div class="menu-tab" data-hoja="union">🏛️ Cuotas Unión</div>
+  <div class="conectar" id="conectar">
+    <span class="punto"></span>
+    <span>Desconectado</span>
   </div>
+  <button class="btn-nuevo" onclick="abrirModal()">+ Nuevo</button>
 </div>
 
-<div class="search-wrap">
-  <input class="search-input" id="busqueda" type="text" placeholder="Buscar por nombre o DNI...">
-  <button class="btn btn-primary" onclick="cargarDatos()">
-    <i class="fas fa-search"></i>
-  </button>
+<div class="tabs" id="tabs">
+  <div class="tab active" data-tab="jugadores">Jugadores</div>
+  <div class="tab" data-tab="asistencia">Asistencia</div>
+  <div class="tab" data-tab="club">Cuotas Club</div>
+  <div class="tab" data-tab="union">Cuotas Unión</div>
+</div>
+
+<div class="toolbar">
+  <input class="buscar" id="buscar" placeholder="Buscar...">
+  <button class="btn btn-primary" onclick="cargar()">🔄</button>
 </div>
 
 <div class="main">
   <div class="estado" id="estado"></div>
-  <div class="tabla-container" id="tablaContainer">
-    <div style="padding: 60px; text-align: center; color: var(--text-muted);">
-      <div class="spinner" style="width: 30px; height: 30px; margin: 0 auto 16px; border-width: 3px;"></div>
-      <p>Cargando datos...</p>
+  <div class="tabla" id="tabla">
+    <div style="padding: 40px; text-align: center; color: var(--muted);">
+      <div class="spinner" style="width: 24px; height: 24px; margin: 0 auto 12px;"></div>
+      <p>Cargando...</p>
     </div>
   </div>
 </div>
 
-<!-- MODAL JUGADOR -->
-<div class="modal-overlay" id="modalJugador">
-  <div class="modal">
-    <div class="modal-header">
-      <h3 id="tituloModal">Nuevo Jugador</h3>
-      <button class="modal-close" onclick="cerrarModal()">&times;</button>
+<!-- MODAL -->
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3 id="titulo">Nuevo Jugador</h3>
+      <button class="modal-close" onclick="cerrar()">×</button>
     </div>
     <div class="modal-body">
-      <input type="hidden" id="idJugador">
+      <input type="hidden" id="idDNI">
       <div class="form-row">
         <div class="form-group">
           <label>DNI</label>
-          <input type="text" id="dniJugador" placeholder="12345678">
+          <input type="text" id="dni" placeholder="12345678">
         </div>
         <div class="form-group">
           <label>Celular</label>
-          <input type="text" id="celularJugador" placeholder="+54 9 11 1234 5678">
+          <input type="text" id="celular" placeholder="+54 9 11...">
         </div>
       </div>
       <div class="form-group">
-        <label>Nombre Completo</label>
-        <input type="text" id="nombreJugador" placeholder="Juan Pérez">
+        <label>Nombre</label>
+        <input type="text" id="nombre" placeholder="Juan Pérez">
       </div>
       <div class="form-group">
         <label>Correo</label>
-        <input type="email" id="correoJugador" placeholder="juan@email.com">
+        <input type="email" id="correo" placeholder="juan@email.com">
       </div>
       <div class="form-row">
         <div class="form-group">
           <label>Puesto 1</label>
-          <select id="puesto1Jugador">
+          <select id="p1">
             <option value="">Seleccionar...</option>
             <option value="Hook">Hook</option>
             <option value="Pilier">Pilier</option>
@@ -194,7 +196,7 @@
         </div>
         <div class="form-group">
           <label>Puesto 2</label>
-          <select id="puesto2Jugador">
+          <select id="p2">
             <option value="">Seleccionar...</option>
             <option value="Hook">Hook</option>
             <option value="Pilier">Pilier</option>
@@ -204,7 +206,6 @@
             <option value="Centro">Centro</option>
             <option value="Apertura">Apertura</option>
             <option value="Medio">Medio scrum</option>
-            <option value="Flyhalf">Flyhalf</option>
             <option value="Wing">Wing</option>
             <option value="Fullback">Fullback</option>
           </select>
@@ -212,7 +213,7 @@
       </div>
       <div class="form-group">
         <label>Puesto 3</label>
-        <select id="puesto3Jugador">
+        <select id="p3">
           <option value="">Seleccionar...</option>
           <option value="Hook">Hook</option>
           <option value="Pilier">Pilier</option>
@@ -222,31 +223,30 @@
           <option value="Centro">Centro</option>
           <option value="Apertura">Apertura</option>
           <option value="Medio">Medio scrum</option>
-          <option value="Flyhalf">Flyhalf</option>
           <option value="Wing">Wing</option>
           <option value="Fullback">Fullback</option>
         </select>
       </div>
-      <div class="actions-row">
-        <button class="btn btn-danger" id="btnEliminar" onclick="eliminarJugador()" style="display:none;">Eliminar</button>
-        <button class="btn btn-secondary" onclick="cerrarModal()">Cancelar</button>
-        <button class="btn btn-primary" onclick="guardarJugador()">Guardar</button>
+      <div class="actions">
+        <button class="btn btn-danger" id="btnElim" onclick="eliminar()" style="display:none;">Eliminar</button>
+        <button class="btn btn-sec" onclick="cerrar()">Cancelar</button>
+        <button class="btn btn-primary" onclick="guardar()">Guardar</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- MODAL VER JUGADOR -->
-<div class="modal-overlay" id="modalVerJugador">
-  <div class="modal">
-    <div class="modal-header">
-      <h3>👤 Datos del Jugador</h3>
-      <button class="modal-close" onclick="cerrarModal()">&times;</button>
+<!-- MODAL VER -->
+<div class="modal" id="modalVer">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3>Datos del Jugador</h3>
+      <button class="modal-close" onclick="cerrar()">×</button>
     </div>
     <div class="modal-body">
-      <div class="detalle-info" id="detalleJugador"></div>
-      <div class="actions-row">
-        <button class="btn btn-secondary" onclick="cerrarModal()">Cerrar</button>
+      <div class="detalle" id="detalle"></div>
+      <div class="actions">
+        <button class="btn btn-sec" onclick="cerrar()">Cerrar</button>
         <button class="btn btn-primary" onclick="editarDesdeVer()">Editar</button>
       </div>
     </div>
@@ -254,573 +254,442 @@
 </div>
 
 <!-- MODAL ASISTENCIA -->
-<div class="modal-overlay" id="modalAsistencia">
-  <div class="modal" style="max-width: 900px;">
-    <div class="modal-header">
-      <h3>🏉 Asistencia - <span id="nombreAsist"></span></h3>
-      <button class="modal-close" onclick="cerrarModal()">&times;</button>
+<div class="modal" id="modalAsist">
+  <div class="modal-box" style="max-width: 700px;">
+    <div class="modal-head">
+      <h3>Asistencia - <span id="nombreAsist"></span></h3>
+      <button class="modal-close" onclick="cerrar()">×</button>
     </div>
     <div class="modal-body">
-      <div id="semanasAsistencia"></div>
-      <div class="actions-row">
-        <button class="btn btn-secondary" onclick="cerrarModal()">Cerrar</button>
-        <button class="btn btn-primary" onclick="guardarAsistencia()">Guardar Asistencia</button>
+      <div id="semanas"></div>
+      <div class="actions">
+        <button class="btn btn-sec" onclick="cerrar()">Cerrar</button>
+        <button class="btn btn-primary" onclick="guardarAsist()">Guardar</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- MODAL CUOTAS CLUB -->
-<div class="modal-overlay" id="modalCuotasClub">
-  <div class="modal">
-    <div class="modal-header">
-      <h3>💳 Cuotas Club - <span id="nombreClub"></span></h3>
-      <button class="modal-close" onclick="cerrarModal()">&times;</button>
+<!-- MODAL CLUB -->
+<div class="modal" id="modalClub">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3>Cuotas Club - <span id="nombreClub"></span></h3>
+      <button class="modal-close" onclick="cerrar()">×</button>
     </div>
     <div class="modal-body">
-      <p style="margin-bottom: 16px; color: var(--text-muted);">12 cuotas del año</p>
-      <div class="meses-grid" id="mesesClub"></div>
-      <div class="actions-row">
-        <button class="btn btn-secondary" onclick="cerrarModal()">Cerrar</button>
-        <button class="btn btn-primary" onclick="guardarCuotasClub()">Guardar Cuotas</button>
+      <p style="font-size:11px; color:var(--muted); margin-bottom:12px;">12 cuotas del año</p>
+      <div class="meses" id="meses"></div>
+      <div class="actions">
+        <button class="btn btn-sec" onclick="cerrar()">Cerrar</button>
+        <button class="btn btn-primary" onclick="guardarClub()">Guardar</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- MODAL CUOTAS UNION -->
-<div class="modal-overlay" id="modalCuotasUnion">
-  <div class="modal">
-    <div class="modal-header">
-      <h3>🏛️ Cuotas Unión - <span id="nombreUnion"></span></h3>
-      <button class="modal-close" onclick="cerrarModal()">&times;</button>
+<!-- MODAL UNION -->
+<div class="modal" id="modalUnion">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3>Cuotas Unión - <span id="nombreUnion"></span></h3>
+      <button class="modal-close" onclick="cerrar()">×</button>
     </div>
     <div class="modal-body">
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+      <div class="form-row">
         <div class="form-group">
           <label>Cuota 1</label>
-          <div class="semana-check">
-            <input type="checkbox" id="cuota1Union" class="btn-check">
+          <div class="check-item">
+            <input type="checkbox" id="cuota1" class="check">
             <label>Pagada</label>
           </div>
         </div>
         <div class="form-group">
           <label>Cuota 2</label>
-          <div class="semana-check">
-            <input type="checkbox" id="cuota2Union" class="btn-check">
+          <div class="check-item">
+            <input type="checkbox" id="cuota2" class="check">
             <label>Pagada</label>
           </div>
         </div>
       </div>
-      <div class="actions-row">
-        <button class="btn btn-secondary" onclick="cerrarModal()">Cerrar</button>
-        <button class="btn btn-primary" onclick="guardarCuotasUnion()">Guardar Cuotas</button>
+      <div class="actions">
+        <button class="btn btn-sec" onclick="cerrar()">Cerrar</button>
+        <button class="btn btn-primary" onclick="guardarUnion()">Guardar</button>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-var SHEET_ID = "1DSLMUY658O0-liB7bpv0g8VFTpGiv3nNNgDXc2X97VM";
-var API_URL = "https://script.google.com/macros/s/AKfycbzgKvSx888zzvo8baAN_Oe11GO_xxF9lApNnF4lYgCaTug3YhR7ttIXl0hgRCfrhLhV/exec";
+var SHEET = "1DSLMUY658O0-liB7bpv0g8VFTpGiv3nNNgDXc2X97VM";
+var API = "https://script.google.com/macros/s/AKfycbzgKvSx888zzvo8baAN_Oe11GO_xxF9lApNnF4lYgCaTug3YhR7ttIXl0hgRCfrhLhV/exec";
+var GID = "1592827022";
 
-var hojaActiva = "jugadores";
-var datosJugadores = [];
-var jugadorActual = null;
-var jugadorParaEditar = null;
+var tab = "jugadores";
+var datos = [];
+var actual = null;
+var editar = null;
 
-async function cargarDatos() {
-    var e = document.getElementById('estado');
-    e.className = 'estado loading';
-    e.innerHTML = '<div class="spinner"></div> Cargando datos...';
-    e.style.display = 'flex';
+function init() {
+  var c = document.getElementById('conectar');
+  c.className = 'conectar ok';
+  c.innerHTML = '<span class="punto"></span><span>Conectado</span>';
+  cargar();
+  window.conectarOK = function() {
+    c.className = 'conectar ok';
+    c.innerHTML = '<span class="punto"></span><span>Conectado</span>';
+  };
+}
 
-    try {
-        var csv = await fetchCSV("347341918");
-        
-        if (!csv || csv.length < 2) {
-            e.className = 'estado error';
-            e.innerHTML = '<span>⚠️</span> No hay datos';
-            return;
-        }
-        
-        // Filtrar filas con DNI
-        datosJugadores = csv.slice(1).filter(f => f[0] && f[0].trim());
-        
-        renderizar();
-        e.style.display = 'none';
-    } catch(err) {
-        console.error(err);
-        e.className = 'estado error';
-        e.innerHTML = '<span>⚠️</span> Error: ' + err.message;
+function showMsg(msg, tipo) {
+  var e = document.getElementById('estado');
+  e.className = 'estado show ' + tipo;
+  e.innerHTML = tipo === 'loading' ? '<div class="spinner"></div>' + msg : msg;
+  if (tipo !== 'loading') setTimeout(() => e.className = 'estado', 3000);
+}
+
+function csvUrl(gid) {
+  return `https://docs.google.com/spreadsheets/d/${SHEET}/export?format=csv&gid=${gid}`;
+}
+
+function parseCSV(text) {
+  var lineas = text.split("\n");
+  var result = [];
+  lineas.forEach(function(l) {
+    if (!l.trim()) return;
+    var cols = [];
+    var act = "";
+    var comillas = false;
+    for (var i = 0; i < l.length; i++) {
+      var c = l[i];
+      if (c === '"') { comillas = !comillas; continue; }
+      if (c === "," && !comillas) { cols.push(act.trim()); act = ""; }
+      else act += c;
     }
+    cols.push(act.trim());
+    result.push(cols);
+  });
+  return result;
 }
 
-function csvURL(gid) {
-    return `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${gid}`;
-}
-
-function fetchCSV(gid) {
-    return fetch(csvURL(gid))
-        .then(r => {
-            if (!r.ok) throw new Error('HTTP ' + r.status);
-            return r.text();
-        })
-        .then(txt => {
-            return txt.split("\n").map(linea => {
-                var result = [];
-                var actual = '';
-                var entreComillas = false;
-                for (var i = 0; i < linea.length; i++) {
-                    var c = linea[i];
-                    if (c === '"') {
-                        entreComillas = !entreComillas;
-                    } else if (c === ',' && !entreComillas) {
-                        result.push(actual.trim());
-                        actual = '';
-                    } else {
-                        actual += c;
-                    }
-                }
-                result.push(actual.trim());
-                return result;
-            });
-        });
-}
-
-function normalizar(s) {
-    return (s || "").toString().toUpperCase().trim();
+async function cargar() {
+  showMsg('Cargando datos...', 'loading');
+  
+  try {
+    var resp = await fetch(csvUrl(GID));
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    var text = await resp.text();
+    var csv = parseCSV(text);
+    
+    if (!csv || csv.length < 2) {
+      document.getElementById('tabla').innerHTML = '<div style="padding:40px; text-align:center; color:var(--muted);"><p>Sin datos</p></div>';
+      showMsg('Sin datos en la planilla', 'error');
+      return;
+    }
+    
+    datos = csv.slice(1).filter(function(f) { return f[0] && f[0].trim(); });
+    
+    showMsg('Cargado: ' + datos.length + ' jugadores', 'success');
+    render();
+  } catch(err) {
+    console.error(err);
+    var c = document.getElementById('conectar');
+    c.className = 'conectar error';
+    c.innerHTML = '<span class="punto"></span><span>Error</span>';
+    showMsg('Error: ' + err.message, 'error');
+  }
 }
 
 function esBool(v) {
-    if (!v) return false;
-    return ["TRUE", "VERDADERO", "1", "SI"].includes(v.toString().toUpperCase().trim());
+  if (!v) return false;
+  var s = v.toString().toUpperCase().trim();
+  return ["TRUE", "VERDADERO", "1", "SI"].includes(s);
 }
 
-function renderizar() {
-    var busq = document.getElementById('busqueda').value.toLowerCase();
-    var filtrados = datosJugadores.filter(j => 
-        !busq || normalizar(j[1]).includes(busq) || normalizar(j[0]).includes(busq)
-    );
-    
-    if (hojaActiva === "jugadores") renderizarJugadores(filtrados);
-    else if (hojaActiva === "asistencia") renderizarAsistencia(filtrados);
-    else if (hojaActiva === "club") renderizarClub(filtrados);
-    else if (hojaActiva === "union") renderizarUnion(filtrados);
-}
-
-function renderizarJugadores(datos) {
-    var c = document.getElementById('tablaContainer');
-    if (datos.length === 0) {
-        c.innerHTML = '<div style="padding: 60px; text-align: center; color: var(--text-muted);"><p>No hay jugadores. Agregá uno nuevo.</p></div>';
-        return;
-    }
-    
-    var html = '<div class="tabla-header"><div style="width:40px;"></div><div class="nombre" style="flex:1;">Jugador</div><div style="width:80px;">Puestos</div><div style="width:80px;"></div></div><div class="tabla-body">';
-    
-    datos.forEach(j => {
-        var nombre = j[1] || '';
-        var inicial = nombre.charAt(0) || '?';
-        var p1 = j[4] || '-';
-        var p2 = j[5] || '';
-        
-        html += '<div class="jugador-row">' +
-            '<div class="avatar">' + inicial + '</div>' +
-            '<div class="nombre"><div>' + nombre + '</div><div>DNI: ' + (j[0] || '') + '</div></div>' +
-            '<div><span class="badge">' + p1 + (p2 ? ', ' + p2 : '') + '</span></div>' +
-            '<div><button class="btn btn-sm btn-secondary" onclick="verDetalle(\'' + j[0] + '\', \'' + nombre.replace(/'/g, "\\'") + '\')">Ver</button></div>' +
-        '</div>';
+function render() {
+  var busq = document.getElementById('buscar').value.toLowerCase();
+  var filt = datos.filter(function(j) {
+    return !busq || (j[1]||"").toLowerCase().includes(busq) || (j[0]||"").includes(busq);
+  });
+  
+  var t = document.getElementById('tabla');
+  var html = "";
+  
+  if (tab === "jugadores") {
+    html = '<div class="tabla-head"><div style="width:36px;"></div><div class="dato">Jugador</div><div style="width:80px;">Puestos</div><div style="width:60px;"></div></div><div class="tabla-body">';
+    filt.forEach(function(j) {
+      var nom = j[1] || "";
+      var ini = nom.charAt(0) || "?";
+      var p1 = j[4] || "-";
+      var p2 = j[5] || "";
+      html += '<div class="fila"><div class="avatar">' + ini + '</div><div class="dato"><div>' + nom + '</div><div>DNI: ' + (j[0]||"") + '</div></div><div><span class="badge">' + p1 + (p2 ? ", " + p2 : "") + '</span></div><div><button class="btn btn-sm btn-sec" onclick="ver(\'' + j[0] + '\', \'' + nom.replace(/'/g,"\\'") + '\')">Ver</button></div></div>';
     });
-    
-    html += '</div>';
-    c.innerHTML = html;
-}
-
-function renderizarAsistencia(datos) {
-    var c = document.getElementById('tablaContainer');
-    if (datos.length === 0) {
-        c.innerHTML = '<div style="padding: 60px; text-align: center; color: var(--text-muted);"><p>No hay jugadores.</p></div>';
-        return;
-    }
-    
-    var html = '<div class="tabla-header"><div style="width:40px;"></div><div class="nombre" style="flex:1;">Jugador</div><div style="width:80px;">Estado</div><div style="width:80px;"></div></div><div class="tabla-body">';
-    
-    datos.forEach(j => {
-        var nombre = j[1] || '';
-        var inicial = nombre.charAt(0) || '?';
-        var cols = j.slice(2);
-        var presentes = cols.filter(esBool).length;
-        var estado = presentes >= 10 ? 'ok' : (presentes > 0 ? 'incompleto' : 'falta');
-        
-        html += '<div class="jugador-row">' +
-            '<div class="avatar">' + inicial + '</div>' +
-            '<div class="nombre"><div>' + nombre + '</div><div>DNI: ' + (j[0] || '') + '</div></div>' +
-            '<div><span class="badge ' + estado + '">' + presentes + '/12</span></div>' +
-            '<div><button class="btn btn-sm btn-primary" onclick="abrirAsistencia(\'' + j[0] + '\', \'' + nombre.replace(/'/g, "\\'") + '\')">Editar</button></div>' +
-        '</div>';
+  } else if (tab === "asistencia") {
+    html = '<div class="tabla-head"><div style="width:36px;"></div><div class="dato">Jugador</div><div style="width:60px;">Estado</div><div style="width:60px;"></div></div><div class="tabla-body">';
+    filt.forEach(function(j) {
+      var nom = j[1] || "";
+      var ini = nom.charAt(0) || "?";
+      var cols = j.slice(2);
+      var pres = cols.filter(esBool).length;
+      var estado = pres >= 10 ? "ok" : (pres > 0 ? "incompleto" : "falta");
+      html += '<div class="fila"><div class="avatar">' + ini + '</div><div class="dato"><div>' + nom + '</div><div>DNI: ' + (j[0]||"") + '</div></div><div><span class="badge ' + estado + '">' + pres + "/12</span></div><div><button class="btn btn-sm btn-primary" onclick="abrAsist(\'' + j[0] + '\', \'' + nom.replace(/'/g,"\\'") + '\')">Editar</button></div></div>';
     });
-    
-    html += '</div>';
-    c.innerHTML = html;
-}
-
-function renderizarClub(datos) {
-    var c = document.getElementById('tablaContainer');
-    if (datos.length === 0) {
-        c.innerHTML = '<div style="padding: 60px; text-align: center; color: var(--text-muted);"><p>No hay jugadores.</p></div>';
-        return;
-    }
-    
-    var html = '<div class="tabla-header"><div style="width:40px;"></div><div class="nombre" style="flex:1;">Jugador</div><div style="width:100px;">Cuotas</div><div style="width:80px;"></div></div><div class="tabla-body">';
-    
-    datos.forEach(j => {
-        var nombre = j[1] || '';
-        var inicial = nombre.charAt(0) || '?';
-        var cols = j.slice(2, 14);
-        var cuotas = cols.filter(esBool).length;
-        
-        html += '<div class="jugador-row">' +
-            '<div class="avatar">' + inicial + '</div>' +
-            '<div class="nombre"><div>' + nombre + '</div><div>DNI: ' + (j[0] || '') + '</div></div>' +
-            '<div><span class="badge ' + (cuotas >= 10 ? 'ok' : (cuotas > 0 ? 'incompleto' : 'falta')) + '">' + cuotas + '/12</span></div>' +
-            '<div><button class="btn btn-sm btn-primary" onclick="abrirClub(\'' + j[0] + '\', \'' + nombre.replace(/'/g, "\\'") + '\')">Editar</button></div>' +
-        '</div>';
+  } else if (tab === "club") {
+    html = '<div class="tabla-head"><div style="width:36px;"></div><div class="dato">Jugador</div><div style="width:80px;">Cuotas</div><div style="width:60px;"></div></div><div class="tabla-body">';
+    filt.forEach(function(j) {
+      var nom = j[1] || "";
+      var ini = nom.charAt(0) || "?";
+      var cols = j.slice(2, 14);
+      var cuotas = cols.filter(esBool).length;
+      html += '<div class="fila"><div class="avatar">' + ini + '</div><div class="dato"><div>' + nom + '</div><div>DNI: ' + (j[0]||"") + '</div></div><div><span class="badge ' + (cuotas >= 10 ? "ok" : (cuotas > 0 ? "incompleto" : "falta")) + '">' + cuotas + '/12</span></div><div><button class="btn btn-sm btn-primary" onclick="abrClub(\'' + j[0] + '\', \'' + nom.replace(/'/g,"\\'") + '\')">Editar</button></div></div>';
     });
-    
-    html += '</div>';
-    c.innerHTML = html;
-}
-
-function renderizarUnion(datos) {
-    var c = document.getElementById('tablaContainer');
-    if (datos.length === 0) {
-        c.innerHTML = '<div style="padding: 60px; text-align: center; color: var(--text-muted);"><p>No hay jugadores.</p></div>';
-        return;
-    }
-    
-    var html = '<div class="tabla-header"><div style="width:40px;"></div><div class="nombre" style="flex:1;">Jugador</div><div style="width:80px;">Cuota 1</div><div style="width:80px;">Cuota 2</div><div style="width:80px;"></div></div><div class="tabla-body">';
-    
-    datos.forEach(j => {
-        var nombre = j[1] || '';
-        var inicial = nombre.charAt(0) || '?';
-        var c1 = esBool(j[2]), c2 = esBool(j[3]);
-        
-        html += '<div class="jugador-row">' +
-            '<div class="avatar">' + inicial + '</div>' +
-            '<div class="nombre"><div>' + nombre + '</div><div>DNI: ' + (j[0] || '') + '</div></div>' +
-            '<div><span class="badge ' + (c1 ? 'ok' : 'falta') + '">' + (c1 ? '✓' : '✗') + '</span></div>' +
-            '<div><span class="badge ' + (c2 ? 'ok' : 'falta') + '">' + (c2 ? '✓' : '✗') + '</span></div>' +
-            '<div><button class="btn btn-sm btn-primary" onclick="abrirUnion(\'' + j[0] + '\', \'' + nombre.replace(/'/g, "\\'") + '\')">Editar</button></div>' +
-        '</div>';
+  } else if (tab === "union") {
+    html = '<div class="tabla-head"><div style="width:36px;"></div><div class="dato">Jugador</div><div style="width:50px;">C1</div><div style="width:50px;">C2</div><div style="width:60px;"></div></div><div class="tabla-body">';
+    filt.forEach(function(j) {
+      var nom = j[1] || "";
+      var ini = nom.charAt(0) || "?";
+      var c1 = esBool(j[2]);
+      var c2 = esBool(j[3]);
+      html += '<div class="fila"><div class="avatar">' + ini + '</div><div class="dato"><div>' + nom + '</div><div>DNI: ' + (j[0]||"") + '</div></div><div><span class="badge ' + (c1?"ok":"falta") + '">' + (c1?"✓":"✗") + '</span></div><div><span class="badge ' + (c2?"ok":"falta") + '">' + (c2?"✓":"✗") + '</span></div><div><button class="btn btn-sm btn-primary" onclick="abrUnion(\'' + j[0] + '\', \'' + nom.replace(/'/g,"\\'") + '\')">Editar</button></div></div>';
     });
-    
-    html += '</div>';
-    c.innerHTML = html;
+  }
+  
+  html += "</div>";
+  t.innerHTML = html;
 }
 
-function abrirModalJugador(dni, nombre) {
-    document.getElementById('tituloModal').textContent = dni ? 'Editar Jugador' : 'Nuevo Jugador';
-    document.getElementById('idJugador').value = dni || '';
-    document.getElementById('dniJugador').value = dni || '';
-    document.getElementById('dniJugador').disabled = !!dni;
-    document.getElementById('nombreJugador').value = nombre || '';
-    document.getElementById('btnEliminar').style.display = dni ? 'block' : 'none';
-    document.getElementById('modalJugador').classList.add('visible');
+function abrirModal(dni, nom) {
+  document.getElementById('titulo').textContent = dni ? "Editar Jugador" : "Nuevo Jugador";
+  document.getElementById('idDNI').value = dni || "";
+  document.getElementById('dni').value = dni || "";
+  document.getElementById('dni').disabled = !!dni;
+  document.getElementById('nombre').value = nom || "";
+  document.getElementById('btnElim').style.display = dni ? "block" : "none";
+  document.getElementById('modal').classList.add('show');
 }
 
-function verDetalle(dni, nombre) {
-    var jugador = datosJugadores.find(j => j[0] === dni);
-    if (!jugador) return;
-    
-    var html = '<p><strong>DNI:</strong> ' + (jugador[0] || '-') + '</p>' +
-        '<p><strong>Nombre:</strong> ' + (jugador[1] || '-') + '</p>' +
-        '<p><strong>Celular:</strong> ' + (jugador[2] || '-') + '</p>' +
-        '<p><strong>Correo:</strong> ' + (jugador[3] || '-') + '</p>' +
-        '<p><strong>Puesto 1:</strong> ' + (jugador[4] || '-') + '</p>' +
-        '<p><strong>Puesto 2:</strong> ' + (jugador[5] || '-') + '</p>' +
-        '<p><strong>Puesto 3:</strong> ' + (jugador[6] || '-') + '</p>';
-    
-    document.getElementById('detalleJugador').innerHTML = html;
-    jugadorParaEditar = { 
-        dni: jugador[0], nombre: jugador[1], 
-        celular: jugador[2], correo: jugador[3],
-        p1: jugador[4], p2: jugador[5], p3: jugador[6] 
-    };
-    document.getElementById('modalVerJugador').classList.add('visible');
+function ver(dni, nom) {
+  var j = datos.find(function(x) { return x[0] === dni; });
+  if (!j) return;
+  
+  var html = "<p><strong>DNI:</strong> " + (j[0]||"-") + "</p>" +
+    "<p><strong>Nombre:</strong> " + (j[1]||"-") + "</p>" +
+    "<p><strong>Celular:</strong> " + (j[2]||"-") + "</p>" +
+    "<p><strong>Correo:</strong> " + (j[3]||"-") + "</p>" +
+    "<p><strong>Puesto 1:</strong> " + (j[4]||"-") + "</p>" +
+    "<p><strong>Puesto 2:</strong> " + (j[5]||"-") + "</p>" +
+    "<p><strong>Puesto 3:</strong> " + (j[6]||"-") + "</p>";
+  
+  document.getElementById('detalle').innerHTML = html;
+  editar = { dni:j[0], nombre:j[1], celular:j[2], correo:j[3], p1:j[4], p2:j[5], p3:j[6] };
+  document.getElementById('modalVer').classList.add('show');
 }
 
 function editarDesdeVer() {
-    if (!jugadorParaEditar) return;
-    cerrarModal();
-    abrirModalJugador(jugadorParaEditar.dni, jugadorParaEditar.nombre);
-    document.getElementById('celularJugador').value = jugadorParaEditar.celular || '';
-    document.getElementById('correoJugador').value = jugadorParaEditar.correo || '';
-    document.getElementById('puesto1Jugador').value = jugadorParaEditar.p1 || '';
-    document.getElementById('puesto2Jugador').value = jugadorParaEditar.p2 || '';
-    document.getElementById('puesto3Jugador').value = jugadorParaEditar.p3 || '';
+  cerrar();
+  abrirModal(editar.dni, editar.nombre);
+  document.getElementById('celular').value = editar.celular || "";
+  document.getElementById('correo').value = editar.correo || "";
+  document.getElementById('p1').value = editar.p1 || "";
+  document.getElementById('p2').value = editar.p2 || "";
+  document.getElementById('p3').value = editar.p3 || "";
 }
 
-function abrirAsistencia(dni, nombre) {
-    jugadorActual = { dni, nombre };
-    document.getElementById('nombreAsist').textContent = nombre;
-    
-    var jugador = datosJugadores.find(j => j[0] === dni);
-    var cols = jugador ? jugador.slice(2) : [];
-    
-    var html = '';
-    var maxSemanas = Math.min(52, Math.floor(cols.length / 3));
-    if (maxSemanas === 0) maxSemanas = 12;
-    
-    for (var s = 0; s < maxSemanas; s++) {
-        var sem = cols.slice(s * 3, s * 3 + 3);
-        html += '<div class="semana-box"><div class="semana-header">Semana ' + (s + 1) + '</div><div class="semana-checks">' +
-            '<div class="semana-check"><input type="checkbox" class="btn-check" data-idx="' + (s * 3) + '" ' + (esBool(sem[0]) ? 'checked' : '') + '><label>Día 1</label></div>' +
-            '<div class="semana-check"><input type="checkbox" class="btn-check" data-idx="' + (s * 3 + 1) + '" ' + (esBool(sem[1]) ? 'checked' : '') + '><label>Día 2</label></div>' +
-            '<div class="semana-check"><input type="checkbox" class="btn-check" data-idx="' + (s * 3 + 2) + '" ' + (esBool(sem[2]) ? 'checked' : '') + '><label>Día 3</label></div>' +
-        '</div></div>';
-    }
-    
-    document.getElementById('semanasAsistencia').innerHTML = html;
-    document.getElementById('modalAsistencia').classList.add('visible');
+function abrAsist(dni, nom) {
+  actual = { dni: dni, nombre: nom };
+  document.getElementById('nombreAsist').textContent = nom;
+  var j = datos.find(function(x) { return x[0] === dni; });
+  var cols = j ? j.slice(2) : [];
+  
+  var html = "";
+  for (var s = 0; s < 12; s++) {
+    var c = cols.slice(s*3, s*3+3);
+    html += '<div class="semana"><div class="semana-title">Semana ' + (s+1) + '</div><div class="semana-checks">' +
+      '<div class="check-item"><input type="checkbox" class="check" data-idx="' + (s*3) + '" ' + (esBool(c[0])?'checked':'') + '><label>D1</label></div>' +
+      '<div class="check-item"><input type="checkbox" class="check" data-idx="' + (s*3+1) + '" ' + (esBool(c[1])?'checked':'') + '><label>D2</label></div>' +
+      '<div class="check-item"><input type="checkbox" class="check" data-idx="' + (s*3+2) + '" ' + (esBool(c[2])?'checked':'') + '><label>D3</label></div>' +
+    '</div></div>';
+  }
+  
+  document.getElementById('semanas').innerHTML = html;
+  document.getElementById('modalAsist').classList.add('show');
 }
 
-function abrirClub(dni, nombre) {
-    jugadorActual = { dni, nombre };
-    document.getElementById('nombreClub').textContent = nombre;
-    
-    var jugador = datosJugadores.find(j => j[0] === dni);
-    var cols = jugador ? jugador.slice(2, 14) : Array(12).fill('');
-    
-    var meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-    var html = '';
-    
-    meses.forEach((m, i) => {
-        html += '<div class="mes-item"><input type="checkbox" class="btn-check" data-idx="' + i + '" ' + (esBool(cols[i]) ? 'checked' : '') + '><label>' + m + '</label></div>';
+function abrClub(dni, nom) {
+  actual = { dni: dni, nombre: nom };
+  document.getElementById('nombreClub').textContent = nom;
+  var j = datos.find(function(x) { return x[0] === dni; });
+  var cols = j ? j.slice(2, 14) : Array(12).fill("");
+  
+  var meses = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
+  var html = "";
+  meses.forEach(function(m, i) {
+    html += '<div class="mes"><input type="checkbox" class="check" data-idx="' + i + '" ' + (esBool(cols[i])?'checked':'') + '><label>' + m + '</label></div>';
+  });
+  
+  document.getElementById('meses').innerHTML = html;
+  document.getElementById('modalClub').classList.add('show');
+}
+
+function abrUnion(dni, nom) {
+  actual = { dni: dni, nombre: nom };
+  document.getElementById('nombreUnion').textContent = nom;
+  var j = datos.find(function(x) { return x[0] === dni; });
+  document.getElementById('cuota1').checked = esBool(j ? j[2] : "");
+  document.getElementById('cuota2').checked = esBool(j ? j[3] : "");
+  document.getElementById('modalUnion').classList.add('show');
+}
+
+function cerrar() {
+  document.querySelectorAll('.modal').forEach(function(m) { m.classList.remove('show'); });
+}
+
+async function guardar() {
+  var dni = document.getElementById('dni').value;
+  var nombre = document.getElementById('nombre').value;
+  if (!dni || !nombre) return alert("Completá DNI y Nombre");
+  
+  showMsg("Guardando...", "loading");
+  
+  try {
+    var resp = await fetch(API, {
+      method: "POST",
+      body: JSON.stringify({
+        accion: "guardar_jugador",
+        dni: dni,
+        nombre: nombre,
+        celular: document.getElementById('celular').value,
+        correo: document.getElementById('correo').value,
+        puesto1: document.getElementById('p1').value,
+        puesto2: document.getElementById('p2').value,
+        puesto3: document.getElementById('p3').value
+      })
     });
     
-    document.getElementById('mesesClub').innerHTML = html;
-    document.getElementById('modalCuotasClub').classList.add('visible');
-}
-
-function abrirUnion(dni, nombre) {
-    jugadorActual = { dni, nombre };
-    document.getElementById('nombreUnion').textContent = nombre;
-    
-    var jugador = datosJugadores.find(j => j[0] === dni);
-    document.getElementById('cuota1Union').checked = esBool(jugador ? jugador[2] : '');
-    document.getElementById('cuota2Union').checked = esBool(jugador ? jugador[3] : '');
-    document.getElementById('modalCuotasUnion').classList.add('visible');
-}
-
-function cerrarModal() {
-    document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('visible'));
-}
-
-async function guardarJugador() {
-    var dni = document.getElementById('dniJugador').value;
-    var nombre = document.getElementById('nombreJugador').value;
-    var celular = document.getElementById('celularJugador').value;
-    var correo = document.getElementById('correoJugador').value;
-    var p1 = document.getElementById('puesto1Jugador').value;
-    var p2 = document.getElementById('puesto2Jugador').value;
-    var p3 = document.getElementById('puesto3Jugador').value;
-    
-    if (!dni || !nombre) return alert('Completá DNI y Nombre');
-    
-    var estado = document.getElementById('estado');
-    estado.className = 'estado loading';
-    estado.innerHTML = '<div class="spinner"></div> Guardando...';
-    estado.style.display = 'flex';
-    
-    try {
-        var resp = await fetch(API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
-            body: JSON.stringify({
-                accion: 'guardar_jugador',
-                dni: dni,
-                nombre: nombre,
-                celular: celular,
-                correo: correo,
-                puesto1: p1,
-                puesto2: p2,
-                puesto3: p3
-            })
-        });
-        
-        var result = await resp.json();
-        
-        if (result.ok) {
-            estado.className = 'estado success';
-            estado.innerHTML = '<i class="fas fa-check"></i> Jugador guardado';
-            cerrarModal();
-            cargarDatos();
-        } else {
-            estado.className = 'estado error';
-            estado.innerHTML = '<span>⚠️</span> ' + (result.error || 'Error');
-        }
-    } catch(err) {
-        console.error(err);
-        estado.className = 'estado error';
-        estado.innerHTML = '<span>⚠️</span> Error: ' + err.message;
+    var r = await resp.json();
+    if (r.ok) {
+      showMsg("Jugador guardado", "success");
+      cerrar();
+      cargar();
+    } else {
+      showMsg(r.error || "Error", "error");
     }
+  } catch(err) {
+    showMsg(err.message, "error");
+  }
 }
 
-async function eliminarJugador() {
-    if (!confirm('¿Eliminar este jugador?')) return;
-    
-    var dni = document.getElementById('idJugador').value;
-    var estado = document.getElementById('estado');
-    estado.innerHTML = '<div class="spinner"></div> Eliminando...';
-    estado.style.display = 'flex';
-    
-    try {
-        var resp = await fetch(API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
-            body: JSON.stringify({ accion: 'eliminar_jugador', dni: dni })
-        });
-        
-        var result = await resp.json();
-        
-        if (result.ok) {
-            cerrarModal();
-            cargarDatos();
-        } else {
-            alert('Error: ' + result.error);
-        }
-    } catch(err) {
-        alert('Error: ' + err.message);
-    }
-}
-
-async function guardarAsistencia() {
-    var checks = document.querySelectorAll('#semanasAsistencia .btn-check:checked');
-    var idxs = Array.from(checks).map(c => parseInt(c.dataset.idx));
-    
-    var datos = {};
-    idxs.forEach(i => datos[i] = 'SI');
-    
-    var estado = document.getElementById('estado');
-    estado.innerHTML = '<div class="spinner"></div> Guardando...';
-    estado.style.display = 'flex';
-    
-    try {
-        var resp = await fetch(API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
-            body: JSON.stringify({
-                accion: 'guardar_asistencia',
-                dni: jugadorActual.dni,
-                datos: datos
-            })
-        });
-        
-        var result = await resp.json();
-        
-        if (result.ok) {
-            estado.className = 'estado success';
-            estado.innerHTML = '<i class="fas fa-check"></i> Asistencia guardada';
-            cerrarModal();
-            cargarDatos();
-        } else {
-            estado.className = 'estado error';
-            estado.innerHTML = '<span>⚠️</span> ' + (result.error || 'Error');
-        }
-    } catch(err) {
-        estado.className = 'estado error';
-        estado.innerHTML = '<span>⚠️</span> Error: ' + err.message;
-    }
-}
-
-async function guardarCuotasClub() {
-    var checks = document.querySelectorAll('#mesesClub .btn-check:checked');
-    var idxs = Array.from(checks).map(c => parseInt(c.dataset.idx));
-    
-    var datos = {};
-    idxs.forEach(i => datos[i] = 'SI');
-    
-    var estado = document.getElementById('estado');
-    estado.innerHTML = '<div class="spinner"></div> Guardando...';
-    estado.style.display = 'flex';
-    
-    try {
-        var resp = await fetch(API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
-            body: JSON.stringify({
-                accion: 'guardar_cuotas_club',
-                dni: jugadorActual.dni,
-                datos: datos
-            })
-        });
-        
-        var result = await resp.json();
-        
-        if (result.ok) {
-            estado.className = 'estado success';
-            estado.innerHTML = '<i class="fas fa-check"></i> Cuotas guardadas';
-            cerrarModal();
-            cargarDatos();
-        } else {
-            estado.className = 'estado error';
-            estado.innerHTML = '<span>⚠️</span> ' + (result.error || 'Error');
-        }
-    } catch(err) {
-        estado.className = 'estado error';
-        estado.innerHTML = '<span>⚠️</span> Error: ' + err.message;
-    }
-}
-
-async function guardarCuotasUnion() {
-    var c1 = document.getElementById('cuota1Union').checked;
-    var c2 = document.getElementById('cuota2Union').checked;
-    
-    var estado = document.getElementById('estado');
-    estado.innerHTML = '<div class="spinner"></div> Guardando...';
-    estado.style.display = 'flex';
-    
-    try {
-        var resp = await fetch(API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
-            body: JSON.stringify({
-                accion: 'guardar_cuotas_union',
-                dni: jugadorActual.dni,
-                cuota1: c1 ? 'SI' : 'NO',
-                cuota2: c2 ? 'SI' : 'NO'
-            })
-        });
-        
-        var result = await resp.json();
-        
-        if (result.ok) {
-            estado.className = 'estado success';
-            estado.innerHTML = '<i class="fas fa-check"></i> Cuotas guardadas';
-            cerrarModal();
-            cargarDatos();
-        } else {
-            estado.className = 'estado error';
-            estado.innerHTML = '<span>⚠️</span> ' + (result.error || 'Error');
-        }
-    } catch(err) {
-        estado.className = 'estado error';
-        estado.innerHTML = '<span>⚠️</span> Error: ' + err.message;
-    }
-}
-
-document.querySelectorAll('.menu-tab').forEach(t => {
-    t.addEventListener('click', function() {
-        document.querySelectorAll('.menu-tab').forEach(x => x.classList.remove('active'));
-        this.classList.add('active');
-        hojaActiva = this.dataset.hoja;
-        renderizar();
+async function eliminar() {
+  if (!confirm("¿Eliminar este jugador?")) return;
+  
+  var dni = document.getElementById('idDNI').value;
+  showMsg("Eliminando...", "loading");
+  
+  try {
+    var resp = await fetch(API, {
+      method: "POST",
+      body: JSON.stringify({ accion: "eliminar_jugador", dni: dni })
     });
+    var r = await resp.json();
+    if (r.ok) {
+      cerrar();
+      cargar();
+    } else {
+      showMsg(r.error, "error");
+    }
+  } catch(err) {
+    showMsg(err.message, "error");
+  }
+}
+
+async function guardarAsist() {
+  var checks = document.querySelectorAll('#semanas .check:checked');
+  var idxs = Array.from(checks).map(function(c) { return parseInt(c.dataset.idx); });
+  var datos2 = {};
+  idxs.forEach(function(i) { datos2[i] = "SI"; });
+  
+  showMsg("Guardando...", "loading");
+  
+  try {
+    var resp = await fetch(API, {
+      method: "POST",
+      body: JSON.stringify({ accion: "guardar_asistencia", dni: actual.dni, datos: datos2 })
+    });
+    var r = await resp.json();
+    if (r.ok) {
+      showMsg("Asistencia guardada", "success");
+      cerrar();
+      cargar();
+    } else {
+      showMsg(r.error, "error");
+    }
+  } catch(err) {
+    showMsg(err.message, "error");
+  }
+}
+
+async function guardarClub() {
+  var checks = document.querySelectorAll('#meses .check:checked');
+  var idxs = Array.from(checks).map(function(c) { return parseInt(c.dataset.idx); });
+  var datos2 = {};
+  idxs.forEach(function(i) { datos2[i] = "SI"; });
+  
+  showMsg("Guardando...", "loading");
+  
+  try {
+    var resp = await fetch(API, {
+      method: "POST",
+      body: JSON.stringify({ accion: "guardar_cuotas_club", dni: actual.dni, datos: datos2 })
+    });
+    var r = await resp.json();
+    if (r.ok) {
+      showMsg("Cuotas guardadas", "success");
+      cerrar();
+      cargar();
+    } else {
+      showMsg(r.error, "error");
+    }
+  } catch(err) {
+    showMsg(err.message, "error");
+  }
+}
+
+async function guardarUnion() {
+  var c1 = document.getElementById('cuota1').checked;
+  var c2 = document.getElementById('cuota2').checked;
+  
+  showMsg("Guardando...", "loading");
+  
+  try {
+    var resp = await fetch(API, {
+      method: "POST",
+      body: JSON.stringify({ accion: "guardar_cuotas_union", dni: actual.dni, cuota1: c1?"SI":"NO", cuota2: c2?"SI":"NO" })
+    });
+    var r = await resp.json();
+    if (r.ok) {
+      showMsg("Cuotas guardadas", "success");
+      cerrar();
+      cargar();
+    } else {
+      showMsg(r.error, "error");
+    }
+  } catch(err) {
+    showMsg(err.message, "error");
+  }
+}
+
+document.querySelectorAll('.tab').forEach(function(t) {
+  t.addEventListener('click', function() {
+    document.querySelectorAll('.tab').forEach(function(x) { x.classList.remove('active'); });
+    this.classList.add('active');
+    tab = this.dataset.tab;
+    render();
+  });
 });
 
-document.getElementById('busqueda').addEventListener('input', renderizar);
+document.getElementById('buscar').addEventListener('input', render);
 
-cargarDatos();
+init();
 </script>
 
 </body>
