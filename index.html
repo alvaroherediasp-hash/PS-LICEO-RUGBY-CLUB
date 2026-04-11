@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Menú Completo Jugadores - Rugby</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&family=Russo+One&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+<style>
+
+  :root {
+    --rugby-green: #1D4E27;
+    --rugby-green-light: #2D7A3A;
+    --accent: #4ADE80;
+    --bg: #0a0a0a;
+    --bg2: #131313;
+    --bg3: #1a1a1a;
+    --bg4: #222222;
+    --border: rgba(255,255,255,0.06);
+    --text: #F5F5F5;
+    --text-muted: #888888;
+    --gold: #F5A623;
+    --orange: #FF6B35;
+    --rojo: #DC2626;
+    --azul: #185FA5;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Barlow', sans-serif;
+    min-height: 100vh;
+  }
+
+  .header {
+    background: linear-gradient(135deg, var(--bg2) 0%, var(--bg3) 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .header-icon {
+    width: 52px;
+    height: 52px;
+    background: linear-gradient(145deg, var(--rugby-green) 0%, var(--rugby-green-light) 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+  }
+
+  .header-text h1 {
+    font-family: 'Russo One', sans-serif;
+    font-size: 24px;
+    background: linear-gradient(90deg, var(--text) 0%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .header-text p {
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  /* MENÚ DE HOJAS */
+  .menu-wrap {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 30px;
+    overflow-x: auto;
+  }
+
+  .menu-tabs {
+    display: flex;
+    gap: 10px;
+    white-space: nowrap;
+  }
+
+  .menu-tab {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    padding: 12px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .menu-tab:hover {
+    background: var(--bg4);
+    border-color: var(--rugby-green);
+  }
+
+  .menu-tab.active {
+    background: var(--rugby-green);
+    border-color: var(--rugby-green);
+    color: #fff;
+  }
+
+  /* SEARCH */
+  .search-wrap {
+    padding: 16px 30px;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .search-input {
+    background: var(--bg3);
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    padding: 12px 16px;
+    font-size: 14px;
+    outline: none;
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .search-input:focus {
+    border-color: var(--rugby-green);
+  }
+
+  /* MAIN */
+  .main {
+    padding: 24px 30px;
+  }
+
+  .estado {
+    display: none;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+  }
+
+  .estado.loading { display: flex; background: rgba(29,126,39,0.15); border: 1px solid rgba(29,126,39,0.3); color: var(--accent); }
+  .estado.error { display: flex; background: rgba(220,38,38,0.15); border: 1px solid rgba(220,38,38,0.3); color: #fca5a5; }
+  .estado.success { display: flex; background: rgba(29,126,39,0.15); border: 1px solid rgba(29,126,39,0.3); color: var(--accent); }
+
+  .spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(29,126,39,0.3);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* TABLA */
+  .tabla-container {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .tabla-header {
+    display: grid;
+    grid-template-columns: 50px 1fr 90px 90px 90px 90px;
+    gap: 10px;
+    padding: 14px 20px;
+    background: var(--bg3);
+    border-bottom: 1px solid var(--border);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .tabla-header.tt { grid-template-columns: 40px 1fr 90px 120px 100px 80px; }
+
+  .tabla-body {
+    max-height: calc(100vh - 350px);
+    overflow-y: auto;
+  }
+
+  .jugador-row {
+    display: grid;
+    grid-template-columns: 50px 1fr 90px 90px 90px 90px;
+    gap: 10px;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    align-items: center;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+
+  .jugador-row:hover {
+    background: var(--bg3);
+  }
+
+  .jugador-row.tt { grid-template-columns: 40px 1fr 90px 120px 100px 80px; }
+
+  .jugador-avatar {
+    width: 40px;
+    height: 40px;
+    background: var(--rugby-green);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Russo One', sans-serif;
+    font-size: 16px;
+    color: #fff;
+  }
+
+  .badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    text-align: center;
+    display: inline-block;
+  }
+
+  .badge.ok { background: rgba(29,126,39,0.2); color: var(--accent); }
+  .badge.falta { background: rgba(220,38,38,0.2); color: #fca5a5; }
+  .badge.pagado { background: rgba(74,222,128,0.2); color: #4ADE80; }
+  .badge.pendiente { background: rgba(245,166,35,0.2); color: var(--gold); }
+  .badge.presente { background: rgba(29,126,39,0.2); color: var(--accent); }
+  .badge.ausente { background: rgba(220,38,38,0.2); color: #fca5a5; }
+
+  .tt-check {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--rugby-green);
+    cursor: pointer;
+  }
+
+  .tt-importe {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 10px;
+    width: 70px;
+    color: var(--text);
+    font-size: 13px;
+  }
+
+  .tt-importe:focus {
+    border-color: var(--rugby-green);
+  }
+
+  .tt-medio {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 11px;
+    border: 1px solid var(--border);
+    background: var(--bg2);
+    color: var(--text);
+  }
+
+  .tt-badge {
+    padding: 4px 10px;
+    border-radius: 15px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .tt-badge.efectivo { background: rgba(29,126,39,0.2); color: var(--accent); }
+  .tt-badge.transferencia { background: rgba(24,95,165,0.2); color: #93C5FD; }
+  .tt-badge.no-pago { background: rgba(220,38,38,0.2); color: #fca5a5; }
+
+  .btn {
+    padding: 10px 18px;
+    border-radius: 10px;
+    border: none;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-primary { background: var(--rugby-green); color: #fff; }
+  .btn-warning { background: var(--orange); color: #fff; }
+  .btn-save { background: var(--gold); color: #000; }
+  .btn-secondary { background: var(--bg4); color: var(--text); border: 1px solid var(--border); }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.8);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-overlay.visible { display: flex; }
+
+  .modal {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    max-width: 700px;
+    width: 95%;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .modal-header h3 {
+    font-family: 'Russo One', sans-serif;
+    font-size: 18px;
+  }
+
+  .modal-close {
+    background: none;
+    border: none;
+    color: var(--text);
+    font-size: 24px;
+    cursor: pointer;
+  }
+
+  .modal-body {
+    padding: 20px 24px;
+  }
+
+  .form-group {
+    margin-bottom: 16px;
+  }
+
+  .form-group label {
+    display: block;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+
+  .form-group input,
+  .form-group select {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    padding: 12px;
+    font-size: 14px;
+  }
+
+  @media (max-width: 768px) {
+    .header { flex-direction: column; gap: 16px; text-align: center; }
+    .tabla-header, .jugador-row { grid-template-columns: 40px 1fr 70px; }
+    .jugador-row > *:nth-child(n+4) { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="header-icon">🏉</div>
+    <div class="header-text">
+      <h1>Menú Completo Jugadores</h1>
+      <p>Todas las hojas del Club</p>
+    </div>
+  </div>
+</div>
+
+<div class="menu-wrap">
+  <div class="menu-tabs" id="menuTabs">
+    <div class="menu-tab active" data-hoja="asist">🏉 Asistencia <span class="count"></span></div>
+    <div class="menu-tab" data-hoja="club">💳 Cuotas Club <span class="count"></span></div>
+    <div class="menu-tab" data-hoja="union">🏛️ Cuotas Unión <span class="count"></span></div>
+    <div class="menu-tab" data-hoja="tt">🍽️ Tercer Tiempo <span class="count"></span></div>
+  </div>
+</div>
+
+<div class="search-wrap">
+  <input class="search-input" id="busqueda" type="text" placeholder="Buscar por nombre o DNI...">
+</div>
+
+<div class="main">
+  <div class="estado" id="estado"></div>
+
+  <div class="tabla-container" id="tablaContainer">
+    <div class="loading-placeholder" style="padding: 60px; text-align: center; color: var(--text-muted);">
+      <div class="spinner" style="width: 30px; height: 30px; margin: 0 auto 16px; border-width: 3px;"></div>
+      <p>Cargando datos...</p>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL AGREGAR PARTIDO TERCER TIEMPO -->
+<div class="modal-overlay" id="modalAgregar">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>🍽️ Agregar Partido - Tercer Tiempo</h3>
+      <button class="modal-close" onclick="cerrarModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Fecha del Partido</label>
+        <input type="date" id="fechaPartido">
+      </div>
+      <div class="form-group">
+        <label>Importe por Jugador ($)</label>
+        <input type="number" id="importePartido" placeholder="0.00" step="0.01">
+      </div>
+      <div class="form-group">
+        <label>Medio de Pago</label>
+        <select id="medioPago">
+          <option value="efectivo">💵 Efectivo</option>
+          <option value="transferencia">📱 Transferencia</option>
+        </select>
+      </div>
+      <div style="display: flex; gap: 12px; margin-top: 20px;">
+        <button class="btn btn-primary" onclick="agregarPartido()">
+          <i class="fas fa-plus"></i> Agregar
+        </button>
+        <button class="btn btn-secondary" onclick="cerrarModal()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== CONFIGURACIÓN =====
+var SHEET_ID = "1DSLMUY658O0-liB7bpv0g8VFTpGiv3nNNgDXc2X97VM";
+var GIDs = {
+  asist: "347341918",
+  club: "162977848",
+  union: "1658884378",
+  tt: "1159874602"
+};
+var API_URL = "https://script.google.com/macros/s/AKfycbx3ZsQIAYfNrLP7Uun6_fsA7nbp_zHJBl4kJDgZ94oNYHCZWtnIX4ETZ8T_mkFQtM4K/exec";
+
+var hojaActiva = "asist";
+var datosCompletos = { asist: [], club: [], union: [], tt: [] };
+var datosFiltrados = [];
+var datosPartidos = [];
+
+function esBool(v) {
+  if (!v) return false;
+  return ["TRUE", "VERDADERO", "1"].includes(v.toString().toUpperCase().trim());
+}
+
+function norm(s) {
+  return (s || "").toString().toUpperCase().trim();
+}
+
+function csvURL(gid) {
+  return `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${gid}`;
+}
+
+function fetchCSV(gid) {
+  return fetch(csvURL(gid)).then(r => r.text()).then(txt => txt.split("\n").map(l => l.split(",")));
+}
+
+// ===== CARGAR TODOS LOS DATOS =====
+async function cargarDatos() {
+  var estado = document.getElementById("estado");
+  estado.className = "estado loading";
+  estado.innerHTML = '<div class="spinner"></div> Cargando datos de todas las hojas...';
+  estado.style.display = "flex";
+
+  try {
+    var results = await Promise.all([
+      fetchCSV(GIDs.asist),
+      fetchCSV(GIDs.club),
+      fetchCSV(GIDs.union),
+      fetchCSV(GIDs.tt)
+    ]);
+
+    // ASISTENCIA
+    datosCompletos.asist = results[0].slice(1).filter(f => norm(f[0])).map(f => ({
+      dni: norm(f[0]), nombre: f[1] || "",
+      cols: f.slice(2),
+      cantPres: f.slice(2).filter(esBool).length,
+      cantAus: f.slice(2).filter(f => !esBool(f)).length
+    }));
+
+    // CLUB
+    datosCompletos.club = results[1].slice(1).filter(f => norm(f[0])).map(f => ({
+      dni: norm(f[0]), nombre: f[1] || "",
+      cuota1: esBool(f[2]), cuota2: esBool(f[3])
+    }));
+
+    // UNION
+    datosCompletos.union = results[2].slice(1).filter(f => norm(f[0])).map(f => ({
+      dni: norm(f[0]), nombre: f[1] || "",
+      cols: f.slice(2, 14),
+      pagados: f.slice(2, 14).filter(esBool).length,
+      pendientes: f.slice(2, 14).filter(f => !esBool(f)).length
+    }));
+
+    // TERCER TIEMPO
+    datosCompletos.tt = results[3].slice(1).filter(f => norm(f[0])).map(f => ({
+      dni: norm(f[0]), nombre: f[1] || "",
+      cols: f.slice(2),
+      cantPres: f.slice(2).filter(esBool).length,
+      cantAus: f.slice(2).filter(f => !esBool(f)).length
+    }));
+
+    // Cargar partidos guardados localmente
+    var stored = localStorage.getItem('partidos_tt');
+    if (stored) datosPartidos = JSON.parse(stored);
+
+    actualizarContadores();
+    cambiarHoja(hojaActiva);
+    
+    estado.style.display = "none";
+
+  } catch(err) {
+    console.error(err);
+    estado.className = "estado error";
+    estado.innerHTML = '<span>⚠️</span> Error al cargar datos';
+  }
+}
+
+function actualizarContadores() {
+  var asistOk = datosCompletos.asist.filter(j => j.cantAus === 0).length;
+  var clubOk = datosCompletos.club.filter(j => j.cuota1 && j.cuota2).length;
+  var unionOk = datosCompletos.union.filter(j => j.pendientes === 0).length;
+  var ttOk = datosCompletos.tt.filter(j => j.cantAus === 0).length;
+
+  document.querySelectorAll('.menu-tab')[0].querySelector('.count').textContent = asistOk;
+  document.querySelectorAll('.menu-tab')[1].querySelector('.count').textContent = clubOk;
+  document.querySelectorAll('.menu-tab')[2].querySelector('.count').textContent = unionOk;
+  document.querySelectorAll('.menu-tab')[3].querySelector('.count').textContent = ttOk;
+}
+
+function cambiarHoja(hoja) {
+  hojaActiva = hoja;
+  document.querySelectorAll('.menu-tab').forEach(t => t.classList.remove('active'));
+  document.querySelector(`[data-hoja="${hoja}"]`).classList.add('active');
+
+  var busqueda = document.getElementById('busqueda').value.toLowerCase();
+  
+  if (hoja === 'asist') {
+    datosFiltrados = datosCompletos.asist.filter(j => 
+      !busqueda || j.nombre.toLowerCase().includes(busqueda) || j.dni.includes(busqueda)
+    );
+    renderizarAsistencia();
+  } else if (hoja === 'club') {
+    datosFiltrados = datosCompletos.club.filter(j => 
+      !busqueda || j.nombre.toLowerCase().includes(busqueda) || j.dni.includes(busqueda)
+    );
+    renderizarClub();
+  } else if (hoja === 'union') {
+    datosFiltrados = datosCompletos.union.filter(j => 
+      !busqueda || j.nombre.toLowerCase().includes(busqueda) || j.dni.includes(busqueda)
+    );
+    renderizarUnion();
+  } else if (hoja === 'tt') {
+    datosFiltrados = datosCompletos.tt.filter(j => 
+      !busqueda || j.nombre.toLowerCase().includes(busqueda) || j.dni.includes(busqueda)
+    );
+    renderizarTT();
+  }
+}
+
+function renderizarAsistencia() {
+  var container = document.getElementById('tablaContainer');
+  if (datosFiltrados.length === 0) {
+    container.innerHTML = '<div class="loading-placeholder" style="padding: 60px; text-align: center;"><p>No hay jugadores</p></div>';
+    return;
+  }
+
+  var html = `
+    <div class="tabla-header">
+      <div></div>
+      <div>Jugador</div>
+      <div>Presentes</div>
+      <div>Ausentes</div>
+      <div>%</div>
+      <div>Detalle</div>
+    </div>
+    <div class="tabla-body">
+  `;
+
+  datosFiltrados.forEach(j => {
+    var pct = j.cols.length > 0 ? Math.round((j.cantPres / j.cols.length) * 100) : 0;
+    html += `
+      <div class="jugador-row">
+        <div class="jugador-avatar">${j.nombre.charAt(0)}</div>
+        <div><div style="font-weight:600;">${j.nombre}</div><div style="font-size:12px;color:var(--text-muted);">${j.dni}</div></div>
+        <div><span class="badge presente">${j.cantPres}</span></div>
+        <div><span class="badge ausente">${j.cantAus}</span></div>
+        <div><span class="badge ${pct >= 70 ? 'ok' : 'falta'}">${pct}%</span></div>
+        <div><button class="btn btn-sm btn-secondary" onclick="editarAsistencia('${j.dni}')">Editar</button></div>
+      </div>
+    `;
+  });
+
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+function renderizarClub() {
+  var container = document.getElementById('tablaContainer');
+  if (datosFiltrados.length === 0) {
+    container.innerHTML = '<div class="loading-placeholder" style="padding: 60px; text-align: center;"><p>No hay jugadores</p></div>';
+    return;
+  }
+
+  var html = `
+    <div class="tabla-header">
+      <div></div>
+      <div>Jugador</div>
+      <div>Cuota 1</div>
+      <div>Cuota 2</div>
+      <div>Estado</div>
+      <div>Detalle</div>
+    </div>
+    <div class="tabla-body">
+  `;
+
+  datosFiltrados.forEach(j => {
+    var estado = j.cuota1 && j.cuota2 ? 'OK' : (j.cuota1 || j.cuota2 ? 'Parcial' : 'Pendiente');
+    html += `
+      <div class="jugador-row">
+        <div class="jugador-avatar">${j.nombre.charAt(0)}</div>
+        <div><div style="font-weight:600;">${j.nombre}</div><div style="font-size:12px;color:var(--text-muted);">${j.dni}</div></div>
+        <div><span class="badge ${j.cuota1 ? 'ok' : 'pendiente'}">${j.cuota1 ? '✓' : '✗'}</span></div>
+        <div><span class="badge ${j.cuota2 ? 'ok' : 'pendiente'}">${j.cuota2 ? '✓' : '✗'}</span></div>
+        <div><span class="badge ${estado === 'OK' ? 'ok' : 'pendiente'}">${estado}</span></div>
+        <div><button class="btn btn-sm btn-secondary" onclick="editarClub('${j.dni}')">Editar</button></div>
+      </div>
+    `;
+  });
+
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+function renderizarUnion() {
+  var container = document.getElementById('tablaContainer');
+  if (datosFiltrados.length === 0) {
+    container.innerHTML = '<div class="loading-placeholder" style="padding: 60px; text-align: center;"><p>No hay jugadores</p></div>';
+    return;
+  }
+
+  var html = `
+    <div class="tabla-header">
+      <div></div>
+      <div>Jugador</div>
+      <div>Pagados</div>
+      <div>Pendientes</div>
+      <div>Estado</div>
+      <div>Detalle</div>
+    </div>
+    <div class="tabla-body">
+  `;
+
+  datosFiltrados.forEach(j => {
+    html += `
+      <div class="jugador-row">
+        <div class="jugador-avatar">${j.nombre.charAt(0)}</div>
+        <div><div style="font-weight:600;">${j.nombre}</div><div style="font-size:12px;color:var(--text-muted);">${j.dni}</div></div>
+        <div><span class="badge ok">${j.pagados}/12</span></div>
+        <div><span class="badge ${j.pendientes === 0 ? 'ok' : 'falta'}">${j.pendientes}/12</span></div>
+        <div><span class="badge ${j.pendientes === 0 ? 'ok' : 'pendiente'}">${j.pendientes === 0 ? 'OK' : 'PEND'}</span></div>
+        <div><button class="btn btn-sm btn-secondary" onclick="editarUnion('${j.dni}')">Editar</button></div>
+      </div>
+    `;
+  });
+
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+function renderizarTT() {
+  var container = document.getElementById('tablaContainer');
+  if (datosFiltrados.length === 0) {
+    container.innerHTML = '<div class="loading-placeholder" style="padding: 60px; text-align: center;"><p>No hay jugadores</p></div>';
+    return;
+  }
+
+  var html = `
+    <div class="tabla-header tt">
+      <div></div>
+      <div>Jugador</div>
+      <div>Partidos</div>
+      <div>Tercer Tiempo</div>
+      <div>Partido Nuevo</div>
+      <div></div>
+    </div>
+    <div class="tabla-body">
+      <button class="btn btn-warning" style="width:100%; margin-bottom:12px; border-radius:8px;" onclick="abrirModalPartido()">
+        🍽️ + Agregar Partido
+      </button>
+  `;
+
+  datosFiltrados.forEach(j => {
+    html += `
+      <div class="jugador-row tt" onclick="verDetalleTT('${j.dni}')">
+        <div class="jugador-avatar">${j.nombre.charAt(0)}</div>
+        <div><div style="font-weight:600;">${j.nombre}</div><div style="font-size:12px;color:var(--text-muted);">${j.dni}</div></div>
+        <div><span class="badge ok">${j.cols.length}</span></div>
+        <div><span class="badge ${j.cantAus === 0 ? 'presente' : 'ausente'}">${j.cantPres}/${j.cantAus + j.cantPres}</span></div>
+        <div><button class="btn btn-sm btn-primary" onclick="event.stopPropagation(); agregarPartidoJugador('${j.dni}')">+</button></div>
+        <div><button class="btn btn-sm btn-secondary" onclick="event.stopPropagation(); verDetalleTT('${j.dni}')">Ver</button></div>
+      </div>
+    `;
+  });
+
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+function verDetalleTT(dni) {
+  var jugador = datosCompletos.tt.find(j => j.dni === dni);
+  if (!jugador) return;
+
+  var modal = document.querySelector('.modal-overlay');
+  var body = modal.querySelector('.modal-body');
+  
+  modal.querySelector('h3').textContent = '🍽️ ' + jugador.nombre;
+
+  body.innerHTML = `
+    <div style="font-size:12px;color:var(--text-muted);margin-bottom:16px;">DNI: ${jugador.dni}</div>
+    
+    <button class="btn btn-warning" style="width:100%; margin-bottom:16px;" onclick="agregarPartidoJugador('${dni}')">
+      + Agregar Partido
+    </button>
+
+    <div style="max-height:300px; overflow-y:auto; border-radius:10px; border:1px solid var(--border);">
+      <table style="width:100%; border-collapse:collapse;">
+        <thead>
+          <tr style="background:var(--bg3);">
+            <th style="padding:10px;width:40px;">✔</th>
+            <th style="padding:10px;">Fecha</th>
+            <th style="padding:10px;">Importe</th>
+            <th style="padding:10px;">Medio</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${renderTTHTML(jugador.dni)}
+        </tbody>
+      </table>
+    </div>
+
+    <button class="btn btn-save" style="width:100%; margin-top:16px;" onclick="guardarTTEnDrive('${dni}')">
+      💾 GUARDAR EN DRIVE
+    </button>
+  `;
+
+  modal.classList.add('visible');
+}
+
+function renderTTHTML(dni) {
+  var today = new Date();
+  today.setHours(0, 0, 0, 0);
+  var html = "";
+
+  if (datosPartidos.length === 0) {
+    return '<tr><td colspan="4" style="padding:20px;text-align:center;color:var(--text-muted);">No hay partidos</td></tr>';
+  }
+
+  datosPartidos.forEach((p, idx) => {
+    var fechaPartido = new Date(p.fecha);
+    fechaPartido.setHours(0, 0, 0, 0);
+    var pasado = fechaPartido < today;
+    var asistio = p.asistencias && p.asistencias[dni];
+    var importeVal = p.importes ? (p.importes[dni] || '') : '';
+    var medioVal = p.medios ? (p.medios[dni] || p.medio) : p.medio;
+
+    var medioTexto = "", medioClase = "";
+    if (asistio) {
+      medioTexto = medioVal === 'efectivo' ? 'Efectivo' : 'Transferencia';
+      medioClase = medioVal === 'efectivo' ? 'tt-badge efectivo' : 'tt-badge transferencia';
+    } else if (pasado) {
+      medioTexto = 'NO PAGO';
+      medioClase = 'tt-badge no-pago';
+    } else {
+      medioTexto = '—';
+    }
+
+    html += `
+      <tr style="border-bottom:1px solid var(--border);">
+        <td style="padding:8px;text-align:center;">
+          <input type="checkbox" class="tt-check" ${asistio ? 'checked' : ''} ${pasado && !asistio ? 'disabled' : ''} onchange="marcarTT('${dni}', ${idx}, this.checked)">
+        </td>
+        <td style="padding:8px;">${p.fecha}</td>
+        <td style="padding:8px;">
+          <input type="number" class="tt-importe" value="${importeVal}" placeholder="0.00" step="0.01" onchange="guardarImporteTT('${dni}', ${idx}, this.value)">
+        </td>
+        <td style="padding:8px;">
+          <select class="tt-medio" onchange="guardarMedioTT('${dni}', ${idx}, this.value)" style="${asistio ? '' : 'opacity:0.5'}">
+            <option value="efectivo" ${medioVal === 'efectivo' ? 'selected' : ''}>Efectivo</option>
+            <option value="transferencia" ${medioVal === 'transferencia' ? 'selected' : ''}>Transferencia</option>
+          </select>
+          ${!asistio && !pasado ? '' : `<span class="${medioClase}" style="margin-left:8px;">${medioTexto}</span>`}
+        </td>
+      </tr>
+    `;
+  });
+
+  return html;
+}
+
+function marcarTT(dni, idx, valor) {
+  if (!datosPartidos[idx].asistencias) datosPartidos[idx].asistencias = {};
+  datosPartidos[idx].asistencias[dni] = valor;
+  localStorage.setItem('partidos_tt', JSON.stringify(datosPartidos));
+  verDetalleTT(dni);
+}
+
+function guardarImporteTT(dni, idx, valor) {
+  if (!datosPartidos[idx].importes) datosPartidos[idx].importes = {};
+  datosPartidos[idx].importes[dni] = valor;
+  localStorage.setItem('partidos_tt', JSON.stringify(datosPartidos));
+}
+
+function guardarMedioTT(dni, idx, valor) {
+  if (!datosPartidos[idx].medios) datosPartidos[idx].medios = {};
+  datosPartidos[idx].medios[dni] = valor;
+  localStorage.setItem('partidos_tt', JSON.stringify(datosPartidos));
+}
+
+// ===== GUARDAR EN DRIVE =====
+async function guardarTTEnDrive(dni) {
+  var estado = document.getElementById('estado');
+  estado.className = 'estado loading';
+  estado.innerHTML = '<div class="spinner"></div> Guardando en Drive...';
+  estado.style.display = 'flex';
+
+  try {
+    var jugador = datosCompletos.tt.find(j => j.dni === dni);
+    if (!jugador) return;
+
+    var headers = ['DNI', 'Nombre'];
+    var valores = [dni, jugador.nombre];
+
+    datosPartidos.forEach(p => {
+      headers.push(p.fecha);
+      var asistio = p.asistencias && p.asistencias[dni];
+      valores.push(asistio ? 'SI' : '');
+    });
+
+    var datos = {
+      hoja: 'Tercer Tiempo',
+      dni: dni,
+      headers: headers,
+      valores: valores
+    };
+
+    var response = await fetch(API_URL, {
+      method: 'POST',
+      body: JSON.stringify(datos)
+    });
+
+    var result = await response.json();
+    console.log('Resultado:', result);
+
+    estado.className = 'estado success';
+    estado.innerHTML = '<i class="fas fa-check"></i> Guardado en Drive correctamente';
+    setTimeout(() => estado.style.display = 'none', 3000);
+
+  } catch(err) {
+    console.error(err);
+    estado.className = 'estado error';
+    estado.innerHTML = '<span>⚠️</span> Error al guardar';
+  }
+}
+
+// ===== EDITAR OTRAS HOJAS =====
+function editarAsistencia(dni) { alert('Editar asistencia para DNI: ' + dni); }
+function editarClub(dni) { alert('Editar cuotas club para DNI: ' + dni); }
+function editarUnion(dni) { alert('Editar cuotas unión para DNI: ' + dni); }
+
+// ===== AGREGAR PARTIDO =====
+function abrirModalPartido() {
+  var fechaInput = document.getElementById('fechaPartido');
+  var hoy = new Date().toISOString().split('T')[0];
+  fechaInput.value = hoy;
+  document.getElementById('importePartido').value = '';
+  document.getElementById('modalAgregar').classList.add('visible');
+}
+
+function agregarPartido() {
+  var fecha = document.getElementById('fechaPartido').value;
+  var importe = document.getElementById('importePartido').value;
+  var medio = document.getElementById('medioPago').value;
+
+  if (!fecha || !importe) {
+    alert('Completá la fecha y el importe');
+    return;
+  }
+
+  if (datosPartidos.find(p => p.fecha === fecha)) {
+    alert('Ya existe un partido en esa fecha');
+    return;
+  }
+
+  datosPartidos.push({
+    fecha: fecha,
+    importe: parseFloat(importe),
+    medio: medio,
+    importaciones: {},
+    medios: {},
+    asistencias: {}
+  });
+
+  datosPartidos.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+  localStorage.setItem('partidos_tt', JSON.stringify(datosPartidos));
+
+  document.getElementById('modalAgregar').classList.remove('visible');
+  renderizarTT();
+
+  var estado = document.getElementById('estado');
+  estado.className = 'estado success';
+  estado.innerHTML = '<i class="fas fa-check"></i> Partido agregado';
+  setTimeout(() => estado.style.display = 'none', 3000);
+}
+
+function agregarPartidoJugador(dni) {
+  verDetalleTT(dni);
+}
+
+function cerrarModal() {
+  document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('visible'));
+}
+
+// ===== EVENTOS =====
+document.getElementById('menuTabs').addEventListener('click', function(e) {
+  var tab = e.target.closest('.menu-tab');
+  if (tab) cambiarHoja(tab.dataset.hoja);
+});
+
+document.getElementById('busqueda').addEventListener('input', function() {
+  cambiarHoja(hojaActiva);
+});
+
+document.querySelector('.modal-overlay').addEventListener('click', function(e) {
+  if (e.target === this) cerrarModal();
+});
+
+// Iniciar
+cargarDatos();
+</script>
+
+</body>
+</html>
