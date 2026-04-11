@@ -333,6 +333,16 @@ function getVal(row, idx) {
   return row["c" + idx] || "";
 }
 
+function getDNI(row, sheet) {
+  if (sheet === "jugadores") return getVal(row, 1);
+  return getVal(row, 0);
+}
+
+function getNombre(row, sheet) {
+  if (sheet === "jugadores") return getVal(row, 2);
+  return getVal(row, 1);
+}
+
 function esBool(v) {
   if (!v) return false;
   var s = v.toString().toUpperCase().trim();
@@ -344,8 +354,13 @@ async function cargar() {
   setConectar(false, 'Cargando...');
   
   try {
+    console.log('Fetching:', API);
     var resp = await fetch(API);
-    var json = await resp.json();
+    console.log('Response:', resp.status, resp.statusText);
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    var text = await resp.text();
+    console.log('Text length:', text.length);
+    var json = JSON.parse(text);
     
     if (json.error) {
       setConectar(false, json.error);
@@ -373,7 +388,9 @@ function render() {
   
   if (tab === "jugadores") {
     var lista = (datos.jugadores || []).filter(function(j) {
-      return !busq || (getVal(j,1)||"").toLowerCase().includes(busq) || (getVal(j,0)||"").includes(busq);
+      var dni = getDNI(j, "jugadores");
+      var nom = getNombre(j, "jugadores");
+      return !busq || (nom||"").toLowerCase().includes(busq) || (dni||"").includes(busq);
     });
     if (lista.length === 0) {
       t.innerHTML = '<div style="padding:40px; text-align:center; color:var(--muted);"><p>Sin jugadores</p></div>';
@@ -381,15 +398,19 @@ function render() {
     }
     html = '<div class="tabla-head"><div style="width:36px;"></div><div class="dato">Jugador</div><div style="width:80px;">Puestos</div><div style="width:60px;"></div></div><div class="tabla-body">';
     lista.forEach(function(j) {
-      var nom = getVal(j,1) || "";
+      var nom = getNombre(j, "jugadores") || "";
       var ini = nom.charAt(0) || "?";
-      var p1 = getVal(j,4) || "-";
-      var p2 = getVal(j,5) || "";
-      html += '<div class="fila"><div class="avatar">' + ini + '</div><div class="dato"><div>' + nom + '</div><div>DNI: ' + (getVal(j,0)||"") + '</div></div><div><span class="badge">' + p1 + (p2 ? ", " + p2 : "") + '</span></div><div><button class="btn btn-sm btn-sec" onclick="ver(\'' + getVal(j,0) + '\')">Ver</button></div></div>';
+      var dni = getDNI(j, "jugadores");
+      var p1 = getVal(j, 4) || "-";
+      var p2 = getVal(j, 5) || "";
+      html += '<div class="fila"><div class="avatar">' + ini + '</div><div class="dato"><div>' + nom + '</div><div>DNI: ' + dni + '</div></div><div><span class="badge">' + p1 + (p2 ? ", " + p2 : "") + '</span></div><div><button class="btn btn-sm btn-sec" onclick="ver(\'' + dni + '\')">Ver</button></div></div>';
     });
   } else if (tab === "asistencia") {
     var lista = (datos.asistencia || []).filter(function(j) {
-      return !busq || (getVal(j,1)||"").toLowerCase().includes(busq) || (getVal(j,0)||"").includes(busq);
+      var dni = getDNI(j, "asistencia");
+      var nom = getNombre(j, "asistencia");
+      if (!dni || dni === "DNI") return false;
+      return !busq || (nom||"").toLowerCase().includes(busq) || (dni||"").includes(busq);
     });
     if (lista.length === 0) {
       t.innerHTML = '<div style="padding:40px; text-align:center; color:var(--muted);"><p>Sin datos de asistencia</p></div>';
@@ -397,18 +418,23 @@ function render() {
     }
     html = '<div class="tabla-head"><div style="width:36px;"></div><div class="dato">Jugador</div><div style="width:100px;">Estado</div><div style="width:60px;"></div></div><div class="tabla-body">';
     lista.forEach(function(j) {
-      var nom = getVal(j,1) || "";
+      var nom = getNombre(j, "asistencia") || "";
+      var dni = getDNI(j, "asistencia");
       var ini = nom.charAt(0) || "?";
-      var cols = j.slice(2);
+      var cols = [];
+      for (var k = 2; k < 38; k++) cols.push(getVal(j, k));
       var pres = 0;
-      for (var i = 0; i < cols.length && i < 36; i++) if (esBool(cols[i])) pres++;
+      for (var i = 0; i < cols.length; i++) if (esBool(cols[i])) pres++;
       var estado = pres >= 36 ? "ok" : (pres > 0 ? "incompleto" : "falta");
       var label = pres >= 36 ? "COMPLETO" : (pres > 0 ? pres + "/36" : "NO ASIST");
-      html += '<div class="fila"><div class="avatar">' + ini + '</div><div class="dato"><div>' + nom + '</div><div>DNI: ' + (getVal(j,0)||"") + '</div></div><div><span class="badge ' + estado + '">' + label + '</span></div><div><button class="btn btn-sm btn-primary" onclick="abrAsist(\'' + getVal(j,0) + '\', \'' + nom.replace(/'/g,"\\'") + '\')">Editar</button></div></div>';
+      html += '<div class="fila"><div class="avatar">' + ini + '</div><div class="dato"><div>' + nom + '</div><div>DNI: ' + dni + '</div></div><div><span class="badge ' + estado + '">' + label + '</span></div><div><button class="btn btn-sm btn-primary" onclick="abrAsist(\'' + dni + '\', \'' + nom.replace(/'/g,"\\'") + '\')">Editar</button></div></div>';
     });
   } else if (tab === "club") {
     var lista = (datos.club || []).filter(function(j) {
-      return !busq || (getVal(j,1)||"").toLowerCase().includes(busq) || (getVal(j,0)||"").includes(busq);
+      var dni = getDNI(j, "club");
+      var nom = getNombre(j, "club");
+      if (!dni || dni === "DNI") return false;
+      return !busq || (nom||"").toLowerCase().includes(busq) || (dni||"").includes(busq);
     });
     if (lista.length === 0) {
       t.innerHTML = '<div style="padding:40px; text-align:center; color:var(--muted);"><p>Sin datos de cuotas</p></div>';
@@ -416,15 +442,19 @@ function render() {
     }
     html = '<div class="tabla-head"><div style="width:36px;"></div><div class="dato">Jugador</div><div style="width:80px;">Cuotas</div><div style="width:60px;"></div></div><div class="tabla-body">';
     lista.forEach(function(j) {
-      var nom = getVal(j,1) || "";
+      var nom = getNombre(j, "club") || "";
+      var dni = getDNI(j, "club");
       var ini = nom.charAt(0) || "?";
       var cuotas = 0;
       for (var i = 2; i < 14; i++) if (esBool(getVal(j,i))) cuotas++;
-      html += '<div class="fila"><div class="avatar">' + ini + '</div><div class="dato"><div>' + nom + '</div><div>DNI: ' + (getVal(j,0)||"") + '</div></div><div><span class="badge ' + (cuotas >= 10 ? "ok" : (cuotas > 0 ? "incompleto" : "falta")) + '">' + cuotas + '/12</span></div><div><button class="btn btn-sm btn-primary" onclick="abrClub(\'' + getVal(j,0) + '\', \'' + nom.replace(/'/g,"\\'") + '\')">Editar</button></div></div>';
+      html += '<div class="fila"><div class="avatar">' + ini + '</div><div class="dato"><div>' + nom + '</div><div>DNI: ' + dni + '</div></div><div><span class="badge ' + (cuotas >= 10 ? "ok" : (cuotas > 0 ? "incompleto" : "falta")) + '">' + cuotas + '/12</span></div><div><button class="btn btn-sm btn-primary" onclick="abrClub(\'' + dni + '\', \'' + nom.replace(/'/g,"\\'") + '\')">Editar</button></div></div>';
     });
   } else if (tab === "union") {
     var lista = (datos.union || []).filter(function(j) {
-      return !busq || (getVal(j,1)||"").toLowerCase().includes(busq) || (getVal(j,0)||"").includes(busq);
+      var dni = getDNI(j, "union");
+      var nom = getNombre(j, "union");
+      if (!dni || dni === "DNI") return false;
+      return !busq || (nom||"").toLowerCase().includes(busq) || (dni||"").includes(busq);
     });
     if (lista.length === 0) {
       t.innerHTML = '<div style="padding:40px; text-align:center; color:var(--muted);"><p>Sin datos de cuotas</p></div>';
@@ -432,11 +462,12 @@ function render() {
     }
     html = '<div class="tabla-head"><div style="width:36px;"></div><div class="dato">Jugador</div><div style="width:50px;">C1</div><div style="width:50px;">C2</div><div style="width:60px;"></div></div><div class="tabla-body">';
     lista.forEach(function(j) {
-      var nom = getVal(j,1) || "";
+      var nom = getNombre(j, "union") || "";
+      var dni = getDNI(j, "union");
       var ini = nom.charAt(0) || "?";
       var c1 = esBool(getVal(j,2));
       var c2 = esBool(getVal(j,3));
-      html += '<div class="fila"><div class="avatar">' + ini + '</div><div class="dato"><div>' + nom + '</div><div>DNI: ' + (getVal(j,0)||"") + '</div></div><div><span class="badge ' + (c1?"ok":"falta") + '">' + (c1?"✓":"✗") + '</span></div><div><span class="badge ' + (c2?"ok":"falta") + '">' + (c2?"✓":"✗") + '</span></div><div><button class="btn btn-sm btn-primary" onclick="abrUnion(\'' + getVal(j,0) + '\', \'' + nom.replace(/'/g,"\\'") + '\')">Editar</button></div></div>';
+      html += '<div class="fila"><div class="avatar">' + ini + '</div><div class="dato"><div>' + nom + '</div><div>DNI: ' + dni + '</div></div><div><span class="badge ' + (c1?"ok":"falta") + '">' + (c1?"✓":"✗") + '</span></div><div><span class="badge ' + (c2?"ok":"falta") + '">' + (c2?"✓":"✗") + '</span></div><div><button class="btn btn-sm btn-primary" onclick="abrUnion(\'' + dni + '\', \'' + nom.replace(/'/g,"\\'") + '\')">Editar</button></div></div>';
     });
   }
   
@@ -455,19 +486,19 @@ function abrirModal(dni, nom) {
 }
 
 function ver(dni) {
-  var j = (datos.jugadores || []).find(function(x) { return x.c0 === dni; });
+  var j = (datos.jugadores || []).find(function(x) { return getVal(x,1) === dni; });
   if (!j) return;
   
-  var html = "<p><strong>DNI:</strong> " + (getVal(j,0)||"-") + "</p>" +
-    "<p><strong>Nombre:</strong> " + (getVal(j,1)||"-") + "</p>" +
-    "<p><strong>Celular:</strong> " + (getVal(j,2)||"-") + "</p>" +
-    "<p><strong>Correo:</strong> " + (getVal(j,3)||"-") + "</p>" +
+  var html = "<p><strong>DNI:</strong> " + (getVal(j,1)||"-") + "</p>" +
+    "<p><strong>Nombre:</strong> " + (getVal(j,2)||"-") + "</p>" +
+    "<p><strong>Celular:</strong> " + (getVal(j,3)||"-") + "</p>" +
+    "<p><strong>Correo:</strong> " + (getVal(j,7)||"-") + "</p>" +
     "<p><strong>Puesto 1:</strong> " + (getVal(j,4)||"-") + "</p>" +
     "<p><strong>Puesto 2:</strong> " + (getVal(j,5)||"-") + "</p>" +
     "<p><strong>Puesto 3:</strong> " + (getVal(j,6)||"-") + "</p>";
   
   document.getElementById('detalle').innerHTML = html;
-  editar = { dni: getVal(j,0), nombre: getVal(j,1), celular: getVal(j,2), correo: getVal(j,3), p1: getVal(j,4), p2: getVal(j,5), p3: getVal(j,6) };
+  editar = { dni: getVal(j,1), nombre: getVal(j,2), celular: getVal(j,3), correo: getVal(j,7), p1: getVal(j,4), p2: getVal(j,5), p3: getVal(j,6) };
   document.getElementById('modalVer').classList.add('show');
 }
 
@@ -484,15 +515,16 @@ function editarDesdeVer() {
 function abrAsist(dni, nom) {
   actual = { dni: dni, nombre: nom };
   document.getElementById('nombreAsist').textContent = nom;
-  var j = (datos.asistencia || []).find(function(x) { return x.c0 === dni; });
-  var cols = j ? j.slice(2) : [];
+  var j = (datos.asistencia || []).find(function(x) { return getDNI(x, "asistencia") === dni; });
+  var cols = [];
+  if (j) for (var k = 2; k < 38; k++) cols.push(getVal(j, k));
   
   var html = "";
   for (var s = 0; s < 12; s++) {
     var base = s * 3;
-    var d1 = esBool(getVal(j, base + 2));
-    var d2 = esBool(getVal(j, base + 3));
-    var d3 = esBool(getVal(j, base + 4));
+    var d1 = esBool(cols[base]);
+    var d2 = esBool(cols[base + 1]);
+    var d3 = esBool(cols[base + 2]);
     var cant = (d1?1:0) + (d2?1:0) + (d3?1:0);
     var estado = cant === 3 ? "ok" : (cant > 0 ? "incompleto" : "falta");
     var estadoLabel = cant === 3 ? "COMPLETO" : (cant > 0 ? cant + "/3" : "NO ASIST");
@@ -511,7 +543,7 @@ function abrAsist(dni, nom) {
 function abrClub(dni, nom) {
   actual = { dni: dni, nombre: nom };
   document.getElementById('nombreClub').textContent = nom;
-  var j = (datos.club || []).find(function(x) { return x.c0 === dni; });
+  var j = (datos.club || []).find(function(x) { return getDNI(x, "club") === dni; });
   
   var meses = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
   var html = "";
@@ -526,7 +558,7 @@ function abrClub(dni, nom) {
 function abrUnion(dni, nom) {
   actual = { dni: dni, nombre: nom };
   document.getElementById('nombreUnion').textContent = nom;
-  var j = (datos.union || []).find(function(x) { return x.c0 === dni; });
+  var j = (datos.union || []).find(function(x) { return getDNI(x, "union") === dni; });
   document.getElementById('cuota1').checked = esBool(getVal(j,2));
   document.getElementById('cuota2').checked = esBool(getVal(j,3));
   document.getElementById('modalUnion').classList.add('show');
@@ -544,17 +576,23 @@ async function guardar() {
   showMsg("Guardando...", "loading");
   
   try {
+    var celular = document.getElementById('celular').value;
+    var correo = document.getElementById('correo').value;
+    var p1 = document.getElementById('p1').value;
+    var p2 = document.getElementById('p2').value;
+    var p3 = document.getElementById('p3').value;
+    
     var resp = await fetch(API, {
       method: "POST",
       body: JSON.stringify({
         accion: "guardar_jugador",
         dni: dni,
         nombre: nombre,
-        celular: document.getElementById('celular').value,
-        correo: document.getElementById('correo').value,
-        puesto1: document.getElementById('p1').value,
-        puesto2: document.getElementById('p2').value,
-        puesto3: document.getElementById('p3').value
+        celular: celular,
+        correo: correo,
+        puesto1: p1,
+        puesto2: p2,
+        puesto3: p3
       })
     });
     
@@ -595,7 +633,7 @@ async function eliminar() {
 
 async function guardarAsist() {
   var checks = document.querySelectorAll('#semanas .check:checked');
-  var idxs = Array.from(checks).map(function(c) { return parseInt(c.dataset.idx); });
+  var idxs = Array.from(checks).map(function(c) { return parseInt(c.dataset.idx) + 2; });
   var datos2 = {};
   idxs.forEach(function(i) { datos2[i] = "SI"; });
   
