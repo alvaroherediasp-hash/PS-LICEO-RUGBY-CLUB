@@ -1,177 +1,661 @@
-/**
- * Liceo Rugby Club - Google Apps Script
- */
-
-var SHEET_ID = "1DSLMUY658O0-liB7bpv0g8VFTpGiv3nNNgDXc2X97VM";
-
-function doPost(e) {
-  var contenido = e.postData.contents;
-  var datos = JSON.parse(contenido);
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Liceo Rugby Club</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Russo+One&display=swap" rel="stylesheet"/>
+<style>
+  :root { --green: #1D4E27; --green-light: #2D7A3A; --accent: #4ADE80; --bg: #0a0a0a; --bg2: #131313; --bg3: #1a1a1a; --bg4: #222222; --border: rgba(255,255,255,0.06); --text: #F5F5F5; --muted: #888888; --gold: #F5A623; --orange: #FF6B35; --rojo: #DC2626; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Barlow', sans-serif; min-height: 100vh; }
   
-  var resultado = { ok: false, error: "" };
+  .header { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 20px; display: flex; align-items: center; justify-content: space-between; }
+  .header-left { display: flex; align-items: center; gap: 12px; }
+  .icon { width: 48px; height: 48px; background: var(--green); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+  .header h1 { font-family: 'Russo One', sans-serif; font-size: 20px; }
+  .btn-nuevo { background: var(--green); color: #fff; padding: 10px 16px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; }
+
+  .tabs { background: var(--bg2); padding: 12px 20px; display: flex; gap: 8px; overflow-x: auto; }
+  .tab { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 10px 16px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+  .tab:hover { background: var(--bg4); }
+  .tab.active { background: var(--green); color: #fff; }
+
+  .toolbar { background: var(--bg2); padding: 12px 20px; display: flex; gap: 12px; align-items: center; border-bottom: 1px solid var(--border); }
+  .buscar { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 10px 14px; width: 250px; }
+  .btn { padding: 10px 16px; border-radius: 8px; border: none; cursor: pointer; font-size: 12px; font-weight: 600; }
+  .btn-primary { background: var(--green); color: #fff; }
+  .btn-sec { background: var(--bg4); color: var(--text); border: 1px solid var(--border); }
+  .btn-danger { background: var(--rojo); color: #fff; }
+
+  .main { padding: 20px; }
+  .estado { display: none; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; }
+  .estado.show { display: flex; align-items: center; gap: 10px; }
+  .estado.loading { background: rgba(29,126,39,0.15); color: var(--accent); }
+  .estado.error { background: rgba(220,38,38,0.15); color: #fca5a5; }
+  .estado.success { background: rgba(29,126,39,0.15); color: var(--accent); }
+  .spinner { width: 14px; height: 14px; border: 2px solid rgba(29,126,39,0.3); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .conectar { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+  .conectar.ok { background: rgba(29,126,39,0.2); color: var(--accent); }
+  .conectar.error { background: rgba(220,38,38,0.2); color: #fca5a5; }
+  .conectar .punto { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+
+  .tabla { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .tabla-head { display: flex; gap: 10px; padding: 12px 16px; background: var(--bg3); border-bottom: 1px solid var(--border); font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--muted); }
+  .tabla-body { max-height: calc(100vh - 320px); overflow-y: auto; }
+  .fila { display: flex; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--border); align-items: center; }
+  .fila:hover { background: var(--bg3); }
+
+  .avatar { width: 36px; height: 36px; background: var(--green); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Russo One', sans-serif; font-size: 13px; color: #fff; flex-shrink: 0; }
+  .dato { flex: 1; }
+  .dato div:first-child { font-weight: 600; }
+  .dato div:last-child { font-size: 11px; color: var(--muted); }
+
+  .badge { padding: 4px 8px; border-radius: 12px; font-size: 10px; font-weight: 600; }
+  .badge.ok { background: rgba(29,126,39,0.2); color: var(--accent); }
+  .badge.falta { background: rgba(220,38,38,0.2); color: #fca5a5; }
+  .badge.incompleto { background: rgba(245,166,35,0.2); color: var(--gold); }
+
+  .btn-sm { padding: 6px 12px; font-size: 11px; }
+
+  .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 100; align-items: center; justify-content: center; }
+  .modal.show { display: flex; }
+  .modal-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; max-width: 600px; width: 95%; max-height: 85vh; overflow-y: auto; }
+  .modal-head { display: flex; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border); }
+  .modal-head h3 { font-family: 'Russo One', sans-serif; }
+  .modal-close { background: none; border: none; color: var(--text); font-size: 22px; cursor: pointer; }
+  .modal-body { padding: 20px; }
+
+  .form-group { margin-bottom: 14px; }
+  .form-group label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 5px; }
+  .form-group input, .form-group select { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; color: var(--text); padding: 10px; font-size: 13px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .semana { background: var(--bg3); border-radius: 8px; padding: 10px; margin-bottom: 8px; }
+  .semana-title { font-size: 10px; color: var(--accent); margin-bottom: 6px; }
+  .semana-checks { display: flex; gap: 16px; }
+  .check-item { display: flex; align-items: center; gap: 5px; }
+  .check-item label { font-size: 10px; color: var(--muted); }
+  .check { width: 18px; height: 18px; accent-color: var(--green); }
+
+  .meses { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .mes { display: flex; align-items: center; gap: 5px; background: var(--bg3); padding: 6px; border-radius: 4px; }
+  .mes label { font-size: 10px; color: var(--muted); }
+
+  .detalle { background: var(--bg3); border-radius: 8px; padding: 14px; }
+  .detalle p { font-size: 12px; margin-bottom: 6px; }
+  .detalle strong { color: var(--accent); }
+
+  .actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border); }
+
+  @media (max-width: 700px) {
+    .tabla-head, .fila { display: grid; grid-template-columns: 36px 1fr 60px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="icon">🏉</div>
+    <div>
+      <h1>Liceo Rugby Club</h1>
+    </div>
+  </div>
+  <div class="conectar" id="conectar">
+    <span class="punto"></span>
+    <span>Desconectado</span>
+  </div>
+  <button class="btn-nuevo" onclick="abrirModal()">+ Nuevo</button>
+</div>
+
+<div class="tabs" id="tabs">
+  <div class="tab active" data-tab="jugadores">Jugadores</div>
+  <div class="tab" data-tab="asistencia">Asistencia</div>
+  <div class="tab" data-tab="club">Cuotas Club</div>
+  <div class="tab" data-tab="union">Cuotas Unión</div>
+</div>
+
+<div class="toolbar">
+  <input class="buscar" id="buscar" placeholder="Buscar...">
+  <button class="btn btn-primary" onclick="cargar()">🔄</button>
+</div>
+
+<div class="main">
+  <div class="estado" id="estado"></div>
+  <div class="tabla" id="tabla">
+    <div style="padding: 40px; text-align: center; color: var(--muted);">
+      <div class="spinner" style="width: 24px; height: 24px; margin: 0 auto 12px;"></div>
+      <p>Cargando...</p>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL JUGADOR -->
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3 id="titulo">Nuevo Jugador</h3>
+      <button class="modal-close" onclick="cerrar()">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="idDNI">
+      <div class="form-row">
+        <div class="form-group">
+          <label>DNI</label>
+          <input type="text" id="dni" placeholder="12345678">
+        </div>
+        <div class="form-group">
+          <label>Celular</label>
+          <input type="text" id="celular" placeholder="+54 9 11...">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Nombre</label>
+        <input type="text" id="nombre" placeholder="Juan Pérez">
+      </div>
+      <div class="form-group">
+        <label>Correo</label>
+        <input type="email" id="correo" placeholder="juan@email.com">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Puesto 1</label>
+          <select id="p1">
+            <option value="">Seleccionar...</option>
+            <option value="Hook">Hook</option>
+            <option value="Pilier">Pilier</option>
+            <option value="Segunda">Segunda</option>
+            <option value="Octavo">Octavo</option>
+            <option value="Ala">Ala</option>
+            <option value="Centro">Centro</option>
+            <option value="Apertura">Apertura</option>
+            <option value="Medio">Medio scrum</option>
+            <option value="Flyhalf">Flyhalf</option>
+            <option value="Wing">Wing</option>
+            <option value="Fullback">Fullback</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Puesto 2</label>
+          <select id="p2">
+            <option value="">Seleccionar...</option>
+            <option value="Hook">Hook</option>
+            <option value="Pilier">Pilier</option>
+            <option value="Segunda">Segunda</option>
+            <option value="Octavo">Octavo</option>
+            <option value="Ala">Ala</option>
+            <option value="Centro">Centro</option>
+            <option value="Wing">Wing</option>
+            <option value="Fullback">Fullback</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Puesto 3</label>
+        <select id="p3">
+          <option value="">Seleccionar...</option>
+          <option value="Hook">Hook</option>
+          <option value="Pilier">Pilier</option>
+          <option value="Segunda">Segunda</option>
+          <option value="Octavo">Octavo</option>
+          <option value="Ala">Ala</option>
+          <option value="Centro">Centro</option>
+          <option value="Wing">Wing</option>
+          <option value="Fullback">Fullback</option>
+        </select>
+      </div>
+      <div class="actions">
+        <button class="btn btn-danger" id="btnElim" onclick="eliminar()" style="display:none;">Eliminar</button>
+        <button class="btn btn-sec" onclick="cerrar()">Cancelar</button>
+        <button class="btn btn-primary" onclick="guardar()">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL VER -->
+<div class="modal" id="modalVer">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3>Datos del Jugador</h3>
+      <button class="modal-close" onclick="cerrar()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="detalle" id="detalle"></div>
+      <div class="actions">
+        <button class="btn btn-sec" onclick="cerrar()">Cerrar</button>
+        <button class="btn btn-primary" onclick="editarDesdeVer()">Editar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ASISTENCIA -->
+<div class="modal" id="modalAsist">
+  <div class="modal-box" style="max-width: 700px;">
+    <div class="modal-head">
+      <h3>Asistencia - <span id="nombreAsist"></span></h3>
+      <button class="modal-close" onclick="cerrar()">×</button>
+    </div>
+    <div class="modal-body">
+      <div id="semanas"></div>
+      <div class="actions">
+        <button class="btn btn-sec" onclick="cerrar()">Cerrar</button>
+        <button class="btn btn-primary" onclick="guardarAsist()">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CLUB -->
+<div class="modal" id="modalClub">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3>Cuotas Club - <span id="nombreClub"></span></h3>
+      <button class="modal-close" onclick="cerrar()">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:11px; color:var(--muted); margin-bottom:12px;">12 cuotas del año</p>
+      <div class="meses" id="meses"></div>
+      <div class="actions">
+        <button class="btn btn-sec" onclick="cerrar()">Cerrar</button>
+        <button class="btn btn-primary" onclick="guardarClub()">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL UNION -->
+<div class="modal" id="modalUnion">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3>Cuotas Unión - <span id="nombreUnion"></span></h3>
+      <button class="modal-close" onclick="cerrar()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Cuota 1</label>
+          <div class="check-item">
+            <input type="checkbox" id="cuota1" class="check">
+            <label>Pagada</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Cuota 2</label>
+          <div class="check-item">
+            <input type="checkbox" id="cuota2" class="check">
+            <label>Pagada</label>
+          </div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-sec" onclick="cerrar()">Cerrar</button>
+        <button class="btn btn-primary" onclick="guardarUnion()">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+var API = "https://script.google.com/macros/s/AKfycbzgKvSx888zzvo8baAN_Oe11GO_xxF9lApNnF4lYgCaTug3YhR7ttIXl0hgRCfrhLhV/exec";
+var tab = "jugadores";
+var datos = [];
+var headers = [];
+var actual = null;
+var editar = null;
+
+function init() {
+  cargar();
+}
+
+function showMsg(msg, tipo) {
+  var e = document.getElementById('estado');
+  e.className = 'estado show ' + tipo;
+  e.innerHTML = tipo === 'loading' ? '<div class="spinner"></div>' + msg : msg;
+  if (tipo !== 'loading') setTimeout(function() { e.className = 'estado'; }, 3000);
+}
+
+function showConectar(ok, msg) {
+  var c = document.getElementById('conectar');
+  c.className = 'conectar ' + (ok ? 'ok' : 'error');
+  c.innerHTML = '<span class="punto"></span><span>' + msg + '</span>';
+}
+
+async function cargar() {
+  showMsg('Cargando datos...', 'loading');
+  showConectar(true, 'Cargando...');
   
   try {
-    switch (datos.accion) {
-      case "guardar_jugador":
-        resultado = guardarJugador(datos);
-        break;
-      case "eliminar_jugador":
-        resultado = eliminarJugador(datos.dni);
-        break;
-      case "guardar_asistencia":
-        resultado = guardarAsistencia(datos.dni, datos.datos);
-        break;
-      case "guardar_cuotas_club":
-        resultado = guardarCuotasClub(datos.dni, datos.datos);
-        break;
-      case "guardar_cuotas_union":
-        resultado = guardarCuotasUnion(datos.dni, datos.cuota1, datos.cuota2);
-        break;
-      default:
-        resultado.error = "Accion desconocida: " + datos.accion;
+    var resp = await fetch(API);
+    var text = await resp.text();
+    
+    try {
+      var json = JSON.parse(text);
+    } catch(e) {
+      showConectar(false, 'Error JSON');
+      showMsg('Error al parsear respuesta', 'error');
+      return;
     }
+    
+    if (json.error) {
+      showConectar(false, json.error);
+      showMsg(json.error, 'error');
+      return;
+    }
+    
+    datos = json.datos || [];
+    headers = json.headers || [];
+    
+    showConectar(true, 'Conectado (' + datos.length + ')');
+    showMsg('Cargado: ' + datos.length + ' jugadores', 'success');
+    render();
   } catch(err) {
-    resultado.error = err.message;
+    console.error(err);
+    showConectar(false, 'Sin conexión');
+    showMsg('Error: ' + err.message, 'error');
   }
-  
-  return ContentService.createTextOutput(JSON.stringify(resultado))
-    .setMimeType(ContentService.MimeType.JSON);
 }
 
-function doGet() {
-  var resultado = { ok: true, datos: [], headers: [] };
+function esBool(v) {
+  if (!v) return false;
+  var s = v.toString().toUpperCase().trim();
+  return ["TRUE", "VERDADERO", "1", "SI"].includes(s);
+}
+
+function getVal(row, idx) {
+  return row["c" + idx] || "";
+}
+
+function render() {
+  var busq = document.getElementById('buscar').value.toLowerCase();
+  var filt = datos.filter(function(j) {
+    return !busq || (getVal(j,1)||"").toLowerCase().includes(busq) || (getVal(j,0)||"").includes(busq);
+  });
+  
+  var t = document.getElementById('tabla');
+  var html = "";
+  
+  if (tab === "jugadores") {
+    html = '<div class="tabla-head"><div style="width:36px;"></div><div class="dato">Jugador</div><div style="width:80px;">Puestos</div><div style="width:60px;"></div></div><div class="tabla-body">';
+    filt.forEach(function(j) {
+      var nom = getVal(j,1) || "";
+      var ini = nom.charAt(0) || "?";
+      var p1 = getVal(j,4) || "-";
+      var p2 = getVal(j,5) || "";
+      html += '<div class="fila"><div class="avatar">' + ini + '</div><div class="dato"><div>' + nom + '</div><div>DNI: ' + (getVal(j,0)||"") + '</div></div><div><span class="badge">' + p1 + (p2 ? ", " + p2 : "") + '</span></div><div><button class="btn btn-sm btn-sec" onclick="ver(\'' + getVal(j,0) + '\')">Ver</button></div></div>';
+    });
+  } else if (tab === "asistencia") {
+    html = '<div class="tabla-head"><div style="width:36px;"></div><div class="dato">Jugador</div><div style="width:60px;">Estado</div><div style="width:60px;"></div></div><div class="tabla-body">';
+    filt.forEach(function(j) {
+      var nom = getVal(j,1) || "";
+      var ini = nom.charAt(0) || "?";
+      var pres = 0;
+      for (var i = 2; i < 14; i++) if (esBool(getVal(j,i))) pres++;
+      var estado = pres >= 10 ? "ok" : (pres > 0 ? "incompleto" : "falta");
+      html += '<div class="fila"><div class="avatar">' + ini + '</div><div class="dato"><div>' + nom + '</div><div>DNI: ' + (getVal(j,0)||"") + '</div></div><div><span class="badge ' + estado + '">' + pres + "/12</span></div><div><button class="btn btn-sm btn-primary" onclick=\"abrAsist('" + getVal(j,0) + "','" + nom.replace(/'/g,"\\'") + "')\">Editar</button></div></div>";
+    });
+  } else if (tab === "club") {
+    html = '<div class="tabla-head"><div style="width:36px;"></div><div class="dato">Jugador</div><div style="width:80px;">Cuotas</div><div style="width:60px;"></div></div><div class="tabla-body">';
+    filt.forEach(function(j) {
+      var nom = getVal(j,1) || "";
+      var ini = nom.charAt(0) || "?";
+      var cuotas = 0;
+      for (var i = 2; i < 14; i++) if (esBool(getVal(j,i))) cuotas++;
+      html += '<div class="fila"><div class="avatar">' + ini + '</div><div class="dato"><div>' + nom + '</div><div>DNI: ' + (getVal(j,0)||"") + '</div></div><div><span class="badge ' + (cuotas >= 10 ? "ok" : (cuotas > 0 ? "incompleto" : "falta")) + '">' + cuotas + '/12</span></div><div><button class="btn btn-sm btn-primary" onclick=\"abrClub('" + getVal(j,0) + "','" + nom.replace(/'/g,"\\'") + "')\">Editar</button></div></div>";
+    });
+  } else if (tab === "union") {
+    html = '<div class="tabla-head"><div style="width:36px;"></div><div class="dato">Jugador</div><div style="width:50px;">C1</div><div style="width:50px;">C2</div><div style="width:60px;"></div></div><div class="tabla-body">';
+    filt.forEach(function(j) {
+      var nom = getVal(j,1) || "";
+      var ini = nom.charAt(0) || "?";
+      var c1 = esBool(getVal(j,2));
+      var c2 = esBool(getVal(j,3));
+      html += '<div class="fila"><div class="avatar">' + ini + '</div><div class="dato"><div>' + nom + '</div><div>DNI: ' + (getVal(j,0)||"") + '</div></div><div><span class="badge ' + (c1?"ok":"falta") + '">' + (c1?"✓":"✗") + '</span></div><div><span class="badge ' + (c2?"ok":"falta") + '">' + (c2?"✓":"✗") + '</span></div><div><button class="btn btn-sm btn-primary" onclick=\"abrUnion('" + getVal(j,0) + "','" + nom.replace(/'/g,"\\'") + "')\">Editar</button></div></div>";
+    });
+  }
+  
+  html += "</div>";
+  t.innerHTML = html;
+}
+
+function abrirModal(dni, nom) {
+  document.getElementById('titulo').textContent = dni ? "Editar Jugador" : "Nuevo Jugador";
+  document.getElementById('idDNI').value = dni || "";
+  document.getElementById('dni').value = dni || "";
+  document.getElementById('dni').disabled = !!dni;
+  document.getElementById('nombre').value = nom || "";
+  document.getElementById('btnElim').style.display = dni ? "block" : "none";
+  document.getElementById('modal').classList.add('show');
+}
+
+function ver(dni) {
+  var j = datos.find(function(x) { return x.c0 === dni; });
+  if (!j) return;
+  
+  var html = "<p><strong>DNI:</strong> " + (getVal(j,0)||"-") + "</p>" +
+    "<p><strong>Nombre:</strong> " + (getVal(j,1)||"-") + "</p>" +
+    "<p><strong>Celular:</strong> " + (getVal(j,2)||"-") + "</p>" +
+    "<p><strong>Correo:</strong> " + (getVal(j,3)||"-") + "</p>" +
+    "<p><strong>Puesto 1:</strong> " + (getVal(j,4)||"-") + "</p>" +
+    "<p><strong>Puesto 2:</strong> " + (getVal(j,5)||"-") + "</p>" +
+    "<p><strong>Puesto 3:</strong> " + (getVal(j,6)||"-") + "</p>";
+  
+  document.getElementById('detalle').innerHTML = html;
+  editar = {
+    dni: getVal(j,0), nombre: getVal(j,1), 
+    celular: getVal(j,2), correo: getVal(j,3), 
+    p1: getVal(j,4), p2: getVal(j,5), p3: getVal(j,6)
+  };
+  document.getElementById('modalVer').classList.add('show');
+}
+
+function editarDesdeVer() {
+  cerrar();
+  abrirModal(editar.dni, editar.nombre);
+  document.getElementById('celular').value = editar.celular || "";
+  document.getElementById('correo').value = editar.correo || "";
+  document.getElementById('p1').value = editar.p1 || "";
+  document.getElementById('p2').value = editar.p2 || "";
+  document.getElementById('p3').value = editar.p3 || "";
+}
+
+function abrAsist(dni, nom) {
+  actual = { dni: dni, nombre: nom };
+  document.getElementById('nombreAsist').textContent = nom;
+  var j = datos.find(function(x) { return x.c0 === dni; });
+  
+  var html = "";
+  for (var s = 0; s < 12; s++) {
+    var i = s * 3 + 2;
+    html += '<div class="semana"><div class="semana-title">Semana ' + (s+1) + '</div><div class="semana-checks">' +
+      '<div class="check-item"><input type="checkbox" class="check" data-idx="' + s + '" ' + (esBool(getVal(j,i))?'checked':'') + '><label>D1</label></div>' +
+      '<div class="check-item"><input type="checkbox" class="check" data-idx="' + s + '" ' + (esBool(getVal(j,i+1))?'checked':'') + '><label>D2</label></div>' +
+      '<div class="check-item"><input type="checkbox" class="check" data-idx="' + s + '" ' + (esBool(getVal(j,i+2))?'checked':'') + '><label>D3</label></div>' +
+    '</div></div>';
+  }
+  
+  document.getElementById('semanas').innerHTML = html;
+  document.getElementById('modalAsist').classList.add('show');
+}
+
+function abrClub(dni, nom) {
+  actual = { dni: dni, nombre: nom };
+  document.getElementById('nombreClub').textContent = nom;
+  var j = datos.find(function(x) { return x.c0 === dni; });
+  
+  var meses = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
+  var html = "";
+  meses.forEach(function(m, i) {
+    html += '<div class="mes"><input type="checkbox" class="check" data-idx="' + i + '" ' + (esBool(getVal(j,i+2))?'checked':'') + '><label>' + m + '</label></div>';
+  });
+  
+  document.getElementById('meses').innerHTML = html;
+  document.getElementById('modalClub').classList.add('show');
+}
+
+function abrUnion(dni, nom) {
+  actual = { dni: dni, nombre: nom };
+  document.getElementById('nombreUnion').textContent = nom;
+  var j = datos.find(function(x) { return x.c0 === dni; });
+  document.getElementById('cuota1').checked = esBool(getVal(j,2));
+  document.getElementById('cuota2').checked = esBool(getVal(j,3));
+  document.getElementById('modalUnion').classList.add('show');
+}
+
+function cerrar() {
+  document.querySelectorAll('.modal').forEach(function(m) { m.classList.remove('show'); });
+}
+
+async function guardar() {
+  var dni = document.getElementById('dni').value;
+  var nombre = document.getElementById('nombre').value;
+  if (!dni || !nombre) return alert("Completá DNI y Nombre");
+  
+  showMsg("Guardando...", "loading");
   
   try {
-    var ss = SpreadsheetApp.openById(SHEET_ID);
-    var sheet = ss.getSheetByName("Asistencia") || ss.getSheets()[0];
-    var data = sheet.getDataRange().getValues();
+    var resp = await fetch(API, {
+      method: "POST",
+      body: JSON.stringify({
+        accion: "guardar_jugador",
+        dni: dni,
+        nombre: nombre,
+        celular: document.getElementById('celular').value,
+        correo: document.getElementById('correo').value,
+        puesto1: document.getElementById('p1').value,
+        puesto2: document.getElementById('p2').value,
+        puesto3: document.getElementById('p3').value
+      })
+    });
     
-    resultado.headers = data[0];
-    
-    for (var i = 1; i < data.length; i++) {
-      if (data[i][0]) {
-        var row = {};
-        for (var j = 0; j < data[0].length; j++) {
-          row["c" + j] = data[i][j];
-        }
-        resultado.datos.push(row);
-      }
+    var r = await resp.json();
+    if (r.ok) {
+      showMsg("Jugador guardado", "success");
+      cerrar();
+      cargar();
+    } else {
+      showMsg(r.error || "Error", "error");
     }
   } catch(err) {
-    resultado.error = err.message;
+    showMsg(err.message, "error");
   }
-  
-  return ContentService.createTextOutput(JSON.stringify(resultado))
-    .setMimeType(ContentService.MimeType.JSON);
 }
 
-function guardarJugador(datos) {
-  var ss = SpreadsheetApp.openById(SHEET_ID);
-  var sheet = ss.getSheetByName("Asistencia");
-  if (!sheet) return { ok: false, error: "Sheet no encontrada" };
+async function eliminar() {
+  if (!confirm("¿Eliminar este jugador?")) return;
+  var dni = document.getElementById('idDNI').value;
+  showMsg("Eliminando...", "loading");
   
-  var data = sheet.getDataRange().getValues();
-  var fila = -1;
-  
-  for (var i = 1; i < data.length; i++) {
-    if (String(data[i][0]) == String(datos.dni)) {
-      fila = i + 1;
-      break;
+  try {
+    var resp = await fetch(API, {
+      method: "POST",
+      body: JSON.stringify({ accion: "eliminar_jugador", dni: dni })
+    });
+    var r = await resp.json();
+    if (r.ok) {
+      cerrar();
+      cargar();
+    } else {
+      showMsg(r.error, "error");
     }
+  } catch(err) {
+    showMsg(err.message, "error");
   }
-  
-  if (fila > 0) {
-    sheet.getRange(fila, 1, 1, 7).setValues([[datos.dni, datos.nombre, datos.celular || "", datos.correo || "", datos.puesto1 || "", datos.puesto2 || "", datos.puesto3 || ""]]);
-  } else {
-    sheet.appendRow([datos.dni, datos.nombre, datos.celular || "", datos.correo || "", datos.puesto1 || "", datos.puesto2 || "", datos.puesto3 || ""]);
-  }
-  
-  return { ok: true, mensaje: "Jugador guardado" };
 }
 
-function eliminarJugador(dni) {
-  var ss = SpreadsheetApp.openById(SHEET_ID);
-  var sheet = ss.getSheetByName("Asistencia");
-  if (!sheet) return { ok: false, error: "Sheet no encontrada" };
+async function guardarAsist() {
+  var checks = document.querySelectorAll('#semanas .check:checked');
+  var idxs = Array.from(checks).map(function(c) { return parseInt(c.dataset.idx); });
+  var datos2 = {};
+  idxs.forEach(function(i) { datos2[i] = "SI"; });
   
-  var data = sheet.getDataRange().getValues();
-  for (var i = 1; i < data.length; i++) {
-    if (String(data[i][0]) == String(dni)) {
-      sheet.deleteRow(i + 1);
-      return { ok: true, mensaje: "Jugador eliminado" };
+  showMsg("Guardando...", "loading");
+  
+  try {
+    var resp = await fetch(API, {
+      method: "POST",
+      body: JSON.stringify({ accion: "guardar_asistencia", dni: actual.dni, datos: datos2 })
+    });
+    var r = await resp.json();
+    if (r.ok) {
+      showMsg("Asistencia guardada", "success");
+      cerrar();
+      cargar();
+    } else {
+      showMsg(r.error, "error");
     }
+  } catch(err) {
+    showMsg(err.message, "error");
   }
-  return { ok: false, error: "Jugador no encontrado" };
 }
 
-function guardarAsistencia(dni, checks) {
-  var ss = SpreadsheetApp.openById(SHEET_ID);
-  var sheet = ss.getSheetByName("Asistencia");
-  if (!sheet) return { ok: false, error: "Sheet no encontrada" };
+async function guardarClub() {
+  var checks = document.querySelectorAll('#meses .check:checked');
+  var idxs = Array.from(checks).map(function(c) { return parseInt(c.dataset.idx); });
+  var datos2 = {};
+  idxs.forEach(function(i) { datos2[i] = "SI"; });
   
-  var data = sheet.getDataRange().getValues();
-  var fila = -1;
-  for (var i = 1; i < data.length; i++) {
-    if (String(data[i][0]) == String(dni)) {
-      fila = i + 1;
-      break;
+  showMsg("Guardando...", "loading");
+  
+  try {
+    var resp = await fetch(API, {
+      method: "POST",
+      body: JSON.stringify({ accion: "guardar_cuotas_club", dni: actual.dni, datos: datos2 })
+    });
+    var r = await resp.json();
+    if (r.ok) {
+      showMsg("Cuotas guardadas", "success");
+      cerrar();
+      cargar();
+    } else {
+      showMsg(r.error, "error");
     }
+  } catch(err) {
+    showMsg(err.message, "error");
   }
-  
-  if (fila < 0) return { ok: false, error: "Jugador no encontrado" };
-  
-  var keys = Object.keys(checks);
-  for (var i = 0; i < keys.length; i++) {
-    var col = parseInt(keys[i]) + 1;
-    sheet.getRange(fila, col).setValue(checks[keys[i]]);
-  }
-  
-  return { ok: true, mensaje: "Asistencia guardada" };
 }
 
-function guardarCuotasClub(dni, cuotas) {
-  var ss = SpreadsheetApp.openById(SHEET_ID);
-  var sheet = ss.getSheetByName("Asistencia");
-  if (!sheet) return { ok: false, error: "Sheet no encontrada" };
+async function guardarUnion() {
+  var c1 = document.getElementById('cuota1').checked;
+  var c2 = document.getElementById('cuota2').checked;
   
-  var data = sheet.getDataRange().getValues();
-  var fila = -1;
-  for (var i = 1; i < data.length; i++) {
-    if (String(data[i][0]) == String(dni)) {
-      fila = i + 1;
-      break;
+  showMsg("Guardando...", "loading");
+  
+  try {
+    var resp = await fetch(API, {
+      method: "POST",
+      body: JSON.stringify({ accion: "guardar_cuotas_union", dni: actual.dni, cuota1: c1?"SI":"NO", cuota2: c2?"SI":"NO" })
+    });
+    var r = await resp.json();
+    if (r.ok) {
+      showMsg("Cuotas guardadas", "success");
+      cerrar();
+      cargar();
+    } else {
+      showMsg(r.error, "error");
     }
+  } catch(err) {
+    showMsg(err.message, "error");
   }
-  
-  if (fila < 0) return { ok: false, error: "Jugador no encontrado" };
-  
-  var keys = Object.keys(cuotas);
-  for (var i = 0; i < keys.length; i++) {
-    var col = parseInt(keys[i]) + 1;
-    sheet.getRange(fila, col).setValue(cuotas[keys[i]]);
-  }
-  
-  return { ok: true, mensaje: "Cuotas guardadas" };
 }
 
-function guardarCuotasUnion(dni, c1, c2) {
-  var ss = SpreadsheetApp.openById(SHEET_ID);
-  var sheet = ss.getSheetByName("Asistencia");
-  if (!sheet) return { ok: false, error: "Sheet no encontrada" };
-  
-  var data = sheet.getDataRange().getValues();
-  var fila = -1;
-  for (var i = 1; i < data.length; i++) {
-    if (String(data[i][0]) == String(dni)) {
-      fila = i + 1;
-      break;
-    }
-  }
-  
-  if (fila < 0) return { ok: false, error: "Jugador no encontrado" };
-  
-  sheet.getRange(fila, 3).setValue(c1);
-  sheet.getRange(fila, 4).setValue(c2);
-  
-  return { ok: true, mensaje: "Cuotas guardadas" };
-}
+document.querySelectorAll('.tab').forEach(function(t) {
+  t.addEventListener('click', function() {
+    document.querySelectorAll('.tab').forEach(function(x) { x.classList.remove('active'); });
+    this.classList.add('active');
+    tab = this.dataset.tab;
+    render();
+  });
+});
+
+document.getElementById('buscar').addEventListener('input', render);
+
+init();
+</script>
+
+</body>
+</html>
