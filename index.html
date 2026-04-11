@@ -219,7 +219,7 @@
 
   .tabla-header {
     display: grid;
-    grid-template-columns: 60px 1fr 100px 100px 100px 100px 100px;
+    grid-template-columns: 60px 1fr 100px 100px 100px 120px 80px;
     gap: 10px;
     padding: 14px 20px;
     background: var(--bg3);
@@ -239,7 +239,7 @@
 
   .jugador-row {
     display: grid;
-    grid-template-columns: 60px 1fr 100px 100px 100px 100px 100px;
+    grid-template-columns: 60px 1fr 100px 100px 100px 120px 80px;
     gap: 10px;
     padding: 14px 20px;
     border-bottom: 1px solid var(--border);
@@ -322,48 +322,7 @@
     color: var(--accent);
   }
 
-  /* VER DETALLE MODAL */
-  .detalle-section {
-    padding: 16px 0;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .detalle-section:last-child {
-    border-bottom: none;
-  }
-
-  .detalle-titulo {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 12px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    margin-bottom: 10px;
-  }
-
-  .detalle-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-    gap: 12px;
-  }
-
-  .detalle-item {
-    text-align: center;
-  }
-
-  .detalle-item .valor {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 20px;
-    font-weight: 700;
-  }
-
-  .detalle-item .label {
-    font-size: 10px;
-    color: var(--text-muted);
-    text-transform: uppercase;
-  }
-
-  /* MODAL */
+  /* MODAL AGREGAR PARTIDO */
   .modal-overlay {
     display: none;
     position: fixed;
@@ -385,7 +344,7 @@
     background: var(--bg2);
     border: 1px solid var(--border);
     border-radius: 20px;
-    max-width: 600px;
+    max-width: 500px;
     width: 90%;
     max-height: 90vh;
     overflow-y: auto;
@@ -416,18 +375,179 @@
     padding: 20px 24px;
   }
 
-  /* LOADING */
-  .loading-placeholder {
-    padding: 60px;
-    text-align: center;
-    color: var(--text-muted);
+  /* FORM AGREGAR PARTIDO */
+  .form-partido {
+    background: var(--bg3);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
   }
 
-  .loading-placeholder .spinner {
-    width: 30px;
-    height: 30px;
-    margin: 0 auto 16px;
-    border-width: 3px;
+  .form-partido h4 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 16px;
+  }
+
+  .form-group {
+    margin-bottom: 16px;
+  }
+
+  .form-group label {
+    display: block;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+
+  .form-group input[type="date"],
+  .form-group input[type="number"],
+  .form-group select {
+    width: 100%;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    padding: 12px;
+    font-size: 14px;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus {
+    border-color: var(--rugby-green);
+    outline: none;
+  }
+
+  .btn {
+    padding: 12px 24px;
+    border-radius: 10px;
+    border: none;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-primary {
+    background: linear-gradient(145deg, var(--rugby-green) 0%, var(--rugby-green-light) 100%);
+    color: #fff;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(29, 126, 39, 0.4);
+  }
+
+  .btn-secondary {
+    background: var(--bg4);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+
+  .btn-warning {
+    background: linear-gradient(145deg, var(--orange) 0%, #FF8B5A 100%);
+    color: #fff;
+  }
+
+  .btn-warning:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);
+  }
+
+  /* PARTIDOS / TERCER TIEMPO TABLE */
+  .tt-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+  }
+
+  .tt-table th {
+    background: var(--bg3);
+    padding: 12px;
+    text-align: left;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .tt-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .tt-table tbody tr:hover {
+    background: var(--bg3);
+  }
+
+  .tt-check {
+    width: 20px;
+    height: 20px;
+    accent-color: var(--rugby-green);
+    cursor: pointer;
+  }
+
+  .tt-importe {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 10px;
+    width: 80px;
+    color: var(--text);
+  }
+
+  .tt-importe:focus {
+    border-color: var(--rugby-green);
+  }
+
+  .tt-medio {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    border: 1px solid var(--border);
+    background: var(--bg2);
+    color: var(--text);
+  }
+
+  .tt-badge {
+    padding: 4px 10px;
+    border-radius: 15px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .tt-badge.presente {
+    background: rgba(29, 126, 39, 0.2);
+    color: var(--accent);
+  }
+
+  .tt-badge.ausente {
+    background: rgba(220, 38, 38, 0.2);
+    color: #fca5a5;
+  }
+
+  .tt-badge.efectivo {
+    background: rgba(29, 126, 39, 0.2);
+    color: var(--accent);
+  }
+
+  .tt-badge.transferencia {
+    background: rgba(24, 95, 165, 0.2);
+    color: #93C5FD;
+  }
+
+  .tt-badge.no-pago {
+    background: rgba(220, 38, 38, 0.2);
+    color: #fca5a5;
   }
 
   /* FILTRO NEGATIVO */
@@ -524,9 +644,58 @@
   <div class="estado" id="estado"></div>
 
   <div class="tabla-container" id="tablaContainer">
-    <div class="loading-placeholder">
-      <div class="spinner"></div>
+    <div class="loading-placeholder" style="padding: 60px; text-align: center; color: var(--text-muted);">
+      <div class="spinner" style="width: 30px; height: 30px; margin: 0 auto 16px; border-width: 3px;"></div>
       <p>Cargando datos...</p>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL AGREGAR PARTIDO -->
+<div class="modal-overlay" id="modalAgregar">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>🍽️ Agregar Partido</h3>
+      <button class="modal-close" onclick="cerrarModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-partido">
+        <h4>Nuevo Partido</h4>
+        
+        <div class="form-group">
+          <label>Fecha del Partido</label>
+          <input type="date" id="fechaPartido">
+        </div>
+        
+        <div class="form-group">
+          <label>Importe ($)</label>
+          <input type="number" id="importePartido" placeholder="0.00" step="0.01">
+        </div>
+        
+        <div class="form-group">
+          <label>Medio de Pago</label>
+          <select id="medioPago">
+            <option value="efectivo">💵 Efectivo</option>
+            <option value="transferencia">📱 Transferencia</option>
+          </select>
+        </div>
+        
+        <div style="display: flex; gap: 12px; margin-top: 20px;">
+          <button class="btn btn-primary" onclick="guardarPartido()">
+            <i class="fas fa-save"></i> Guardar
+          </button>
+          <button class="btn btn-secondary" onclick="cerrarModal()">
+            Cancelar
+          </button>
+        </div>
+      </div>
+
+      <div class="partidos-guardados" id="partidosGuardados">
+        <h4>Partidos Guardados</h4>
+        <div id="listaPartidos">
+          <p style="color: var(--text-muted); font-size: 12px;">No hay partidos guardados</p>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -547,8 +716,8 @@
 <script>
 // ===== CONFIGURACIÓN =====
 var SHEET_ID = "1DSLMUY658O0-liB7bpv0g8VFTpGiv3nNNgDXc2X97VM";
+var API_URL = "https://script.google.com/macros/s/AKfycbx3ZsQIAYfNrLP7Uun6_fsA7nbp_zHJBl4kJDgZ94oNYHCZWtnIX4ETZ8T_mkFQtM4K/exec";
 
-// GIDs de las hojas
 var HOJAS = {
   asist: { gid: "347341918", nombre: "Asistencia" },
   club: { gid: "162977848", nombre: "Cuotas Club" },
@@ -560,13 +729,24 @@ var hojaActiva = "todos";
 var filtroActivo = "todos";
 var datosTodos = [];
 var datosFiltrados = [];
+var partidos = [];
+var jugadorActual = null;
 
-function csvURL(gid) {
-  return `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${gid}`;
+// ===== LOCALSTORAGE PARA PARTIDOS =====
+function cargarPartidos() {
+  try {
+    var stored = localStorage.getItem('partidos_tercertiempo');
+    if (stored) {
+      partidos = JSON.parse(stored);
+    }
+  } catch(e) {
+    console.error(e);
+    partidos = [];
+  }
 }
 
-function fetchCSV(gid) {
-  return fetch(csvURL(gid)).then(r => r.text()).then(txt => txt.split("\n").map(l => l.split(",")));
+function guardarPartidosLocal() {
+  localStorage.setItem('partidos_tercertiempo', JSON.stringify(partidos));
 }
 
 function esBool(v) {
@@ -578,11 +758,21 @@ function norm(s) {
   return (s || "").toString().toUpperCase().trim();
 }
 
-// ===== CARGAR TODOS LOS DATOS =====
+function csvURL(gid) {
+  return `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${gid}`;
+}
+
+function fetchCSV(gid) {
+  return fetch(csvURL(gid)).then(r => r.text()).then(txt => txt.split("\n").map(l => l.split(",")));
+}
+
+// ===== CARGAR DATOS =====
 async function cargarDatos() {
   var estado = document.getElementById("estado");
   estado.className = "estado loading";
   estado.innerHTML = '<div class="spinner"></div> Cargando datos...';
+
+  cargarPartidos();
 
   try {
     var resultados = await Promise.all([
@@ -597,7 +787,6 @@ async function cargarDatos() {
     var union = resultados[2].slice(1);
     var tt = resultados[3].slice(1);
 
-    // Crear mapa de datos por DNI
     datosTodos = [];
 
     asist.forEach(fila => {
@@ -608,24 +797,20 @@ async function cargarDatos() {
       var filaU = union.find(f => norm(f[0]) === dni);
       var filaTT = tt.find(f => norm(f[0]) === dni);
 
-      // Calcular asistencia
       var colsAsist = fila.slice(2);
       var cantAsist = colsAsist.filter(esBool).length;
       var cantFaltas = colsAsist.length - cantAsist;
       var pctAsist = colsAsist.length > 0 ? Math.round((cantAsist / colsAsist.length) * 100) : 0;
 
-      // Cuotas club
       var cuotasClub = 0;
       if (filaC) {
-        cuotasClub = (esBool(filaC[2]) ? 1 : 0) + (esBool(filaC[3]) ? 1 : 0);
+        cuotasClub = (esBool(filaC[2]) ? 1 : 0) + (esBool(filaC[3]) ? 1 : 0;
       }
 
-      // Unión
       var colsUnion = filaU ? filaU.slice(2, 14) : [];
       var unionPag = colsUnion.filter(esBool).length;
       var unionPend = colsUnion.length - unionPag;
 
-      // Tercer tiempo
       var colsTT = filaTT ? filaTT.slice(2, 14) : [];
       var ttPres = colsTT.filter(esBool).length;
       var ttAus = colsTT.length - ttPres;
@@ -650,6 +835,7 @@ async function cargarDatos() {
     datosFiltrados = [...datosTodos];
     renderizarTabla();
     actualizarContadores();
+    renderizarPartidos();
     
     estado.innerHTML = "";
     estado.style.display = "none";
@@ -689,7 +875,7 @@ function renderizarTabla() {
   });
 
   if (filtrados.length === 0) {
-    container.innerHTML = '<div class="loading-placeholder"><p>No hay jugadores</p></div>';
+    container.innerHTML = '<div class="loading-placeholder" style="padding: 60px; text-align: center;"><p>No hay jugadores</p></div>';
     return;
   }
 
@@ -704,6 +890,9 @@ function renderizarTabla() {
       <div></div>
     </div>
     <div class="tabla-body">
+      <button class="btn btn-warning" style="width: 100%; margin-bottom: 12px; border-radius: 8px;" onclick="abrirModalPartido()">
+        🍽️ Agregar Partido
+      </button>
   `;
 
   filtrados.forEach(j => {
@@ -738,7 +927,7 @@ function renderizarTabla() {
           </span>
         </div>
         <div>
-          <button class="btn btn-sm" onclick="event.stopPropagation(); verDetalle('${j.dni}')">Ver</button>
+          <button class="btn btn-sm btn-secondary" onclick="event.stopPropagation(); verDetalle('${j.dni}')">Ver</button>
         </div>
       </div>
     `;
@@ -746,6 +935,68 @@ function renderizarTabla() {
 
   html += "</div>";
   container.innerHTML = html;
+}
+
+function renderizarPartidos() {
+  // Ya no se usa porque ahora se muestra en el modal de cada jugador
+  var lista = document.getElementById("listaPartidos");
+  lista.innerHTML = '<p style="color: var(--text-muted); font-size: 12px;">Ver en el detalle de cada jugador</p>';
+}
+
+function abrirModalPartido() {
+  var fechaInput = document.getElementById("fechaPartido");
+  var importeInput = document.getElementById("importePartido");
+  var medioSelect = document.getElementById("medioPago");
+  
+  // Hoy por defecto
+  var hoy = new Date().toISOString().split('T')[0];
+  fechaInput.value = hoy;
+  importeInput.value = "";
+  medioSelect.value = "efectivo";
+  
+  document.getElementById("modalAgregar").classList.add("visible");
+}
+
+function guardarPartido() {
+  var fecha = document.getElementById("fechaPartido").value;
+  var importe = document.getElementById("importePartido").value;
+  var medio = document.getElementById("medioPago").value;
+
+  if (!fecha || !importe) {
+    alert("Completa la fecha y el importe");
+    return;
+  }
+
+  // Verificar si ya existe esa fecha
+  var idx = partidos.findIndex(p => p.fecha === fecha);
+  if (idx >= 0) {
+    // Actualizar
+    partidos[idx] = { fecha, importe, medio, ausistencias: {} };
+  } else {
+    // Agregar nuevo
+    partidos.push({ fecha, importe, medio, asistencias: {} });
+  }
+
+  guardarPartidosLocal();
+  renderizarPartidos();
+  cerrarModal();
+}
+
+function marcarAsistencia(idx, valor) {
+  // Ya no se usa - ahora usa marcarTT
+}
+
+function eliminarPartido(idx) {
+  if (confirm("Eliminar este partido?")) {
+    partidos.splice(idx, 1);
+    guardarPartidosLocal();
+    // Actualizar si el modal está abierto
+    if (document.getElementById("modalDetalle").classList.contains("visible")) {
+      var body = document.getElementById("modalBody");
+      var dniMatch = body.innerHTML.match(/dni.*?(\d{8,})/);
+      // Simple reload
+    }
+  }
 }
 
 function verDetalle(dni) {
@@ -758,72 +1009,94 @@ function verDetalle(dni) {
   document.getElementById("modalNombre").textContent = jugador.nombre;
 
   body.innerHTML = `
-    <div class="detalle-section">
-      <div class="detalle-titulo">Datos Personales</div>
-      <div class="detalle-grid">
-        <div class="detalle-item">
-          <div class="valor">${jugador.dni}</div>
-          <div class="label">DNI</div>
+    <div class="detalle-section" style="padding: 16px 0; border-bottom: 1px solid var(--border);">
+      <div style="font-family:'Barlow Condensed';font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px;">Datos Personales</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:12px;">
+        <div>
+          <div style="font-size:20px;font-weight:700;">${jugador.dni}</div>
+          <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;">DNI</div>
         </div>
       </div>
     </div>
 
-    <div class="detalle-section">
-      <div class="detalle-titulo">🏉 Asistencia (${jugador.colsAsist.length} entrenamientos)</div>
-      <div class="detalle-grid">
-        <div class="detalle-item">
-          <div class="valor" style="color: var(--accent)">${jugador.cantAsist}</div>
-          <div class="label">Presentes</div>
+    <div class="detalle-section" style="padding: 16px 0; border-bottom: 1px solid var(--border);">
+      <div style="font-family:'Barlow Condensed';font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--orange);margin-bottom:10px;">🍽️ Tercer Tiempo</div>
+      <div style="margin-bottom:14px;">
+        <button class="btn btn-warning" onclick="abrirModalPartido()" style="padding:10px 18px;border-radius:8px;font-size:12px;border:none;cursor:pointer;">
+          + Agregar Partido
+        </button>
+      </div>
+      <table style="width:100%;border-collapse:collapse;background:var(--bg2);border-radius:10px;overflow:hidden;">
+        <thead>
+          <tr style="background:var(--bg3);">
+            <th style="padding:10px;text-align:left;font-size:10px;text-transform:uppercase;color:var(--text-muted);width:40px;">✔</th>
+            <th style="padding:10px;text-align:left;font-size:10px;text-transform:uppercase;color:var(--text-muted);">Fecha</th>
+            <th style="padding:10px;text-align:left;font-size:10px;text-transform:uppercase;color:var(--text-muted);">Importe</th>
+            <th style="padding:10px;text-align:left;font-size:10px;text-transform:uppercase;color:var(--text-muted);">Medio</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${renderTTHTML(jugador.dni)}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="detalle-section" style="padding: 16px 0; border-bottom: 1px solid var(--border);">
+      <div style="font-family:'Barlow Condensed';font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px;">🏉 Asistencia (${jugador.colsAsist.length} entrenamientos)</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(80px,1fr));gap:12px;">
+        <div>
+          <div style="font-size:20px;font-weight:700;color:var(--accent)">${jugador.cantAsist}</div>
+          <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;">Presentes</div>
         </div>
-        <div class="detalle-item">
-          <div class="valor" style="color: #fca5a5">${jugador.cantFaltas}</div>
-          <div class="label">Faltas</div>
+        <div>
+          <div style="font-size:20px;font-weight:700;color:#fca5a5">${jugador.cantFaltas}</div>
+          <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;">Faltas</div>
         </div>
-        <div class="detalle-item">
-          <div class="valor">${jugador.pctAsist}%</div>
-          <div class="label">% Asistencia</div>
+        <div>
+          <div style="font-size:20px;font-weight:700">${jugador.pctAsist}%</div>
+          <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;">% Asistencia</div>
         </div>
       </div>
     </div>
 
-    <div class="detalle-section">
-      <div class="detalle-titulo">💳 Cuotas Club</div>
-      <div class="detalle-grid">
-        <div class="detalle-item">
-          <div class="valor">Cuota 1</div>
-          <div class="label">${jugador.cuotasClub >= 1 ? '✓ Pagada' : '✗ Pendiente'}</div>
+    <div class="detalle-section" style="padding: 16px 0; border-bottom: 1px solid var(--border);">
+      <div style="font-family:'Barlow Condensed';font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px;">💳 Cuotas Club</div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;">
+        <div>
+          <div style="font-size:14px;">Cuota 1</div>
+          <div style="font-size:12px;color:${jugador.cuotasClub >= 1 ? 'var(--accent)' : '#fca5a5'}">${jugador.cuotasClub >= 1 ? '✓ Pagada' : '✗ Pendiente'}</div>
         </div>
-        <div class="detalle-item">
-          <div class="valor">Cuota 2</div>
-          <div class="label">${jugador.cuotasClub >= 2 ? '✓ Pagada' : '✗ Pendiente'}</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="detalle-section">
-      <div class="detalle-titulo">🏛️ Cuotas Unión (12 meses)</div>
-      <div class="detalle-grid">
-        <div class="detalle-item">
-          <div class="valor" style="color: var(--accent)">${jugador.unionPag}</div>
-          <div class="label">Pagados</div>
-        </div>
-        <div class="detalle-item">
-          <div class="valor" style="color: #fca5a5">${jugador.unionPend}</div>
-          <div class="label">Pendientes</div>
+        <div>
+          <div style="font-size:14px;">Cuota 2</div>
+          <div style="font-size:12px;color:${jugador.cuotasClub >= 2 ? 'var(--accent)' : '#fca5a5'}">${jugador.cuotasClub >= 2 ? '✓ Pagada' : '✗ Pendiente'}</div>
         </div>
       </div>
     </div>
 
-    <div class="detalle-section">
-      <div class="detalle-titulo">🍽️ Tercer Tiempo</div>
-      <div class="detalle-grid">
-        <div class="detalle-item">
-          <div class="valor" style="color: var(--accent)">${jugador.ttPres}</div>
-          <div class="label">Presentes</div>
+    <div class="detalle-section" style="padding: 16px 0; border-bottom: 1px solid var(--border);">
+      <div style="font-family:'Barlow Condensed';font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px;">🏛️ Cuotas Unión (12 meses)</div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;">
+        <div>
+          <div style="font-size:20px;font-weight:700;color:var(--accent)">${jugador.unionPag}</div>
+          <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;">Pagados</div>
         </div>
-        <div class="detalle-item">
-          <div class="valor" style="color: #fca5a5">${jugador.ttAus}</div>
-          <div class="label">Ausentes</div>
+        <div>
+          <div style="font-size:20px;font-weight:700;color:#fca5a5">${jugador.unionPend}</div>
+          <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;">Pendientes</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="detalle-section" style="padding: 16px 0;">
+      <div style="font-family:'Barlow Condensed';font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px;">🍽️ Tercer Tiempo</div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;">
+        <div>
+          <div style="font-size:20px;font-weight:700;color:var(--accent)">${jugador.ttPres}</div>
+          <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;">Presentes</div>
+        </div>
+        <div>
+          <div style="font-size:20px;font-weight:700;color:#fca5a5">${jugador.ttAus}</div>
+          <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;">Ausentes</div>
         </div>
       </div>
     </div>
@@ -833,7 +1106,71 @@ function verDetalle(dni) {
 }
 
 function cerrarModal() {
+  document.getElementById("modalAgregar").classList.remove("visible");
   document.getElementById("modalDetalle").classList.remove("visible");
+}
+
+function renderTTHTML(dni) {
+  var today = new Date();
+  today.setHours(0, 0, 0, 0);
+  var html = "";
+  
+  if (partidos.length === 0) {
+    return '<tr><td colspan="4" style="padding:16px;text-align:center;color:var(--text-muted);font-size:12px;">No hay partidos</td></tr>';
+  }
+  
+  partidos.forEach((p, idx) => {
+    var fechaPartido = new Date(p.fecha);
+    fechaPartido.setHours(0, 0, 0, 0);
+    var pasado = fechaPartido < today;
+    var asistio = p.asistencias && p.asistencias[dni];
+    var medioTexto = "";
+    var medioClase = "";
+    
+    if (asistio) {
+      medioTexto = p.medio === 'efectivo' ? 'Efectivo' : 'Transferencia';
+      medioClase = p.medio === 'efectivo' ? 'tt-badge efectivo' : 'tt-badge transferencia';
+    } else if (pasado) {
+      medioTexto = 'NO PAGO';
+      medioClase = 'tt-badge no-pago';
+    } else {
+      medioTexto = '—';
+      medioClase = '';
+    }
+    
+    html += `
+      <tr style="border-bottom:1px solid var(--border);">
+        <td style="padding:8px;">
+          <input type="checkbox" class="tt-check" 
+            ${asistio ? 'checked' : ''}
+            ${pasado && !asistio ? 'disabled' : ''}
+            onchange="marcarTT(${idx}, '${dni}', this.checked)">
+        </td>
+        <td style="padding:8px;">${p.fecha}</td>
+        <td style="padding:8px;color:var(--accent);">$${parseFloat(p.importe || 0).toFixed(2)}</td>
+        <td style="padding:8px;">
+          <span class="${medioClase}">${medioTexto}</span>
+        </td>
+      </tr>
+    `;
+  });
+  
+  return html;
+}
+
+// Función para marcar asistencia en Tercer Tiempo
+function marcarTT(idx, dni, valor) {
+  if (!partidos[idx].asistencias) {
+    partidos[idx].asistencias = {};
+  }
+  partidos[idx].asistencias[dni] = valor;
+  guardarPartidosLocal();
+  
+  // Actualizar la tabla en el modal
+  var jugador = datosTodos.find(j => j.dni === dni);
+  if (jugador) {
+    verDetalle(dni);
+  }
 }
 
 // ===== EVENTOS =====
@@ -888,6 +1225,10 @@ document.getElementById("filterBadges").addEventListener("click", function(e) {
 });
 
 document.getElementById("busqueda").addEventListener("input", renderizarTabla);
+
+document.getElementById("modalAgregar").addEventListener("click", function(e) {
+  if (e.target === this) cerrarModal();
+});
 
 document.getElementById("modalDetalle").addEventListener("click", function(e) {
   if (e.target === this) cerrarModal();
