@@ -70,13 +70,12 @@
   .nombre div:first-child { font-weight: 600; }
   .nombre div:last-child { font-size: 12px; color: var(--text-muted); }
 
+  .info-row { display: flex; gap: 8px; font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+
   .badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
   .badge.ok { background: rgba(29,126,39,0.2); color: var(--accent); }
   .badge.falta { background: rgba(220,38,38,0.2); color: #fca5a5; }
-  .badge.presente { background: rgba(29,126,39,0.2); color: var(--accent); }
-  .badge.ausente { background: rgba(220,38,38,0.2); color: #fca5a5; }
   .badge.incompleto { background: rgba(245,166,35,0.2); color: var(--gold); }
-  .badge.completo { background: rgba(29,126,39,0.2); color: var(--accent); }
 
   .btn { padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer; font-size: 12px; font-weight: 600; }
   .btn-primary { background: var(--rugby-green); color: #fff; }
@@ -84,13 +83,15 @@
   .btn-danger { background: var(--rojo); color: #fff; }
   .btn-secondary { background: var(--bg4); color: var(--text); border: 1px solid var(--border); }
 
+  .btn-sm { padding: 6px 12px; font-size: 11px; }
+
   .btn-check { width: 20px; height: 20px; accent-color: var(--rugby-green); cursor: pointer; }
 
   .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; }
   .modal-overlay.visible { display: flex; }
   .modal { background: var(--bg2); border: 1px solid var(--border); border-radius: 20px; max-width: 800px; width: 95%; max-height: 90vh; overflow-y: auto; }
   .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; border-bottom: 1px solid var(--border); }
-  .modal-header h3 { font-family: 'Russo One', sans-serif; }
+  .modal-header h3 { font-family: 'Russo One', sans-serif; font-size: 16px; }
   .modal-close { background: none; border: none; color: var(--text); font-size: 24px; cursor: pointer; }
   .modal-body { padding: 24px; }
 
@@ -101,7 +102,7 @@
 
   .semana-box { background: var(--bg3); border-radius: 10px; padding: 12px; margin-bottom: 10px; }
   .semana-header { font-size: 11px; font-weight: 600; color: var(--accent); margin-bottom: 8px; }
-  .semana-checks { display: flex; gap: 20px; align-items: center; }
+  .semana-checks { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
   .semana-check { display: flex; align-items: center; gap: 6px; }
   .semana-check label { font-size: 11px; color: var(--text-muted); }
 
@@ -111,9 +112,14 @@
 
   .actions-row { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); }
 
+  .detalle-info { background: var(--bg3); border-radius: 10px; padding: 16px; margin-bottom: 16px; }
+  .detalle-info p { margin-bottom: 8px; font-size: 13px; }
+  .detalle-info strong { color: var(--accent); }
+
   @media (max-width: 900px) {
-    .tabla-header, .jugador-row { display: grid; grid-template-columns: 40px 1fr 80px 80px; }
+    .tabla-header, .jugador-row { display: grid; grid-template-columns: 40px 1fr 80px; }
     .jugador-row > div:not(.nombre):not(.avatar) { display: none; }
+    .meses-grid { grid-template-columns: repeat(3, 1fr); }
   }
 </style>
 </head>
@@ -168,13 +174,76 @@
     </div>
     <div class="modal-body">
       <input type="hidden" id="idJugador">
-      <div class="form-group">
-        <label>DNI</label>
-        <input type="text" id="dniJugador" placeholder="12345678">
+      <div class="form-row">
+        <div class="form-group">
+          <label>DNI</label>
+          <input type="text" id="dniJugador" placeholder="12345678">
+        </div>
+        <div class="form-group">
+          <label>Celular</label>
+          <input type="text" id="celularJugador" placeholder="+54 9 11 1234 5678">
+        </div>
       </div>
       <div class="form-group">
         <label>Nombre Completo</label>
         <input type="text" id="nombreJugador" placeholder="Juan Pérez">
+      </div>
+      <div class="form-group">
+        <label>Correo</label>
+        <input type="email" id="correoJugador" placeholder="juan@email.com">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Puesto 1 (Principal)</label>
+          <select id="puesto1Jugador">
+            <option value="">Seleccionar...</option>
+            <option value="Hook">Hook</option>
+            <option value="Pilier">Pilier</option>
+            <option value="Segunda">Segunda</option>
+            <option value="Octavo">Octavo</option>
+            <option value="Ala">Ala</option>
+            <option value="Centro">Centro</option>
+            <option value="Apertura">Apertura</option>
+            <option value="Medio">Medio scrum</option>
+            <option value="Flyhalf">Flyhalf</option>
+            <option value="Wing">Wing</option>
+            <option value="Fullback">Fullback</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Puesto 2</label>
+          <select id="puesto2Jugador">
+            <option value="">Seleccionar...</option>
+            <option value="Hook">Hook</option>
+            <option value="Pilier">Pilier</option>
+            <option value="Segunda">Segunda</option>
+            <option value="Octavo">Octavo</option>
+            <option value="Ala">Ala</option>
+            <option value="Centro">Centro</option>
+            <option value="Apertura">Apertura</option>
+            <option value="Medio">Medio scrum</option>
+            <option value="Flyhalf">Flyhalf</option>
+            <option value="Wing">Wing</option>
+            <option value="Fullback">Fullback</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Puesto 3</label>
+        <select id="puesto3Jugador">
+          <option value="">Seleccionar...</option>
+          <option value="Hook">Hook</option>
+          <option value="Pilier">Pilier</option>
+          <option value="Segunda">Segunda</option>
+          <option value="Octavo">Octavo</option>
+          <option value="Ala">Ala</option>
+          <option value="Centro">Centro</option>
+          <option value="Apertura">Apertura</option>
+          <option value="Medio">Medio scrum</option>
+          <option value="Flyhalf">Flyhalf</option>
+          <option value="Wing">Wing</option>
+          <option value="Fullback">Fullback</option>
+        </select>
       </div>
       <div class="actions-row">
         <button class="btn btn-danger" id="btnEliminar" onclick="eliminarJugador()" style="display:none;">Eliminar</button>
@@ -185,9 +254,26 @@
   </div>
 </div>
 
+<!-- MODAL VER JUGADOR -->
+<div class="modal-overlay" id="modalVerJugador">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>👤 Datos del Jugador</h3>
+      <button class="modal-close" onclick="cerrarModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="detalle-info" id="detalleJugador"></div>
+      <div class="actions-row">
+        <button class="btn btn-secondary" onclick="cerrarModal()">Cerrar</button>
+        <button class="btn btn-primary" onclick="editarDesdeVer()">Editar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL ASISTENCIA -->
 <div class="modal-overlay" id="modalAsistencia">
-  <div class="modal">
+  <div class="modal" style="max-width: 900px;">
     <div class="modal-header">
       <h3>🏉 Asistencia - <span id="nombreAsist"></span></h3>
       <button class="modal-close" onclick="cerrarModal()">&times;</button>
@@ -256,7 +342,7 @@
 <div class="modal-overlay" id="modalTercerTiempo">
   <div class="modal" style="max-width: 1000px;">
     <div class="modal-header">
-      <h3>🍽️ Tercer Tiempo - Agregar Partido</h3>
+      <h3>🍽️ Tercer Tiempo</h3>
       <button class="modal-close" onclick="cerrarModal()">&times;</button>
     </div>
     <div class="modal-body">
@@ -276,11 +362,13 @@
 <script>
 // ===== CONFIGURACIÓN =====
 var SHEET_ID = "1DSLMUY658O0-liB7bpv0g8VFTpGiv3nNNgDXc2X97VM";
-var API_URL = "https://script.google.com/macros/s/AKfycbxWNxUx-IVdh1xD6YKRW154_pVXYXmT5pzIt84AjtJ91dIps3E6dATRm8MjWEPSmvab/exec";
+var API_URL = "https://script.google.com/macros/s/AKfycbwAt4MLXCyHb0kVgJDTlgeh732Jx6_SDCRfYd6BQ0IfFh_ss4_KE06DGXltl3JjBxu9/exec";
 
 var hojaActiva = "jugadores";
 var datosJugadores = [];
+var headersAsistencia = [];
 var jugadorActual = null;
+var jugadorParaEditar = null;
 
 // ===== CARGAR DATOS =====
 async function cargarDatos() {
@@ -290,8 +378,14 @@ async function cargarDatos() {
     e.style.display = 'flex';
 
     try {
-        datosJugadores = await fetchCSV("347341918"); // Hoja Asistencia
-        datosJugadores = datosJugadores.slice(1).filter(f => f[0]);
+        var all = await Promise.all([
+            fetchCSV("asistencia"),
+            fetchCSV("347341918")
+        ]);
+        
+        // Headers primera fila
+        headersAsistencia = all[1][0] || [];
+        datosJugadores = all[1].slice(1).filter(f => f[0]);
         
         renderizar();
         e.style.display = 'none';
@@ -306,7 +400,8 @@ function csvURL(gid) {
     return `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${gid}`;
 }
 
-function fetchCSV(gid) {
+function fetchCSV(SheetNameOrGid) {
+    var gid = isNaN(SheetNameOrGid) ? "347341918" : SheetNameOrGid;
     return fetch(csvURL(gid)).then(r => r.text()).then(txt => txt.split("\n").map(l => l.split(",")));
 }
 
@@ -340,9 +435,8 @@ function renderizarJugadores(datos) {
         <div class="tabla-header">
             <div style="width:40px;"></div>
             <div class="nombre" style="flex:1;">Jugador</div>
-            <div style="width:80px;">Asistencia</div>
-            <div style="width:80px;">Club</div>
-            <div style="width:80px;">Unión</div>
+            <div style="width:80px;">Celular</div>
+            <div style="width:80px;">Puestos</div>
             <div style="width:80px;"></div>
         </div>
         <div class="tabla-body">
@@ -351,6 +445,9 @@ function renderizarJugadores(datos) {
     datos.forEach(j => {
         var nombre = j[1] || '';
         var inicial = nombre.charAt(0) || '?';
+        var celular = j[2] || '-';
+        var p1 = j[4] || '-';
+        var p2 = j[5] || '-';
         
         html += `
             <div class="jugador-row">
@@ -359,6 +456,8 @@ function renderizarJugadores(datos) {
                     <div>${nombre}</div>
                     <div>DNI: ${j[0] || ''}</div>
                 </div>
+                <div><span class="badge">${celular}</span></div>
+                <div><span class="badge">${p1}${p2 !== '-' ? ', ' + p2 : ''}</span></div>
                 <div>
                     <button class="btn btn-sm btn-secondary" onclick="verDetalle('${j[0]}', '${nombre}')">Ver</button>
                 </div>
@@ -388,7 +487,7 @@ function renderizarAsistencia(datos) {
         var cols = j.slice(2);
         var presentes = cols.filter(esBool).length;
         var estado = presentes >= 10 ? 'completo' : (presentes > 0 ? 'incompleto' : 'falta');
-        var label = presentes >= 10 ? 'COMPLETO' : (presentes > 0 ? 'INCOMP' : 'NO ASIST');
+        var label = presentes >= 10 ? 'COMPLETO' : (presentes > 0 ? presentes + '/12' : 'NO ASIST');
         
         html += `
             <div class="jugador-row">
@@ -534,6 +633,38 @@ function abrirModalJugador(dni, nombre) {
     document.getElementById('modalJugador').classList.add('visible');
 }
 
+function verDetalle(dni, nombre) {
+    var jugador = datosJugadores.find(j => j[0] === dni);
+    if (!jugador) return;
+    
+    var html = `
+        <p><strong>DNI:</strong> ${jugador[0] || '-'}</p>
+        <p><strong>Nombre:</strong> ${jugador[1] || '-'}</p>
+        <p><strong>Celular:</strong> ${jugador[2] || '-'}</p>
+        <p><strong>Correo:</strong> ${jugador[3] || '-'}</p>
+        <p><strong>Puesto 1:</strong> ${jugador[4] || '-'}</p>
+        <p><strong>Puesto 2:</strong> ${jugador[5] || '-'}</p>
+        <p><strong>Puesto 3:</strong> ${jugador[6] || '-'}</p>
+    `;
+    
+    document.getElementById('detalleJugador').innerHTML = html;
+    jugadorParaEditar = { dni: jugador[0], nombre: jugador[1], 
+        celular: jugador[2], correo: jugador[3],
+        p1: jugador[4], p2: jugador[5], p3: jugador[6] };
+    document.getElementById('modalVerJugador').classList.add('visible');
+}
+
+function editarDesdeVer() {
+    if (!jugadorParaEditar) return;
+    cerrarModal();
+    abrirModalJugador(jugadorParaEditar.dni, jugadorParaEditar.nombre);
+    document.getElementById('celularJugador').value = jugadorParaEditar.celular || '';
+    document.getElementById('correoJugador').value = jugadorParaEditar.correo || '';
+    document.getElementById('puesto1Jugador').value = jugadorParaEditar.p1 || '';
+    document.getElementById('puesto2Jugador').value = jugadorParaEditar.p2 || '';
+    document.getElementById('puesto3Jugador').value = jugadorParaEditar.p3 || '';
+}
+
 function abrirAsistencia(dni, nombre) {
     jugadorActual = { dni, nombre };
     document.getElementById('nombreAsist').textContent = nombre;
@@ -542,9 +673,10 @@ function abrirAsistencia(dni, nombre) {
     var cols = jugador ? jugador.slice(2) : [];
     
     var html = '';
-    for (var s = 0; s < Math.min(cols.length, 12); s += 3) {
+    for (var s = 0; s < cols.length; s += 3) {
         var sem = cols.slice(s, s + 3);
         var numSem = Math.floor(s / 3) + 1;
+        if (numSem > 52) break;
         
         html += `
             <div class="semana-box">
@@ -616,13 +748,21 @@ async function agregarPartidoTT() {
     estado.innerHTML = '<div class="spinner"></div> Agregando partido...';
     
     try {
-        await fetch(API_URL, {
+        var resp = await fetch(API_URL, {
             method: 'POST',
             body: JSON.stringify({ accion: 'agregar_partido_tt' })
         });
         
-        estado.className = 'estado success';
-        estado.innerHTML = '<i class="fas fa-check"></i> Partido agregado';
+        var result = await resp.json();
+        
+        if (result.ok) {
+            estado.className = 'estado success';
+            estado.innerHTML = '<i class="fas fa-check"></i> Partido agregado';
+        } else {
+            estado.className = 'estado error';
+            estado.innerHTML = '<span>⚠️</span> ' + (result.error || 'Error');
+        }
+        
         cerrarModal();
         cargarDatos();
     } catch(err) {
@@ -635,10 +775,6 @@ async function agregarPartidoTT() {
 function actualizarListaTT() {
     var html = '<p style="color:var(--text-muted);">Partido agregado con fecha de hoy</p>';
     document.getElementById('listaPartidosTT').innerHTML = html;
-}
-
-function verDetalle(dni, nombre) {
-    abrirModalJugador(dni, nombre);
 }
 
 function verTT(dni, nombre) {
@@ -655,30 +791,48 @@ function cerrarModal() {
 async function guardarJugador() {
     var dni = document.getElementById('dniJugador').value;
     var nombre = document.getElementById('nombreJugador').value;
+    var celular = document.getElementById('celularJugador').value;
+    var correo = document.getElementById('correoJugador').value;
+    var p1 = document.getElementById('puesto1Jugador').value;
+    var p2 = document.getElementById('puesto2Jugador').value;
+    var p3 = document.getElementById('puesto3Jugador').value;
     
     if (!dni || !nombre) return alert('Completá DNI y Nombre');
     
     var estado = document.getElementById('estado');
     estado.className = 'estado loading';
     estado.innerHTML = '<div class="spinner"></div> Guardando...';
+    estado.style.display = 'flex';
     
     try {
-        await fetch(API_URL, {
+        var resp = await fetch(API_URL, {
             method: 'POST',
             body: JSON.stringify({
                 accion: 'guardar_jugador',
                 dni: dni,
-                nombre: nombre
+                nombre: nombre,
+                celular: celular,
+                correo: correo,
+                puesto1: p1,
+                puesto2: p2,
+                puesto3: p3
             })
         });
         
-        estado.className = 'estado success';
-        estado.innerHTML = '<i class="fas fa-check"></i> Jugador guardado';
-        cerrarModal();
-        cargarDatos();
+        var result = await resp.json();
         
+        if (result.ok) {
+            estado.className = 'estado success';
+            estado.innerHTML = '<i class="fas fa-check"></i> Jugador guardado';
+            cerrarModal();
+            cargarDatos();
+        } else {
+            estado.className = 'estado error';
+            estado.innerHTML = '<span>⚠️</span> ' + (result.error || 'Error');
+        }
     } catch(err) {
         console.error(err);
+        alert('Error: ' + err.message);
         estado.className = 'estado error';
         estado.innerHTML = '<span>⚠️</span> Error al guardar';
     }
@@ -688,12 +842,12 @@ async function eliminarJugador() {
     if (!confirm('¿Eliminar este jugador?')) return;
     
     var dni = document.getElementById('idJugador').value;
-    
     var estado = document.getElementById('estado');
     estado.innerHTML = '<div class="spinner"></div> Eliminando...';
+    estado.style.display = 'flex';
     
     try {
-        await fetch(API_URL, {
+        var resp = await fetch(API_URL, {
             method: 'POST',
             body: JSON.stringify({
                 accion: 'eliminar_jugador',
@@ -701,9 +855,14 @@ async function eliminarJugador() {
             })
         });
         
-        cerrarModal();
-        cargarDatos();
+        var result = await resp.json();
         
+        if (result.ok) {
+            cerrarModal();
+            cargarDatos();
+        } else {
+            alert('Error: ' + result.error);
+        }
     } catch(err) {
         console.error(err);
     }
@@ -718,9 +877,10 @@ async function guardarAsistencia() {
     
     var estado = document.getElementById('estado');
     estado.innerHTML = '<div class="spinner"></div> Guardando...';
+    estado.style.display = 'flex';
     
     try {
-        await fetch(API_URL, {
+        var resp = await fetch(API_URL, {
             method: 'POST',
             body: JSON.stringify({
                 accion: 'guardar_asistencia',
@@ -729,13 +889,20 @@ async function guardarAsistencia() {
             })
         });
         
-        estado.className = 'estado success';
-        estado.innerHTML = '<i class="fas fa-check"></i> Asistencia guardada';
-        cerrarModal();
-        cargarDatos();
+        var result = await resp.json();
         
+        if (result.ok) {
+            estado.className = 'estado success';
+            estado.innerHTML = '<i class="fas fa-check"></i> Asistencia guardada';
+            cerrarModal();
+            cargarDatos();
+        } else {
+            estado.className = 'estado error';
+            estado.innerHTML = '<span>⚠️</span> ' + (result.error || 'Error');
+        }
     } catch(err) {
         console.error(err);
+        alert('Error: ' + err.message);
     }
 }
 
@@ -748,9 +915,10 @@ async function guardarCuotasClub() {
     
     var estado = document.getElementById('estado');
     estado.innerHTML = '<div class="spinner"></div> Guardando...';
+    estado.style.display = 'flex';
     
     try {
-        await fetch(API_URL, {
+        var resp = await fetch(API_URL, {
             method: 'POST',
             body: JSON.stringify({
                 accion: 'guardar_cuotas_club',
@@ -759,13 +927,20 @@ async function guardarCuotasClub() {
             })
         });
         
-        estado.className = 'estado success';
-        estado.innerHTML = '<i class="fas fa-check"></i> Cuotas guardadas';
-        cerrarModal();
-        cargarDatos();
+        var result = await resp.json();
         
+        if (result.ok) {
+            estado.className = 'estado success';
+            estado.innerHTML = '<i class="fas fa-check"></i> Cuotas guardadas';
+            cerrarModal();
+            cargarDatos();
+        } else {
+            estado.className = 'estado error';
+            estado.innerHTML = '<span>⚠️</span> ' + (result.error || 'Error');
+        }
     } catch(err) {
         console.error(err);
+        alert('Error: ' + err.message);
     }
 }
 
@@ -775,9 +950,10 @@ async function guardarCuotasUnion() {
     
     var estado = document.getElementById('estado');
     estado.innerHTML = '<div class="spinner"></div> Guardando...';
+    estado.style.display = 'flex';
     
     try {
-        await fetch(API_URL, {
+        var resp = await fetch(API_URL, {
             method: 'POST',
             body: JSON.stringify({
                 accion: 'guardar_cuotas_union',
@@ -787,13 +963,20 @@ async function guardarCuotasUnion() {
             })
         });
         
-        estado.className = 'estado success';
-        estado.innerHTML = '<i class="fas fa-check"></i> Cuotas guardadas';
-        cerrarModal();
-        cargarDatos();
+        var result = await resp.json();
         
+        if (result.ok) {
+            estado.className = 'estado success';
+            estado.innerHTML = '<i class="fas fa-check"></i> Cuotas guardadas';
+            cerrarModal();
+            cargarDatos();
+        } else {
+            estado.className = 'estado error';
+            estado.innerHTML = '<span>⚠️</span> ' + (result.error || 'Error');
+        }
     } catch(err) {
         console.error(err);
+        alert('Error: ' + err.message);
     }
 }
 
@@ -801,6 +984,7 @@ function guardarTercerTiempo() {
     var estado = document.getElementById('estado');
     estado.className = 'estado success';
     estado.innerHTML = '<i class="fas fa-check"></i> Tercer Tiempo guardado';
+    estado.style.display = 'flex';
     setTimeout(() => estado.style.display = 'none', 2000);
 }
 
