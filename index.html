@@ -3,25 +3,24 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Dashboard del Jugador - Rugby</title>
+<title>Menú Jugadores - Rugby</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&family=Russo+One&display=swap" rel="stylesheet"/>
 <style>
 
   :root {
     --rugby-green: #1D4E27;
     --rugby-green-light: #2D7A3A;
-    --rugby-dark: #0F2E17;
     --accent: #4ADE80;
     --bg: #0a0a0a;
     --bg2: #131313;
     --bg3: #1a1a1a;
     --bg4: #222222;
     --border: rgba(255,255,255,0.06);
-    --border-light: rgba(255,255,255,0.1);
     --text: #F5F5F5;
     --text-muted: #888888;
     --gold: #F5A623;
     --orange: #FF6B35;
+    --rojo: #DC2626;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -31,14 +30,19 @@
     color: var(--text);
     font-family: 'Barlow', sans-serif;
     min-height: 100vh;
-    line-height: 1.5;
   }
 
   /* HEADER */
   .header {
     background: linear-gradient(135deg, var(--bg2) 0%, var(--bg3) 100%);
     border-bottom: 1px solid var(--border);
-    padding: 20px 36px;
+    padding: 20px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .header-left {
     display: flex;
     align-items: center;
     gap: 16px;
@@ -53,108 +57,121 @@
     align-items: center;
     justify-content: center;
     font-size: 28px;
-    box-shadow: 0 4px 15px rgba(29, 126, 39, 0.4);
-    animation: pulse-green 2s ease-in-out infinite;
-  }
-
-  @keyframes pulse-green {
-    0%, 100% { box-shadow: 0 4px 15px rgba(29, 126, 39, 0.4); }
-    50% { box-shadow: 0 4px 25px rgba(74, 222, 128, 0.5); }
   }
 
   .header-text h1 {
     font-family: 'Russo One', sans-serif;
-    font-size: 26px;
-    font-weight: 700;
-    letter-spacing: 1px;
+    font-size: 24px;
     background: linear-gradient(90deg, var(--text) 0%, var(--accent) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    text-transform: uppercase;
   }
 
   .header-text p {
     font-size: 13px;
     color: var(--text-muted);
-    letter-spacing: 0.5px;
   }
 
-  /* SEARCH */
-  .search-wrap {
+  .header-stats {
+    display: flex;
+    gap: 20px;
+  }
+
+  .stat-badge {
+    text-align: center;
+  }
+
+  .stat-badge .num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .stat-badge .label {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* MENÚ DE HOJAS */
+  .menu-wrap {
     background: var(--bg2);
     border-bottom: 1px solid var(--border);
-    padding: 24px 36px;
+    padding: 16px 30px;
+    overflow-x: auto;
   }
 
-  .search-label {
-    font-family: 'Barlow Condensed', sans-serif;
+  .menu-tabs {
+    display: flex;
+    gap: 10px;
+    white-space: nowrap;
+  }
+
+  .menu-tab {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    padding: 12px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .menu-tab:hover {
+    background: var(--bg4);
+    border-color: var(--rugby-green);
+  }
+
+  .menu-tab.active {
+    background: var(--rugby-green);
+    border-color: var(--rugby-green);
+    color: #fff;
+  }
+
+  .menu-tab .count {
+    background: rgba(255,255,255,0.2);
+    padding: 2px 8px;
+    border-radius: 10px;
     font-size: 11px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    margin-bottom: 12px;
+    margin-left: 8px;
+  }
+
+  /* BUSCADOR */
+  .search-wrap {
+    padding: 20px 30px;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
   }
 
   .search-row {
     display: flex;
-    gap: 14px;
-    max-width: 560px;
+    gap: 12px;
+    max-width: 500px;
   }
 
   .search-input {
     flex: 1;
     background: var(--bg3);
     border: 2px solid var(--border);
-    border-radius: 12px;
+    border-radius: 10px;
     color: var(--text);
-    font-family: 'Barlow', sans-serif;
-    font-size: 16px;
-    padding: 14px 18px;
+    padding: 12px 16px;
+    font-size: 14px;
     outline: none;
-    transition: all 0.3s ease;
   }
 
   .search-input:focus {
     border-color: var(--rugby-green);
-    box-shadow: 0 0 0 4px rgba(29, 126, 39, 0.2);
   }
 
-  .search-input::placeholder {
-    color: var(--text-muted);
-  }
-
-  .search-btn {
-    background: linear-gradient(145deg, var(--rugby-green) 0%, var(--rugby-green-light) 100%);
-    border: none;
-    border-radius: 12px;
-    color: #fff;
-    cursor: pointer;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 14px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    padding: 14px 28px;
-    text-transform: uppercase;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(29, 126, 39, 0.3);
-  }
-
-  .search-btn:hover {
-    background: linear-gradient(145deg, var(--rugby-green-light) 0%, var(--accent) 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(29, 126, 39, 0.4);
-  }
-
-  .search-btn:active {
-    transform: scale(0.98);
-  }
-
-  /* MAIN */
+  /* MAIN CONTENT */
   .main {
-    padding: 28px 36px;
-    max-width: 1400px;
-    margin: 0 auto;
+    padding: 24px 30px;
   }
 
   /* ESTADO */
@@ -162,10 +179,9 @@
     display: none;
     align-items: center;
     gap: 12px;
-    padding: 14px 20px;
+    padding: 16px 20px;
     border-radius: 12px;
-    font-size: 14px;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
   }
 
   .estado.loading {
@@ -191,344 +207,266 @@
     animation: spin 0.8s linear infinite;
   }
 
-  @keyframes spin {
-    to { transform: rotate(360deg); }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* TABLA JUGADORES */
+  .tabla-container {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
   }
 
-  /* PERFIL */
-  .perfil-card {
-    display: none;
-    background: linear-gradient(145deg, var(--rugby-dark) 0%, var(--rugby-green) 100%);
-    border: 1px solid rgba(74, 222, 128, 0.2);
-    border-radius: 20px;
-    padding: 24px 28px;
-    margin-bottom: 28px;
+  .tabla-header {
+    display: grid;
+    grid-template-columns: 60px 1fr 100px 100px 100px 100px 100px;
+    gap: 10px;
+    padding: 14px 20px;
+    background: var(--bg3);
+    border-bottom: 1px solid var(--border);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .tabla-body {
+    max-height: calc(100vh - 350px);
+    overflow-y: auto;
+  }
+
+  .jugador-row {
+    display: grid;
+    grid-template-columns: 60px 1fr 100px 100px 100px 100px 100px;
+    gap: 10px;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
     align-items: center;
-    gap: 20px;
-    box-shadow: 0 8px 32px rgba(29, 126, 39, 0.2);
+    transition: all 0.2s;
+    cursor: pointer;
   }
 
-  .perfil-card.visible {
-    display: flex;
+  .jugador-row:hover {
+    background: var(--bg3);
   }
 
-  .avatar {
-    width: 70px;
-    height: 70px;
-    background: linear-gradient(145deg, var(--accent) 0%, var(--rugby-green-light) 100%);
+  .jugador-row:last-child {
+    border-bottom: none;
+  }
+
+  .jugador-avatar {
+    width: 40px;
+    height: 40px;
+    background: var(--rugby-green);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: 'Russo One', sans-serif;
-    font-size: 28px;
-    font-weight: 700;
-    color: var(--rugby-dark);
-    flex-shrink: 0;
-    box-shadow: 0 4px 20px rgba(74, 222, 128, 0.4);
+    font-size: 16px;
+    color: #fff;
   }
 
-  .perfil-info h2 {
-    font-family: 'Russo One', sans-serif;
-    font-size: 24px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    color: var(--text);
-  }
-
-  .perfil-info .dni-badge {
-    display: inline-block;
-    background: rgba(255,255,255,0.1);
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 13px;
-    color: var(--accent);
-    margin-top: 6px;
-  }
-
-  .perfil-edit {
-    margin-left: auto;
-    background: rgba(255,255,255,0.1);
-    border: none;
-    border-radius: 8px;
-    color: var(--text);
-    padding: 10px 16px;
-    font-size: 12px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .perfil-edit:hover {
-    background: rgba(255,255,255,0.2);
-  }
-
-  /* GRID */
-  .grid {
-    display: none;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
-  }
-
-  .grid.visible {
-    display: grid;
-  }
-
-  /* SECCIONES */
-  .seccion {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    overflow: hidden;
-    transition: all 0.3s ease;
-  }
-
-  .seccion:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 40px rgba(0,0,0,0.3);
-  }
-
-  .seccion-header {
-    padding: 16px 22px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-family: 'Barlow Condensed', sans-serif;
+  .jugador-nombre {
+    font-weight: 600;
     font-size: 14px;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    border-bottom: 1px solid var(--border);
   }
 
-  .seccion-header.asistencia {
-    background: linear-gradient(90deg, rgba(29, 126, 39, 0.2) 0%, rgba(29, 126, 39, 0.05) 100%);
+  .jugador-dni {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .badge.asist {
+    background: rgba(29, 126, 39, 0.2);
     color: var(--accent);
   }
 
-  .seccion-header.cuotas {
-    background: linear-gradient(90deg, rgba(245, 166, 35, 0.2) 0%, rgba(245, 166, 35, 0.05) 100%);
+  .badge.falta {
+    background: rgba(220, 38, 38, 0.2);
+    color: #fca5a5;
+  }
+
+  .badge.pagado {
+    background: rgba(74, 222, 128, 0.2);
+    color: #4ADE80;
+  }
+
+  .badge.pendiente {
+    background: rgba(245, 166, 35, 0.2);
     color: var(--gold);
   }
 
-  .seccion-header-union {
-    background: linear-gradient(90deg, rgba(24, 95, 165, 0.2) 0%, rgba(24, 95, 165, 0.05) 100%);
-    color: #93C5FD;
-  }
-
-  .seccion-header.tercer {
-    background: linear-gradient(90deg, rgba(255, 107, 53, 0.2) 0%, rgba(255, 107, 53, 0.05) 100%);
-    color: var(--orange);
-  }
-
-  .seccion-body {
-    padding: 20px 22px;
-  }
-
-  .fila {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 0;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .fila:last-child {
-    border-bottom: none;
-    padding-bottom: 0;
-  }
-
-  .fila-label {
-    font-size: 14px;
-    color: var(--text-muted);
-  }
-
-  .fila-valor {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 24px;
-    font-weight: 700;
-    color: var(--text);
-  }
-
-  .fila-valor.highlight {
+  .badge.present {
+    background: rgba(29, 126, 39, 0.2);
     color: var(--accent);
   }
 
-  /* BARRA PROGRESO */
-  .progress-container {
-    margin-top: 8px;
+  .badge.absent {
+    background: rgba(220, 38, 38, 0.2);
+    color: #fca5a5;
   }
 
-  .pct-bar-bg {
-    background: var(--bg3);
-    border-radius: 6px;
-    height: 8px;
-    overflow: hidden;
-  }
-
-  .pct-bar-fill {
-    height: 100%;
-    border-radius: 6px;
-    background: linear-gradient(90deg, var(--rugby-green) 0%, var(--accent) 100%);
-    transition: width 0.9s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .pct-label {
-    display: flex;
-    justify-content: space-between;
-    font-size: 12px;
-    color: var(--text-muted);
-    margin-top: 6px;
-  }
-
-  /* CHECKS */
-  .checks-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .check-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: var(--bg3);
-    padding: 8px 12px;
-    border-radius: 8px;
-    font-size: 12px;
-    cursor: pointer;
-    transition: all 0.2s;
-    border: 1px solid transparent;
-  }
-
-  .check-item:hover {
-    background: var(--bg4);
-    border-color: var(--border-light);
-  }
-
-  .check-item input {
-    width: 16px;
-    height: 16px;
-    accent-color: var(--rugby-green);
-  }
-
-  .check-item.checked {
+  .badge.ok {
     background: rgba(29, 126, 39, 0.2);
-    border-color: var(--rugby-green);
+    color: var(--accent);
   }
 
-  .check-item.checked input {
-    accent-color: var(--accent);
+  /* VER DETALLE MODAL */
+  .detalle-section {
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
   }
 
-  /* SEMANA CARD */
-  .semana-card {
-    background: var(--bg3);
-    border-radius: 16px;
-    padding: 16px;
-    flex-shrink: 0;
-    min-width: 200px;
+  .detalle-section:last-child {
+    border-bottom: none;
   }
 
-  .semana-header {
+  .detalle-titulo {
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 13px;
+    font-size: 12px;
     letter-spacing: 1px;
+    text-transform: uppercase;
     color: var(--text-muted);
-    margin-bottom: 12px;
+    margin-bottom: 10px;
+  }
+
+  .detalle-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 12px;
+  }
+
+  .detalle-item {
+    text-align: center;
+  }
+
+  .detalle-item .valor {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  .detalle-item .label {
+    font-size: 10px;
+    color: var(--text-muted);
     text-transform: uppercase;
   }
 
-  .semana-checks {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 12px;
+  /* MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.8);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
   }
 
-  .semana-checks input {
-    width: 22px;
-    height: 22px;
-    accent-color: var(--rugby-green);
+  .modal-overlay.visible {
+    display: flex;
+  }
+
+  .modal {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .modal-header h3 {
+    font-family: 'Russo One', sans-serif;
+    font-size: 20px;
+  }
+
+  .modal-close {
+    background: none;
+    border: none;
+    color: var(--text);
+    font-size: 24px;
     cursor: pointer;
   }
 
-  .semana-estado {
-    font-size: 13px;
-    font-weight: 700;
-    padding: 6px 12px;
-    border-radius: 20px;
+  .modal-body {
+    padding: 20px 24px;
+  }
+
+  /* LOADING */
+  .loading-placeholder {
+    padding: 60px;
     text-align: center;
-    letter-spacing: 0.5px;
-  }
-
-  .semana-estado.completo {
-    background: rgba(34, 197, 94, 0.15);
-    color: #22c55e;
-  }
-
-  .semana-estado.incompleto {
-    background: rgba(245, 158, 11, 0.15);
-    color: #f59e0b;
-  }
-
-  .semana-estado.falta {
-    background: rgba(220, 38, 38, 0.15);
-    color: #ef4444;
-  }
-
-  /* EMPTY */
-  .empty {
-    text-align: center;
-    padding: 80px 20px;
-  }
-
-  .empty-icon {
-    font-size: 64px;
-    margin-bottom: 20px;
-    animation: bounce 2s ease-in-out infinite;
-  }
-
-  @keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-  }
-
-  .empty h3 {
-    font-family: 'Russo One', sans-serif;
-    font-size: 24px;
-    color: var(--text);
-    margin-bottom: 8px;
-  }
-
-  .empty p {
-    font-size: 14px;
     color: var(--text-muted);
   }
 
-  /* RESPONSIVE */
-  @media (max-width: 560px) {
-    .header, .search-wrap, .main {
-      padding-left: 18px;
-      padding-right: 18px;
-    }
-    .search-row {
+  .loading-placeholder .spinner {
+    width: 30px;
+    height: 30px;
+    margin: 0 auto 16px;
+    border-width: 3px;
+  }
+
+  /* FILTRO NEGATIVO */
+  .filter-badges {
+    display: flex;
+    gap: 8px;
+    padding: 12px 0;
+    flex-wrap: wrap;
+  }
+
+  .filter-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    cursor: pointer;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    transition: all 0.2s;
+  }
+
+  .filter-badge:hover, .filter-badge.active {
+    background: var(--rugby-green);
+    border-color: var(--rugby-green);
+  }
+
+  @media (max-width: 768px) {
+    .header {
       flex-direction: column;
-    }
-    .header-icon {
-      width: 44px;
-      height: 44px;
-      font-size: 22px;
-    }
-    .header-text h1 {
-      font-size: 20px;
-    }
-    .perfil-card {
-      flex-direction: column;
+      gap: 16px;
       text-align: center;
     }
-    .perfil-edit {
-      margin-left: 0;
-      margin-top: 12px;
+    .header-stats {
+      display: none;
+    }
+    .tabla-header, .jugador-row {
+      grid-template-columns: 50px 1fr 80px;
+    }
+    .jugador-row > *:nth-child(n+4) {
+      display: none;
     }
   }
 </style>
@@ -536,350 +474,427 @@
 <body>
 
 <div class="header">
-  <div class="header-icon">🏉</div>
-  <div class="header-text">
-    <h1>Dashboard del Jugador</h1>
-    <p>Consultá asistencia, cuotas y tercer tiempo</p>
+  <div class="header-left">
+    <div class="header-icon">🏉</div>
+    <div class="header-text">
+      <h1>Menú de Jugadores</h1>
+      <p>Información general de todos los jugadores</p>
+    </div>
+  </div>
+  <div class="header-stats">
+    <div class="stat-badge">
+      <div class="num" id="totalJugadores">—</div>
+      <div class="label">Jugadores</div>
+    </div>
+    <div class="stat-badge">
+      <div class="num" id="totalAsistencias">—</div>
+      <div class="label">% Asistencia</div>
+    </div>
+    <div class="stat-badge">
+      <div class="num" id="totalCuotas">—</div>
+      <div class="label">Cuotas OK</div>
+    </div>
+  </div>
+</div>
+
+<div class="menu-wrap">
+  <div class="menu-tabs" id="menuTabs">
+    <div class="menu-tab active" data-hoja="todos">Todos <span class="count" id="countTodos">0</span></div>
+    <div class="menu-tab" data-hoja="asist">Asistencia <span class="count" id="countAsist">0</span></div>
+    <div class="menu-tab" data-hoja="club">Cuotas Club <span class="count" id="countClub">0</span></div>
+    <div class="menu-tab" data-hoja="union">Cuotas Unión <span class="count" id="countUnion">0</span></div>
+    <div class="menu-tab" data-hoja="tt">Tercer Tiempo <span class="count" id="countTT">0</span></div>
   </div>
 </div>
 
 <div class="search-wrap">
-  <div class="search-label">Búsqueda</div>
   <div class="search-row">
-    <input class="search-input" id="busqueda" type="text"
-      placeholder="Ej: 38063112 o ALVARO DANIEL HEREDIA" autocomplete="off"/>
-    <button class="search-btn" id="btnBuscar" onclick="buscar()">Buscar</button>
+    <input class="search-input" id="busqueda" type="text" placeholder="Buscar por nombre o DNI...">
+  </div>
+  <div class="filter-badges" id="filterBadges">
+    <span class="filter-badge active" data-filter="todos">Todos</span>
+    <span class="filter-badge" data-filter="asist-ok">Con Asistencia</span>
+    <span class="filter-badge" data-filter="asist-bad">Con Faltas</span>
+    <span class="filter-badge" data-filter="cuotas-ok">Cuotas OK</span>
+    <span class="filter-badge" data-filter="cuotas-pend">Cuotas Pendientes</span>
   </div>
 </div>
 
 <div class="main">
   <div class="estado" id="estado"></div>
 
-  <div class="perfil-card" id="perfil">
-    <div class="avatar" id="avatar">🏉</div>
-    <div class="perfil-info">
-      <h2 id="nombre-display">—</h2>
-      <span class="dni-badge" id="dni-display">DNI: —</span>
+  <div class="tabla-container" id="tablaContainer">
+    <div class="loading-placeholder">
+      <div class="spinner"></div>
+      <p>Cargando datos...</p>
     </div>
   </div>
+</div>
 
-  <div class="grid" id="grid">
-
-    <!-- ASISTENCIA -->
-    <div class="seccion">
-      <div class="seccion-header asistencia">
-        <span>🏉</span> Asistencia Entrenamientos
-      </div>
-      <div class="seccion-body">
-        <div class="fila">
-          <span class="fila-label">Total Asistencias</span>
-          <span class="fila-valor highlight" id="val-asist">—</span>
-        </div>
-        <div class="fila">
-          <span class="fila-label">Total Faltas</span>
-          <span class="fila-valor" id="val-faltas">—</span>
-        </div>
-        <div class="fila" style="flex-direction: column; align-items: stretch;">
-          <span class="fila-label">% Asistencia</span>
-          <div class="progress-container">
-            <div class="pct-bar-bg">
-              <div class="pct-bar-fill" id="pct-bar" style="width: 0%"></div>
-            </div>
-            <div class="pct-label">
-              <span id="pct-texto">0%</span>
-              <span id="pct-total">de 0 entrenamientos</span>
-            </div>
-          </div>
-        </div>
-      </div>
+<!-- MODAL DETALLE -->
+<div class="modal-overlay" id="modalDetalle">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modalNombre">—</h3>
+      <button class="modal-close" onclick="cerrarModal()">&times;</button>
     </div>
-
-    <!-- CUOTAS CLUB -->
-    <div class="seccion">
-      <div class="seccion-header cuotas">
-        <span>💳</span> Cuotas del Club
-      </div>
-      <div class="seccion-body">
-        <div class="fila">
-          <span class="fila-label">Cuota 1</span>
-          <span id="val-c1">—</span>
-        </div>
-        <div class="fila">
-          <span class="fila-label">Cuota 2</span>
-          <span id="val-c2">—</span>
-        </div>
-      </div>
+    <div class="modal-body" id="modalBody">
+      <!-- Se carga dinámico -->
     </div>
-
-    <!-- CUOTAS UNIÓN -->
-    <div class="seccion">
-      <div class="seccion-header cuotas-union">
-        <span>🏛️</span> Cuotas Unión
-      </div>
-      <div class="seccion-body">
-        <div class="fila">
-          <span class="fila-label">Meses pagados</span>
-          <span class="fila-valor" id="val-u-pag">—</span>
-        </div>
-        <div class="fila">
-          <span class="fila-label">Meses pendientes</span>
-          <span class="fila-valor" id="val-u-pend">—</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- TERCER TIEMPO -->
-    <div class="seccion">
-      <div class="seccion-header tercer">
-        <span>🍽️</span> Tercer Tiempo
-      </div>
-      <div class="seccion-body">
-        <div class="fila">
-          <span class="fila-label">Meses presente</span>
-          <span class="fila-valor highlight" id="val-tt-pres">—</span>
-        </div>
-        <div class="fila">
-          <span class="fila-label">Meses ausente</span>
-          <span class="fila-valor" id="val-tt-aus">—</span>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <div class="empty" id="empty">
-    <div class="empty-icon">🏉</div>
-    <h3>Buscá un jugador</h3>
-    <p>Ingresá el DNI o el nombre completo para ver su información</p>
   </div>
 </div>
 
 <script>
-var API_URL = "https://script.google.com/macros/s/AKfycbx3ZsQIAYfNrLP7Uun6_fsA7nbp_zHJBl4kJDgZ94oNYHCZWtnIX4ETZ8T_mkFQtM4K/exec";
-
-function esBool(v) {
-  if (!v) return false;
-  var s = v.toString().toUpperCase().trim();
-  return s === "TRUE" || s === "VERDADERO" || s === "1";
-}
-
-function guardarCambio(hoja, dni, col, valor) {
-  fetch(API_URL, {
-    method: "POST",
-    body: JSON.stringify({
-      hoja,
-      dni,
-      col,
-      valor: valor ? "1" : "0"
-    })
-  })
-  .then(r => r.json())
-  .then(res => console.log("OK:", res))
-  .catch(err => console.error(err));
-}
-
-/* =========================
-   RENDER CHECKS ASISTENCIA (MEJORADO)
-========================= */
-
-function renderChecksAsistencia(cols, dni) {
-  const total = cols.length;
-  const asist = cols.filter(esBool).length;
-  const faltas = total - asist;
-  const pct = total > 0 ? Math.round((asist / total) * 100) : 0;
-
-  document.getElementById("val-asist").textContent = asist;
-  document.getElementById("val-faltas").textContent = faltas;
-  document.getElementById("pct-bar").style.width = pct + "%";
-  document.getElementById("pct-texto").textContent = pct + "%";
-  document.getElementById("pct-total").textContent = "de " + total + " entrenos";
-
-  let html = `
-    <div style="display:flex;overflow-x:auto;gap:14px;padding:12px 4px;">
-  `;
-
-  for (let i = 0; i < cols.length; i += 3) {
-    let semana = cols.slice(i, i + 3);
-    let asistSem = semana.filter(esBool).length;
-
-    let estado = "", clase = "";
-    if (asistSem === 3) {
-      estado = "COMPLETO";
-      clase = "completo";
-    } else if (asistSem > 0) {
-      estado = "INCOMPLETO";
-      clase = "incompleto";
-    } else {
-      estado = "FALTA";
-      clase = "falta";
-    }
-
-    html += `
-      <div class="semana-card">
-        <div class="semana-header">Semana ${Math.floor(i/3)+1}</div>
-        <div class="semana-checks">
-          ${semana.map((val, j) => {
-            let idx = i + j;
-            return `
-              <input type="checkbox"
-                ${esBool(val) ? "checked" : ""}
-                onchange="guardarCambio('asist','${dni}',${idx+2},this.checked ? '1' : '0')">
-            `;
-          }).join("")}
-        </div>
-        <div class="semana-estado ${clase}">${estado}</div>
-      </div>
-    `;
-  }
-
-  html += "</div>";
-  return html;
-}
-
-function renderChecksSimple(cols, dni, hoja) {
-  let html = '<div class="checks-container">';
-  
-  for (let i = 0; i < cols.length; i++) {
-    let checked = esBool(cols[i]);
-    html += `
-      <label class="check-item ${checked ? 'checked' : ''}">
-        <input type="checkbox"
-          ${checked ? "checked" : ""}
-          onchange="guardarCambio('${hoja}','${dni}',${i+2},this.checked)">
-        M${i+1}
-      </label>
-    `;
-  }
-  
-  html += "</div>";
-  return html;
-}
-
-function renderCuotasClub(fila, dni) {
-  if (!fila) return "—";
-  
-  return `
-    <div class="checks-container">
-      <label class="check-item ${esBool(fila[2]) ? 'checked' : ''}">
-        <input type="checkbox" ${esBool(fila[2]) ? "checked" : ""}
-          onchange="guardarCambio('club','${dni}',2,this.checked)">
-        Cuota 1
-      </label>
-      <label class="check-item ${esBool(fila[3]) ? 'checked' : ''}">
-        <input type="checkbox" ${esBool(fila[3]) ? "checked" : ""}
-          onchange="guardarCambio('club','${dni}',3,this.checked)">
-        Cuota 2
-      </label>
-    </div>
-  `;
-}
-
-/* =========================
-   GOOGLE SHEETS CONFIG
-========================= */
-
+// ===== CONFIGURACIÓN =====
 var SHEET_ID = "1DSLMUY658O0-liB7bpv0g8VFTpGiv3nNNgDXc2X97VM";
-var GID_ASIST = "347341918";
-var GID_CLUB = "162977848";
-var GID_UNION = "1658884378";
-var GID_TT = "1159874602";
+
+// GIDs de las hojas
+var HOJAS = {
+  asist: { gid: "347341918", nombre: "Asistencia" },
+  club: { gid: "162977848", nombre: "Cuotas Club" },
+  union: { gid: "1658884378", nombre: "Cuotas Unión" },
+  tt: { gid: "1159874602", nombre: "Tercer Tiempo" }
+};
+
+var hojaActiva = "todos";
+var filtroActivo = "todos";
+var datosTodos = [];
+var datosFiltrados = [];
 
 function csvURL(gid) {
   return `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${gid}`;
 }
 
 function fetchCSV(gid) {
-  return fetch(csvURL(gid)).then(r => r.text()).then(parseCSV);
+  return fetch(csvURL(gid)).then(r => r.text()).then(txt => txt.split("\n").map(l => l.split(",")));
 }
 
-function parseCSV(txt) {
-  return txt.split("\n").map(l => l.split(","));
+function esBool(v) {
+  if (!v) return false;
+  return ["TRUE", "VERDADERO", "1"].includes(v.toString().toUpperCase().trim());
 }
 
 function norm(s) {
   return (s || "").toString().toUpperCase().trim();
 }
 
-function buscar() {
-  var q = document.getElementById("busqueda").value.trim();
-  if (!q) return;
-
-  // Mostrar loading
+// ===== CARGAR TODOS LOS DATOS =====
+async function cargarDatos() {
   var estado = document.getElementById("estado");
   estado.className = "estado loading";
-  estado.innerHTML = '<div class="spinner"></div> Buscando jugador...';
+  estado.innerHTML = '<div class="spinner"></div> Cargando datos...';
 
-  Promise.all([
-    fetchCSV(GID_ASIST),
-    fetchCSV(GID_CLUB),
-    fetchCSV(GID_UNION),
-    fetchCSV(GID_TT)
-  ]).then(res => {
-    estado.className = "estado";
+  try {
+    var resultados = await Promise.all([
+      fetchCSV(HOJAS.asist.gid),
+      fetchCSV(HOJAS.club.gid),
+      fetchCSV(HOJAS.union.gid),
+      fetchCSV(HOJAS.tt.gid)
+    ]);
+
+    var asist = resultados[0].slice(1);
+    var club = resultados[1].slice(1);
+    var union = resultados[2].slice(1);
+    var tt = resultados[3].slice(1);
+
+    // Crear mapa de datos por DNI
+    datosTodos = [];
+
+    asist.forEach(fila => {
+      var dni = norm(fila[0]);
+      if (!dni) return;
+
+      var filaC = club.find(f => norm(f[0]) === dni);
+      var filaU = union.find(f => norm(f[0]) === dni);
+      var filaTT = tt.find(f => norm(f[0]) === dni);
+
+      // Calcular asistencia
+      var colsAsist = fila.slice(2);
+      var cantAsist = colsAsist.filter(esBool).length;
+      var cantFaltas = colsAsist.length - cantAsist;
+      var pctAsist = colsAsist.length > 0 ? Math.round((cantAsist / colsAsist.length) * 100) : 0;
+
+      // Cuotas club
+      var cuotasClub = 0;
+      if (filaC) {
+        cuotasClub = (esBool(filaC[2]) ? 1 : 0) + (esBool(filaC[3]) ? 1 : 0);
+      }
+
+      // Unión
+      var colsUnion = filaU ? filaU.slice(2, 14) : [];
+      var unionPag = colsUnion.filter(esBool).length;
+      var unionPend = colsUnion.length - unionPag;
+
+      // Tercer tiempo
+      var colsTT = filaTT ? filaTT.slice(2, 14) : [];
+      var ttPres = colsTT.filter(esBool).length;
+      var ttAus = colsTT.length - ttPres;
+
+      datosTodos.push({
+        dni: dni,
+        nombre: fila[1] || "",
+        colsAsist: colsAsist,
+        cantAsist: cantAsist,
+        cantFaltas: cantFaltas,
+        pctAsist: pctAsist,
+        cuotasClub: cuotasClub,
+        colsUnion: colsUnion,
+        unionPag: unionPag,
+        unionPend: unionPend,
+        colsTT: colsTT,
+        ttPres: ttPres,
+        ttAus: ttAus
+      });
+    });
+
+    datosFiltrados = [...datosTodos];
+    renderizarTabla();
+    actualizarContadores();
+    
+    estado.innerHTML = "";
     estado.style.display = "none";
 
-    var asist = res[0].slice(1);
-    var club = res[1].slice(1);
-    var union = res[2].slice(1);
-    var tt = res[3].slice(1);
-
-    var filaA = asist.find(r => norm(r[0]) === norm(q) || norm(r[1]) === norm(q));
-
-    if (!filaA) {
-      estado.className = "estado error";
-      estado.innerHTML = '<span>⚠️</span> Jugador no encontrado';
-      estado.style.display = "flex";
-      setTimeout(() => estado.style.display = "none", 3000);
-      return;
-    }
-
-    var dni = filaA[0];
-    var nombre = filaA[1];
-    var inicial = nombre.charAt(0);
-
-    var filaC = club.find(r => norm(r[0]) === norm(dni));
-    var filaU = union.find(r => norm(r[0]) === norm(dni));
-    var filaTT = tt.find(r => norm(r[0]) === norm(dni));
-
-    var colsA = filaA.slice(2);
-    var colsU = filaU ? filaU.slice(2, 14) : [];
-    var colsTT = filaTT ? filaTT.slice(2, 14) : [];
-
-    // PERFIL
-    document.getElementById("nombre-display").textContent = nombre;
-    document.getElementById("dni-display").textContent = "DNI: " + dni;
-    document.getElementById("avatar").textContent = inicial;
-    document.getElementById("perfil").className = "perfil-card visible";
-
-    // ASISTENCIA
-    document.getElementById("val-asist").innerHTML = renderChecksAsistencia(colsA, dni);
-
-    // CUOTAS CLUB
-    document.getElementById("val-c1").innerHTML = renderCuotasClub(filaC, dni);
-    document.getElementById("val-c2").innerHTML = "";
-
-    // UNION
-    document.getElementById("val-u-pag").innerHTML = renderChecksSimple(colsU, dni, "union");
-    document.getElementById("val-u-pend").innerHTML = colsU.filter(esBool).length + " pagados";
-
-    // TERCER TIEMPO
-    document.getElementById("val-tt-pres").innerHTML = colsTT.filter(esBool).length;
-    document.getElementById("val-tt-aus").innerHTML = colsTT.filter(v => !esBool(v)).length;
-
-    // Mostrar grid
-    document.getElementById("grid").className = "grid visible";
-
-  }).catch(err => {
+  } catch(err) {
     console.error(err);
     estado.className = "estado error";
-    estado.innerHTML = '<span>⚠️</span> Error al buscar. Intentalo de nuevo.';
-  });
+    estado.innerHTML = '<span>⚠️</span> Error al cargar datos';
+  }
 }
 
-// Buscar con Enter
-document.getElementById("busqueda").addEventListener("keypress", function(e) {
-  if (e.key === "Enter") buscar();
+function actualizarContadores() {
+  var total = datosTodos.length;
+  var asistProm = datosTodos.reduce((s, j) => s + j.pctAsist, 0) / total || 0;
+  var cuotasOK = datosTodos.filter(j => j.cuotasClub >= 2).length;
+
+  document.getElementById("totalJugadores").textContent = total;
+  document.getElementById("totalAsistencias").textContent = Math.round(asistProm) + "%";
+  document.getElementById("totalCuotas").textContent = cuotasOK;
+
+  document.getElementById("countTodos").textContent = total;
+  document.getElementById("countAsist").textContent = datosTodos.filter(j => j.cantFaltas === 0).length;
+  document.getElementById("countClub").textContent = cuotasOK;
+  document.getElementById("countUnion").textContent = datosTodos.filter(j => j.unionPend === 0).length;
+  document.getElementById("countTT").textContent = datosTodos.filter(j => j.ttAus === 0).length;
+}
+
+function renderizarTabla() {
+  var container = document.getElementById("tablaContainer");
+  var busqueda = document.getElementById("busqueda").value.toLowerCase();
+
+  var filtrados = datosFiltrados.filter(j => {
+    if (busqueda && !j.nombre.toLowerCase().includes(busqueda) && !j.dni.includes(busqueda)) {
+      return false;
+    }
+    return true;
+  });
+
+  if (filtrados.length === 0) {
+    container.innerHTML = '<div class="loading-placeholder"><p>No hay jugadores</p></div>';
+    return;
+  }
+
+  var html = `
+    <div class="tabla-header">
+      <div></div>
+      <div>Jugador</div>
+      <div>Asistencia</div>
+      <div>Club</div>
+      <div>Unión</div>
+      <div>3er Tiempo</div>
+      <div></div>
+    </div>
+    <div class="tabla-body">
+  `;
+
+  filtrados.forEach(j => {
+    var inicial = j.nombre.charAt(0) || "?";
+    var nombreCorto = j.nombre.length > 25 ? j.nombre.substring(0, 25) + "..." : j.nombre;
+
+    html += `
+      <div class="jugador-row" onclick="verDetalle('${j.dni}')">
+        <div class="jugador-avatar">${inicial}</div>
+        <div>
+          <div class="jugador-nombre">${nombreCorto}</div>
+          <div class="jugador-dni">${j.dni}</div>
+        </div>
+        <div>
+          <span class="badge ${j.cantFaltas === 0 ? 'asist' : (j.cantFaltas > 3 ? 'falta' : 'asist')}">
+            ${j.pctAsist}%
+          </span>
+        </div>
+        <div>
+          <span class="badge ${j.cuotasClub >= 2 ? 'ok' : (j.cuotasClub > 0 ? 'pagado' : 'pendiente')}">
+            ${j.cuotasClub}/2
+          </span>
+        </div>
+        <div>
+          <span class="badge ${j.unionPend === 0 ? 'ok' : 'pendiente'}">
+            ${j.unionPag}/12
+          </span>
+        </div>
+        <div>
+          <span class="badge ${j.ttAus === 0 ? 'present' : 'absent'}">
+            ${j.ttPres}/${j.colsTT.length || 12}
+          </span>
+        </div>
+        <div>
+          <button class="btn btn-sm" onclick="event.stopPropagation(); verDetalle('${j.dni}')">Ver</button>
+        </div>
+      </div>
+    `;
+  });
+
+  html += "</div>";
+  container.innerHTML = html;
+}
+
+function verDetalle(dni) {
+  var jugador = datosTodos.find(j => j.dni === dni);
+  if (!jugador) return;
+
+  var modal = document.getElementById("modalDetalle");
+  var body = document.getElementById("modalBody");
+
+  document.getElementById("modalNombre").textContent = jugador.nombre;
+
+  body.innerHTML = `
+    <div class="detalle-section">
+      <div class="detalle-titulo">Datos Personales</div>
+      <div class="detalle-grid">
+        <div class="detalle-item">
+          <div class="valor">${jugador.dni}</div>
+          <div class="label">DNI</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="detalle-section">
+      <div class="detalle-titulo">🏉 Asistencia (${jugador.colsAsist.length} entrenamientos)</div>
+      <div class="detalle-grid">
+        <div class="detalle-item">
+          <div class="valor" style="color: var(--accent)">${jugador.cantAsist}</div>
+          <div class="label">Presentes</div>
+        </div>
+        <div class="detalle-item">
+          <div class="valor" style="color: #fca5a5">${jugador.cantFaltas}</div>
+          <div class="label">Faltas</div>
+        </div>
+        <div class="detalle-item">
+          <div class="valor">${jugador.pctAsist}%</div>
+          <div class="label">% Asistencia</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="detalle-section">
+      <div class="detalle-titulo">💳 Cuotas Club</div>
+      <div class="detalle-grid">
+        <div class="detalle-item">
+          <div class="valor">Cuota 1</div>
+          <div class="label">${jugador.cuotasClub >= 1 ? '✓ Pagada' : '✗ Pendiente'}</div>
+        </div>
+        <div class="detalle-item">
+          <div class="valor">Cuota 2</div>
+          <div class="label">${jugador.cuotasClub >= 2 ? '✓ Pagada' : '✗ Pendiente'}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="detalle-section">
+      <div class="detalle-titulo">🏛️ Cuotas Unión (12 meses)</div>
+      <div class="detalle-grid">
+        <div class="detalle-item">
+          <div class="valor" style="color: var(--accent)">${jugador.unionPag}</div>
+          <div class="label">Pagados</div>
+        </div>
+        <div class="detalle-item">
+          <div class="valor" style="color: #fca5a5">${jugador.unionPend}</div>
+          <div class="label">Pendientes</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="detalle-section">
+      <div class="detalle-titulo">🍽️ Tercer Tiempo</div>
+      <div class="detalle-grid">
+        <div class="detalle-item">
+          <div class="valor" style="color: var(--accent)">${jugador.ttPres}</div>
+          <div class="label">Presentes</div>
+        </div>
+        <div class="detalle-item">
+          <div class="valor" style="color: #fca5a5">${jugador.ttAus}</div>
+          <div class="label">Ausentes</div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  modal.classList.add("visible");
+}
+
+function cerrarModal() {
+  document.getElementById("modalDetalle").classList.remove("visible");
+}
+
+// ===== EVENTOS =====
+document.getElementById("menuTabs").addEventListener("click", function(e) {
+  var tab = e.target.closest(".menu-tab");
+  if (!tab) return;
+
+  document.querySelectorAll(".menu-tab").forEach(t => t.classList.remove("active"));
+  tab.classList.add("active");
+
+  var hoja = tab.dataset.hoja;
+  hojaActiva = hoja;
+
+  if (hoja === "todos") {
+    datosFiltrados = [...datosTodos];
+  } else {
+    datosFiltrados = datosTodos.filter(j => {
+      if (hoja === "asist") return j.cantFaltas === 0;
+      if (hoja === "club") return j.cuotasClub >= 2;
+      if (hoja === "union") return j.unionPend === 0;
+      if (hoja === "tt") return j.ttAus === 0;
+      return true;
+    });
+  }
+
+  renderizarTabla();
 });
+
+document.getElementById("filterBadges").addEventListener("click", function(e) {
+  var badge = e.target.closest(".filter-badge");
+  if (!badge) return;
+
+  document.querySelectorAll(".filter-badge").forEach(b => b.classList.remove("active"));
+  badge.classList.add("active");
+
+  var filtro = badge.dataset.filter;
+  filtroActivo = filtro;
+
+  if (filtro === "todos") {
+    datosFiltrados = [...datosTodos];
+  } else if (filtro === "asist-ok") {
+    datosFiltrados = datosTodos.filter(j => j.cantFaltas === 0);
+  } else if (filtro === "asist-bad") {
+    datosFiltrados = datosTodos.filter(j => j.cantFaltas > 3);
+  } else if (filtro === "cuotas-ok") {
+    datosFiltrados = datosTodos.filter(j => j.cuotasClub >= 2);
+  } else if (filtro === "cuotas-pend") {
+    datosFiltrados = datosTodos.filter(j => j.cuotasClub < 2);
+  }
+
+  renderizarTabla();
+});
+
+document.getElementById("busqueda").addEventListener("input", renderizarTabla);
+
+document.getElementById("modalDetalle").addEventListener("click", function(e) {
+  if (e.target === this) cerrarModal();
+});
+
+// Iniciar
+cargarDatos();
 </script>
 
 </body>
