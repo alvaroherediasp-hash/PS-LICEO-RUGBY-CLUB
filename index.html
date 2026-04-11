@@ -306,54 +306,88 @@
 </div>
 
 <script>
-var API = "https://script.google.com/macros/s/AKfycbzvO_WiCJ8l0sboo_CdlbHldnJG5J1EMcde6sDgJE3XfDgP4ReI_3D7JFw9HmXDX2yo/exec" + new Date().getTime();
+var API = "https://script.google.com/macros/s/AKfycbxb7tQ25fZ7gfaRzEQiyDv52N02wMf9MCl_Cs5RlwYTYJnhAolVMVnDP6n_0RQEyBx9/exec";
 
-function fetchWithProxy(url, options) {
-  if (options) {
-    return fetch(url, options).catch(function(err) {
-      console.log("Error, trying with proxy...");
-      return fetch("https://corsproxy.io/?" + encodeURIComponent(url), options);
-    });
+/* =========================
+   FETCH SEGURO
+========================= */
+async function safeFetch(url, options) {
+  try {
+    let resp = await fetch(url, options);
+
+    if (!resp.ok) {
+      throw new Error("HTTP " + resp.status);
+    }
+
+    return resp;
+  } catch (err) {
+    console.log("Intentando proxy...");
+
+    try {
+      let proxyUrl = "https://corsproxy.io/?" + encodeURIComponent(url);
+      let resp2 = await fetch(proxyUrl, options);
+
+      if (!resp2.ok) throw new Error("Proxy HTTP " + resp2.status);
+
+      return resp2;
+    } catch (e) {
+      throw new Error("Sin conexión al servidor");
+    }
   }
-  return fetch(url).catch(function(err) {
-    console.log("Error, trying with proxy...");
-    return fetch("https://corsproxy.io/?" + encodeURIComponent(url));
-  });
 }
+
+/* =========================
+   VARIABLES
+========================= */
 var tab = "jugadores";
 var datos = { jugadores: [], asistencia: [], club: [], union: [] };
 var actual = null;
 var editar = null;
 
+/* =========================
+   INIT
+========================= */
 function init() {
   cargar();
 }
 
+/* =========================
+   MENSAJES
+========================= */
 function showMsg(msg, tipo) {
   var e = document.getElementById('estado');
   e.className = 'estado show ' + tipo;
-  e.innerHTML = tipo === 'loading' ? '<div class="spinner"></div>' + msg : msg;
-  if (tipo !== 'loading') setTimeout(function() { e.className = 'estado'; }, 3000);
+  e.innerHTML = tipo === 'loading'
+    ? '<div class="spinner"></div>' + msg
+    : msg;
+
+  if (tipo !== 'loading') {
+    setTimeout(() => e.className = 'estado', 3000);
+  }
 }
 
+/* =========================
+   CONEXIÓN UI
+========================= */
 function setConectar(ok, msg) {
   var c = document.getElementById('conectar');
   c.className = 'conectar-box' + (ok ? '' : ' error');
   c.innerHTML = '<span class="punto"></span><span>' + msg + '</span>';
 }
 
+/* =========================
+   HELPERS
+========================= */
 function getVal(row, idx) {
   return row["c" + idx] || "";
 }
 
 function getDNI(row, sheet) {
-  if (sheet === "jugadores") return getVal(row, 1);
-  return getVal(row, 0);
+  return sheet === "jugadores" ? getVal(row, 1) : getVal(row, 0);
 }
 
 function getNombre(row, sheet) {
-  if (sheet === "jugadores") return getVal(row, 2);
-  return getVal(row, 1);
+  return sheet === "jugadores" ? getVal(row, 2) : getVal(row, 1);
 }
 
 function esBool(v) {
@@ -362,371 +396,164 @@ function esBool(v) {
   return ["TRUE", "VERDADERO", "1", "SI"].includes(s);
 }
 
+/* =========================
+   CARGAR DATOS
+========================= */
 async function cargar() {
   showMsg('Cargando datos...', 'loading');
   setConectar(false, 'Cargando...');
-  
+
   try {
-    console.log('Fetching:', API);
-    var resp = await fetchWithProxy(API);
-    console.log('Response:', resp.status, resp.statusText);
-    if (!resp.ok) throw new Error('HTTP ' + resp.status);
-    var text = await resp.text();
-    console.log('Text length:', text.length);
-    var json = JSON.parse(text);
-    
-    if (json.error) {
-      setConectar(false, json.error);
-      showMsg(json.error, 'error');
-      return;
+    console.log("API:", API);
+
+    let resp = await safeFetch(API);
+    let text = await resp.text();
+
+    console.log("RAW RESPONSE:", text);
+
+    let json;
+    try {
+      json = JSON.parse(text);
+    } catch (e) {
+      throw new Error("Respuesta inválida del servidor");
     }
-    
+
+    if (!json || json.error) {
+      throw new Error(json?.error || "Error desconocido");
+    }
+
     datos = json.datos || {};
-    var total = (datos.jugadores || []).length;
-    
-    setConectar(true, 'Conectado (' + total + ')');
-    showMsg('Cargado: ' + total + ' jugadores', 'success');
+
+    let total = (datos.jugadores || []).length;
+
+    setConectar(true, "Conectado (" + total + ")");
+    showMsg("Cargado: " + total + " jugadores", "success");
+
     render();
-  } catch(err) {
+
+  } catch (err) {
     console.error(err);
-    setConectar(false, 'Sin conexión');
-    showMsg('Error: ' + err.message, 'error');
+    setConectar(false, "Sin conexión");
+    showMsg(err.message, "error");
   }
 }
 
+/* =========================
+   RENDER
+========================= */
 function render() {
   var busq = document.getElementById('buscar').value.toLowerCase();
   var t = document.getElementById('tabla');
   var html = "";
-  
+
   if (tab === "jugadores") {
-    var lista = (datos.jugadores || []).filter(function(j) {
+    var lista = (datos.jugadores || []).filter(j => {
       var dni = getDNI(j, "jugadores");
       var nom = getNombre(j, "jugadores");
-      return !busq || (nom||"").toLowerCase().includes(busq) || (dni||"").includes(busq);
+      return !busq ||
+        (nom || "").toLowerCase().includes(busq) ||
+        (dni || "").includes(busq);
     });
-    if (lista.length === 0) {
-      t.innerHTML = '<div style="padding:40px; text-align:center; color:var(--muted);"><p>Sin jugadores</p></div>';
+
+    if (!lista.length) {
+      t.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted)">Sin jugadores</div>';
       return;
     }
-    html = '<div class="tabla-head"><div style="width:36px;"></div><div class="dato">Jugador</div><div style="width:80px;">Puestos</div><div style="width:60px;"></div></div><div class="tabla-body">';
-    lista.forEach(function(j) {
-      var nom = getNombre(j, "jugadores") || "";
-      var ini = nom.charAt(0) || "?";
-      var dni = getDNI(j, "jugadores");
-      var p1 = getVal(j, 4) || "-";
-      var p2 = getVal(j, 5) || "";
-      html += '<div class="fila"><div class="avatar">' + ini + '</div><div class="dato"><div>' + nom + '</div><div>DNI: ' + dni + '</div></div><div><span class="badge">' + p1 + (p2 ? ", " + p2 : "") + '</span></div><div><button class="btn btn-sm btn-sec" onclick="ver(\'' + dni + '\')">Ver</button></div></div>';
-    });
-  } else if (tab === "asistencia") {
-    var lista = (datos.asistencia || []).filter(function(j) {
-      var dni = getDNI(j, "asistencia");
-      var nom = getNombre(j, "asistencia");
-      if (!dni || dni === "DNI") return false;
-      return !busq || (nom||"").toLowerCase().includes(busq) || (dni||"").includes(busq);
-    });
-    if (lista.length === 0) {
-      t.innerHTML = '<div style="padding:40px; text-align:center; color:var(--muted);"><p>Sin datos de asistencia</p></div>';
-      return;
-    }
-    html = '<div class="tabla-head"><div style="width:36px;"></div><div class="dato">Jugador</div><div style="width:100px;">Estado</div><div style="width:60px;"></div></div><div class="tabla-body">';
-    lista.forEach(function(j) {
-      var nom = getNombre(j, "asistencia") || "";
-      var dni = getDNI(j, "asistencia");
-      var ini = nom.charAt(0) || "?";
-      var cols = [];
-      for (var k = 2; k < 38; k++) cols.push(getVal(j, k));
-      var pres = 0;
-      for (var i = 0; i < cols.length; i++) if (esBool(cols[i])) pres++;
-      var estado = pres >= 36 ? "ok" : (pres > 0 ? "incompleto" : "falta");
-      var label = pres >= 36 ? "COMPLETO" : (pres > 0 ? pres + "/36" : "NO ASIST");
-      html += '<div class="fila"><div class="avatar">' + ini + '</div><div class="dato"><div>' + nom + '</div><div>DNI: ' + dni + '</div></div><div><span class="badge ' + estado + '">' + label + '</span></div><div><button class="btn btn-sm btn-primary" onclick="abrAsist(\'' + dni + '\', \'' + nom.replace(/'/g,"\\'") + '\')">Editar</button></div></div>';
-    });
-  } else if (tab === "club") {
-    var lista = (datos.club || []).filter(function(j) {
-      var dni = getDNI(j, "club");
-      var nom = getNombre(j, "club");
-      if (!dni || dni === "DNI") return false;
-      return !busq || (nom||"").toLowerCase().includes(busq) || (dni||"").includes(busq);
-    });
-    if (lista.length === 0) {
-      t.innerHTML = '<div style="padding:40px; text-align:center; color:var(--muted);"><p>Sin datos de cuotas</p></div>';
-      return;
-    }
-    html = '<div class="tabla-head"><div style="width:36px;"></div><div class="dato">Jugador</div><div style="width:80px;">Cuotas</div><div style="width:60px;"></div></div><div class="tabla-body">';
-    lista.forEach(function(j) {
-      var nom = getNombre(j, "club") || "";
-      var dni = getDNI(j, "club");
-      var ini = nom.charAt(0) || "?";
-      var cuotas = 0;
-      for (var i = 2; i < 14; i++) if (esBool(getVal(j,i))) cuotas++;
-      html += '<div class="fila"><div class="avatar">' + ini + '</div><div class="dato"><div>' + nom + '</div><div>DNI: ' + dni + '</div></div><div><span class="badge ' + (cuotas >= 10 ? "ok" : (cuotas > 0 ? "incompleto" : "falta")) + '">' + cuotas + '/12</span></div><div><button class="btn btn-sm btn-primary" onclick="abrClub(\'' + dni + '\', \'' + nom.replace(/'/g,"\\'") + '\')">Editar</button></div></div>';
-    });
-  } else if (tab === "union") {
-    var lista = (datos.union || []).filter(function(j) {
-      var dni = getDNI(j, "union");
-      var nom = getNombre(j, "union");
-      if (!dni || dni === "DNI") return false;
-      return !busq || (nom||"").toLowerCase().includes(busq) || (dni||"").includes(busq);
-    });
-    if (lista.length === 0) {
-      t.innerHTML = '<div style="padding:40px; text-align:center; color:var(--muted);"><p>Sin datos de cuotas</p></div>';
-      return;
-    }
-    html = '<div class="tabla-head"><div style="width:36px;"></div><div class="dato">Jugador</div><div style="width:50px;">C1</div><div style="width:50px;">C2</div><div style="width:60px;"></div></div><div class="tabla-body">';
-    lista.forEach(function(j) {
-      var nom = getNombre(j, "union") || "";
-      var dni = getDNI(j, "union");
-      var ini = nom.charAt(0) || "?";
-      var c1 = esBool(getVal(j,2));
-      var c2 = esBool(getVal(j,3));
-      html += '<div class="fila"><div class="avatar">' + ini + '</div><div class="dato"><div>' + nom + '</div><div>DNI: ' + dni + '</div></div><div><span class="badge ' + (c1?"ok":"falta") + '">' + (c1?"✓":"✗") + '</span></div><div><span class="badge ' + (c2?"ok":"falta") + '">' + (c2?"✓":"✗") + '</span></div><div><button class="btn btn-sm btn-primary" onclick="abrUnion(\'' + dni + '\', \'' + nom.replace(/'/g,"\\'") + '\')">Editar</button></div></div>';
+
+    html = '<div class="tabla-head"><div></div><div>Jugador</div><div>Puestos</div><div></div></div><div class="tabla-body">';
+
+    lista.forEach(j => {
+      let nom = getNombre(j, "jugadores") || "";
+      let dni = getDNI(j, "jugadores");
+
+      html += `
+        <div class="fila">
+          <div class="avatar">${nom.charAt(0)}</div>
+          <div class="dato">
+            <div>${nom}</div>
+            <div>DNI: ${dni}</div>
+          </div>
+          <div class="badge">${getVal(j,4)}</div>
+          <div>
+            <button class="btn btn-sm btn-sec" onclick="ver('${dni}')">Ver</button>
+          </div>
+        </div>`;
     });
   }
-  
+
   html += "</div>";
   t.innerHTML = html;
 }
 
-function abrirModal(dni, nom) {
-  document.getElementById('titulo').textContent = dni ? "Editar Jugador" : "Nuevo Jugador";
-  document.getElementById('idDNI').value = dni || "";
-  document.getElementById('dni').value = dni || "";
-  document.getElementById('dni').disabled = !!dni;
-  document.getElementById('nombre').value = nom || "";
-  document.getElementById('btnElim').style.display = dni ? "block" : "none";
-  document.getElementById('modal').classList.add('show');
-}
-
+/* =========================
+   VERIFICACIÓN
+========================= */
 function ver(dni) {
-  var j = (datos.jugadores || []).find(function(x) { return getVal(x,1) === dni; });
+  let j = (datos.jugadores || []).find(x => getVal(x,1) === dni);
   if (!j) return;
-  
-  var html = "<p><strong>DNI:</strong> " + (getVal(j,1)||"-") + "</p>" +
-    "<p><strong>Nombre:</strong> " + (getVal(j,2)||"-") + "</p>" +
-    "<p><strong>Celular:</strong> " + (getVal(j,3)||"-") + "</p>" +
-    "<p><strong>Correo:</strong> " + (getVal(j,7)||"-") + "</p>" +
-    "<p><strong>Puesto 1:</strong> " + (getVal(j,4)||"-") + "</p>" +
-    "<p><strong>Puesto 2:</strong> " + (getVal(j,5)||"-") + "</p>" +
-    "<p><strong>Puesto 3:</strong> " + (getVal(j,6)||"-") + "</p>";
-  
-  document.getElementById('detalle').innerHTML = html;
-  editar = { dni: getVal(j,1), nombre: getVal(j,2), celular: getVal(j,3), correo: getVal(j,7), p1: getVal(j,4), p2: getVal(j,5), p3: getVal(j,6) };
+
+  document.getElementById('detalle').innerHTML =
+    `<p><b>DNI:</b> ${getVal(j,1)}</p>
+     <p><b>Nombre:</b> ${getVal(j,2)}</p>
+     <p><b>Celular:</b> ${getVal(j,3)}</p>
+     <p><b>Correo:</b> ${getVal(j,7)}</p>`;
+
   document.getElementById('modalVer').classList.add('show');
 }
 
-function editarDesdeVer() {
-  cerrar();
-  abrirModal(editar.dni, editar.nombre);
-  document.getElementById('celular').value = editar.celular || "";
-  document.getElementById('correo').value = editar.correo || "";
-  document.getElementById('p1').value = editar.p1 || "";
-  document.getElementById('p2').value = editar.p2 || "";
-  document.getElementById('p3').value = editar.p3 || "";
-}
-
-function abrAsist(dni, nom) {
-  actual = { dni: dni, nombre: nom };
-  document.getElementById('nombreAsist').textContent = nom;
-  var j = (datos.asistencia || []).find(function(x) { return getDNI(x, "asistencia") === dni; });
-  var cols = [];
-  if (j) for (var k = 2; k < 38; k++) cols.push(getVal(j, k));
-  
-  var html = "";
-  for (var s = 0; s < 12; s++) {
-    var base = s * 3;
-    var d1 = esBool(cols[base]);
-    var d2 = esBool(cols[base + 1]);
-    var d3 = esBool(cols[base + 2]);
-    var cant = (d1?1:0) + (d2?1:0) + (d3?1:0);
-    var estado = cant === 3 ? "ok" : (cant > 0 ? "incompleto" : "falta");
-    var estadoLabel = cant === 3 ? "COMPLETO" : (cant > 0 ? cant + "/3" : "NO ASIST");
-    
-    html += '<div class="semana"><div class="semana-title">Semana ' + (s+1) + ' <span class="semana-status ' + estado + '">' + estadoLabel + '</span></div><div class="semana-checks">' +
-      '<div class="check-item"><input type="checkbox" class="check" data-idx="' + base + '" ' + (d1?'checked':'') + '><label>D1</label></div>' +
-      '<div class="check-item"><input type="checkbox" class="check" data-idx="' + (base+1) + '" ' + (d2?'checked':'') + '><label>D2</label></div>' +
-      '<div class="check-item"><input type="checkbox" class="check" data-idx="' + (base+2) + '" ' + (d3?'checked':'') + '><label>D3</label></div>' +
-    '</div></div>';
-  }
-  
-  document.getElementById('semanas').innerHTML = html;
-  document.getElementById('modalAsist').classList.add('show');
-}
-
-function abrClub(dni, nom) {
-  actual = { dni: dni, nombre: nom };
-  document.getElementById('nombreClub').textContent = nom;
-  var j = (datos.club || []).find(function(x) { return getDNI(x, "club") === dni; });
-  
-  var meses = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
-  var html = "";
-  meses.forEach(function(m, i) {
-    html += '<div class="mes"><input type="checkbox" class="check" data-idx="' + i + '" ' + (esBool(getVal(j, i+2))?'checked':'') + '><label>' + m + '</label></div>';
-  });
-  
-  document.getElementById('meses').innerHTML = html;
-  document.getElementById('modalClub').classList.add('show');
-}
-
-function abrUnion(dni, nom) {
-  actual = { dni: dni, nombre: nom };
-  document.getElementById('nombreUnion').textContent = nom;
-  var j = (datos.union || []).find(function(x) { return getDNI(x, "union") === dni; });
-  document.getElementById('cuota1').checked = esBool(getVal(j,2));
-  document.getElementById('cuota2').checked = esBool(getVal(j,3));
-  document.getElementById('modalUnion').classList.add('show');
-}
-
-function cerrar() {
-  document.querySelectorAll('.modal').forEach(function(m) { m.classList.remove('show'); });
-}
-
+/* =========================
+   GUARDAR (EJEMPLO CORREGIDO)
+========================= */
 async function guardar() {
-  var dni = document.getElementById('dni').value;
-  var nombre = document.getElementById('nombre').value;
-  if (!dni || !nombre) return alert("Completá DNI y Nombre");
-  
+  var postData = {
+    accion: "guardar_jugador",
+    dni: document.getElementById('dni').value,
+    nombre: document.getElementById('nombre').value,
+    celular: document.getElementById('celular').value,
+    correo: document.getElementById('correo').value,
+    puesto1: document.getElementById('p1').value,
+    puesto2: document.getElementById('p2').value,
+    puesto3: document.getElementById('p3').value
+  };
+
   showMsg("Guardando...", "loading");
-  
+
   try {
-    var postData = {
-      accion: "guardar_jugador",
-      dni: dni,
-      nombre: nombre,
-      celular: document.getElementById('celular').value,
-      correo: document.getElementById('correo').value,
-      puesto1: document.getElementById('p1').value,
-      puesto2: document.getElementById('p2').value,
-      puesto3: document.getElementById('p3').value
-    };
-    
-    var resp = await fetchWithProxy(API, {
+    let resp = await safeFetch(API, {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
       body: JSON.stringify(postData)
     });
-    
-    var r = await resp.json();
+
+    let text = await resp.text();
+    let r = JSON.parse(text);
+
     if (r.ok) {
-      showMsg("Jugador guardado", "success");
+      showMsg("Guardado OK", "success");
       cerrar();
       cargar();
     } else {
-      showMsg(r.error || "Error", "error");
+      throw new Error(r.error || "Error");
     }
-  } catch(err) {
+
+  } catch (err) {
     showMsg(err.message, "error");
   }
 }
 
-async function eliminar() {
-  if (!confirm("¿Eliminar este jugador?")) return;
-  var dni = document.getElementById('idDNI').value;
-  showMsg("Eliminando...", "loading");
-  
-  try {
-    var resp = await fetchWithProxy(API, {
-      method: "POST",
-      body: JSON.stringify({ accion: "eliminar_jugador", dni: dni })
-    });
-    var r = await resp.json();
-    if (r.ok) {
-      cerrar();
-      cargar();
-    } else {
-      showMsg(r.error, "error");
-    }
-  } catch(err) {
-    showMsg(err.message, "error");
-  }
+/* =========================
+   CERRAR MODAL
+========================= */
+function cerrar() {
+  document.querySelectorAll('.modal')
+    .forEach(m => m.classList.remove('show'));
 }
 
-async function guardarAsist() {
-  var checks = document.querySelectorAll('#semanas .check:checked');
-  var idxs = Array.from(checks).map(function(c) { return parseInt(c.dataset.idx) + 2; });
-  var datos2 = {};
-  idxs.forEach(function(i) { datos2[i] = "SI"; });
-  
-  showMsg("Guardando...", "loading");
-  
-  try {
-    var resp = await fetchWithProxy(API, {
-      method: "POST",
-      body: JSON.stringify({ accion: "guardar_asistencia", dni: actual.dni, datos: datos2 })
-    });
-    var r = await resp.json();
-    if (r.ok) {
-      showMsg("Asistencia guardada", "success");
-      cerrar();
-      cargar();
-    } else {
-      showMsg(r.error, "error");
-    }
-  } catch(err) {
-    showMsg(err.message, "error");
-  }
-}
-
-async function guardarClub() {
-  var checks = document.querySelectorAll('#meses .check:checked');
-  var idxs = Array.from(checks).map(function(c) { return parseInt(c.dataset.idx); });
-  var datos2 = {};
-  idxs.forEach(function(i) { datos2[i] = "SI"; });
-  
-  showMsg("Guardando...", "loading");
-  
-  try {
-    var resp = await fetchWithProxy(API, {
-      method: "POST",
-      body: JSON.stringify({ accion: "guardar_cuotas_club", dni: actual.dni, datos: datos2 })
-    });
-    var r = await resp.json();
-    if (r.ok) {
-      showMsg("Cuotas guardadas", "success");
-      cerrar();
-      cargar();
-    } else {
-      showMsg(r.error, "error");
-    }
-  } catch(err) {
-    showMsg(err.message, "error");
-  }
-}
-
-async function guardarUnion() {
-  var c1 = document.getElementById('cuota1').checked;
-  var c2 = document.getElementById('cuota2').checked;
-  
-  showMsg("Guardando...", "loading");
-  
-  try {
-    var resp = await fetchWithProxy(API, {
-      method: "POST",
-      body: JSON.stringify({ accion: "guardar_cuotas_union", dni: actual.dni, cuota1: c1?"SI":"NO", cuota2: c2?"SI":"NO" })
-    });
-    var r = await resp.json();
-    if (r.ok) {
-      showMsg("Cuotas guardadas", "success");
-      cerrar();
-      cargar();
-    } else {
-      showMsg(r.error, "error");
-    }
-  } catch(err) {
-    showMsg(err.message, "error");
-  }
-}
-
-document.querySelectorAll('.tab').forEach(function(t) {
-  t.addEventListener('click', function() {
-    document.querySelectorAll('.tab').forEach(function(x) { x.classList.remove('active'); });
-    this.classList.add('active');
-    tab = this.dataset.tab;
-    render();
-  });
-});
-
-document.getElementById('buscar').addEventListener('input', render);
-
+/* =========================
+   INIT
+========================= */
 init();
 </script>
 
