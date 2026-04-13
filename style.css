@@ -1,48 +1,172 @@
-body {
-  font-family: Arial;
-  background: #f5f7fb;
+
+/* ===== RESET ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: system-ui, Arial;
 }
 
-.card {
-  background: white;
-  padding: 15px;
-  margin: 10px;
-  border-radius: 10px;
+/* ===== BODY ===== */
+body {
+  background: #0f172a;
+  color: #e5e7eb;
+}
+
+/* ===== HEADER ===== */
+.header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  padding: 20px 30px;
+  background: #020617;
+  border-bottom: 1px solid #1e293b;
 }
 
-.card-info {
-  font-size: 14px;
+.header h1 {
+  font-size: 20px;
 }
 
-.dni {
-  color: gray;
-  font-size: 12px;
-}
-
+/* ===== BOTONES ===== */
 button {
-  padding: 6px 10px;
-  border: none;
-  border-radius: 6px;
   cursor: pointer;
+  border: none;
 }
 
-.btn-ver {
-  background: #2563eb;
+.btn-nuevo {
+  background: #22c55e;
+  color: white;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-weight: bold;
+}
+
+.btn-nuevo:hover {
+  background: #16a34a;
+}
+
+/* ===== TOOLBAR ===== */
+.toolbar {
+  display: flex;
+  gap: 10px;
+  padding: 15px 30px;
+}
+
+.toolbar input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  background: #1e293b;
   color: white;
 }
 
-.btn-ver:hover {
-  background: #1d4ed8;
+.toolbar button {
+  background: #334155;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 10px;
 }
 
+/* ===== MAIN ===== */
+.main {
+  padding: 20px 30px;
+}
+
+/* ===== TABLA ===== */
+.tabla {
+  display: grid;
+  gap: 10px;
+}
+
+.fila {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #1e293b;
+  padding: 15px;
+  border-radius: 12px;
+  transition: 0.2s;
+}
+
+.fila:hover {
+  background: #334155;
+}
+
+.acciones button {
+  background: #3b82f6;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 8px;
+}
+
+/* ===== MODAL ===== */
 .modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
   display: none;
+  align-items: center;
+  justify-content: center;
 }
 
 .modal.show {
-  display: block;
+  display: flex;
+}
+
+.modal-box {
+  background: #020617;
+  padding: 20px;
+  border-radius: 16px;
+  width: 400px;
+  max-width: 95%;
+}
+
+.modal-head {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.modal-body input,
+.modal-body select {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  background: #1e293b;
+  color: white;
+}
+
+/* ===== ACCIONES ===== */
+.acciones {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+#btnGuardar {
+  flex: 1;
+  background: #22c55e;
+  color: white;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+#btnEditar {
+  background: #f59e0b;
+  color: white;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+#btnEliminar {
+  background: #ef4444;
+  color: white;
+  padding: 10px;
+  border-radius: 10px;
 }
