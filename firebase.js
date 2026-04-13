@@ -14,9 +14,18 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 // 🔥 GET
-window.getJugadores = async () => {
-  const snap = await getDocs(collection(db, "jugadores"));
-  return snap.docs.map(doc => doc.data());
+window.getJugadores = async function () {
+  const querySnapshot = await getDocs(collection(db, "jugadores"));
+  let lista = [];
+
+  querySnapshot.forEach(doc => {
+    lista.push({
+      id: doc.id,   // 🔥 CLAVE
+      ...doc.data()
+    });
+  });
+
+  return lista;
 };
 
 // 🔥 SAVE
@@ -64,4 +73,17 @@ window.actualizarJugadorFirebase = async (data) => {
       await updateDoc(doc(db, "jugadores", d.id), data);
     }
   });
+};
+import { doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+
+// ACTUALIZAR
+window.actualizarJugadorFirebase = async function (data) {
+  const ref = doc(db, "jugadores", data.id);
+  await updateDoc(ref, data);
+};
+
+// ELIMINAR
+window.eliminarJugadorFirebase = async function (id) {
+  const ref = doc(db, "jugadores", id);
+  await deleteDoc(ref);
 };
