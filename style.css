@@ -171,7 +171,29 @@ button {
   padding: 10px;
   border-radius: 10px;
 }
+#calendario {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  margin-top: 15px;
+}
 
+.dia {
+  padding: 10px;
+  border-radius: 8px;
+  text-align: center;
+  background: #f3f3f3;
+  font-size: 13px;
+}
+
+.dia strong {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.verde { background: #d4edda; }
+.amarillo { background: #fff3cd; }
+.rojo { background: #f8d7da; }
 /* ===== DETALLE ===== */
 #detalle p {
   margin: 6px 0;
