@@ -75,13 +75,17 @@ function limpiarFormulario() {
 
   document.getElementById("asistenciaId").value = "";
   document.getElementById("jugadorSelect").value = "";
+
+  // 🔥 NUEVOS CAMPOS
+  document.getElementById("jugadorNombre").value = "";
+  document.getElementById("jugadorDni").value = "";
+
   document.getElementById("detalleSemana").value = "";
 
   ["dia1", "dia2", "dia3"].forEach(id => {
     document.getElementById(id).checked = false;
   });
 }
-
 /* =========================
    FECHA HOY
 ========================= */
@@ -216,10 +220,17 @@ async function guardarAsistencia() {
 ========================= */
 function editarAsistencia(a) {
 
-  cerrar(); // 🔥 FIX CLAVE
+  cerrar(); // evita conflicto de modales
 
   document.getElementById("asistenciaId").value = a.id;
+
+  // 🔥 SOLO VISUAL
+  document.getElementById("jugadorNombre").value = a.nombre || "";
+  document.getElementById("jugadorDni").value = a.dni || "";
+
+  // 🔥 OCULTO PARA GUARDAR
   document.getElementById("jugadorSelect").value = a.jugadorId;
+
   document.getElementById("semana").value = a.semana;
   document.getElementById("fechaSemana").value = a.fechaSemana;
 
@@ -231,7 +242,9 @@ function editarAsistencia(a) {
 
   actualizarEstado();
 
-  document.getElementById("tituloModalAsistencia").innerText = "Editar asistencia";
+  document.getElementById("tituloModalAsistencia").innerText =
+    "Editar asistencia";
+
   document.getElementById("modalAsistencia").classList.add("show");
 }
 
