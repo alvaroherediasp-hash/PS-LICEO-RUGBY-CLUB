@@ -193,6 +193,8 @@ function initEvents() {
   document.getElementById("btnEditar")?.addEventListener("click", editarJugador);
   document.getElementById("btnEliminar")?.addEventListener("click", eliminarJugador);
 }
+document.getElementById("btnCerrarVer")
+  ?.addEventListener("click", cerrar);
 
 /* =========================
    INIT
