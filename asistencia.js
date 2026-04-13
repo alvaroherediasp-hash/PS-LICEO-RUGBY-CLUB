@@ -229,38 +229,40 @@ async function guardarAsistencia() {
    EDITAR (FIX PRO)
 ========================= */
 function editarAsistencia(a) {
-   document.getElementById("semana").value = a.semana;
-document.getElementById("fechaSemana").value = a.fechaSemana;
 
-document.getElementById("fechaSemanaLabel").innerText =
-  "Guardado: " + new Date(a.fechaSemana).toLocaleDateString("es-AR");
+  cerrar(); // cerrar todo primero (IMPORTANTE)
 
-  cerrar(); // evita conflicto de modales
+  setTimeout(() => {
 
-  document.getElementById("asistenciaId").value = a.id;
+    document.getElementById("asistenciaId").value = a.id;
 
-  // 🔥 SOLO VISUAL
-  document.getElementById("jugadorNombre").value = a.nombre || "";
-  document.getElementById("jugadorDni").value = a.dni || "";
+    document.getElementById("jugadorSelect").value = a.jugadorId;
 
-  // 🔥 OCULTO PARA GUARDAR
-  document.getElementById("jugadorSelect").value = a.jugadorId;
+    document.getElementById("semana").value = a.semana;
+    document.getElementById("fechaSemana").value = a.fechaSemana;
 
-  document.getElementById("semana").value = a.semana;
-  document.getElementById("fechaSemana").value = a.fechaSemana;
+    document.getElementById("dia1").checked = a.dia1;
+    document.getElementById("dia2").checked = a.dia2;
+    document.getElementById("dia3").checked = a.dia3;
 
-  document.getElementById("dia1").checked = a.dia1;
-  document.getElementById("dia2").checked = a.dia2;
-  document.getElementById("dia3").checked = a.dia3;
+    document.getElementById("detalleSemana").value = a.detalle || "";
 
-  document.getElementById("detalleSemana").value = a.detalle || "";
+    actualizarEstado();
 
-  actualizarEstado();
+    document.getElementById("tituloModalAsistencia").innerText =
+      "Editar asistencia";
 
-  document.getElementById("tituloModalAsistencia").innerText =
-    "Editar asistencia";
+    // 🔥 actualizar label SOLO si existe
+    let label = document.getElementById("fechaSemanaLabel");
+    if (label) {
+      label.innerText =
+        "Guardado: " +
+        new Date(a.fechaSemana).toLocaleDateString("es-AR");
+    }
 
-  document.getElementById("modalAsistencia").classList.add("show");
+    document.getElementById("modalAsistencia").classList.add("show");
+
+  }, 50);
 }
 
 /* =========================
