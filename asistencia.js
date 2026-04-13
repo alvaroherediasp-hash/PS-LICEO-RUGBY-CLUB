@@ -207,38 +207,54 @@ async function guardarAsistencia() {
 ========================= */
 window.verJugador = async function(id) {
 
+  let jugador = jugadores.find(j => j.id == id);
+
   let data = await window.getAsistenciaPorJugador(id);
 
   let cont = document.getElementById("detalleJugador");
 
-  if (!data || !data.length) {
-    cont.innerHTML = "<p>Sin asistencia</p>";
+  if (!jugador) {
+    cont.innerHTML = "<p>Error cargando jugador</p>";
+    return;
+  }
+
+  cont.innerHTML = `
+    <div class="card" style="margin-bottom:15px;">
+      <h3>${jugador.nombre}</h3>
+      <p><b>DNI:</b> ${jugador.dni}</p>
+    </div>
+  `;
+
+  if (!data.length) {
+    cont.innerHTML += "<p>Sin asistencia registrada</p>";
   } else {
 
-    cont.innerHTML = data.map(a => {
+    cont.innerHTML += data.map(a => `
+      <div class="card" style="margin-bottom:10px;">
 
-      let fecha = a.fechaSemana?.toDate
-        ? a.fechaSemana.toDate().toLocaleDateString()
-        : (a.fechaSemana || "-");
+        <b>📅 Semana ${a.semana}</b>
+        <div>Fecha: ${a.fechaSemana || "-"}</div>
 
-      return `
-        <div class="card">
-          <b>Semana ${a.semana}</b>
-          <div>📅 ${fecha}</div>
-          <div>
-            Día1: ${a.dia1 ? "✔" : "-"} |
-            Día2: ${a.dia2 ? "✔" : "-"} |
-            Partido: ${a.dia3 ? "✔" : "-"}
-          </div>
-          <div>${a.estado}</div>
-          <div>${a.detalle || ""}</div>
+        <div style="margin-top:5px;">
+          Día1: ${a.dia1 ? "✔" : "✖"} |
+          Día2: ${a.dia2 ? "✔" : "✖"} |
+          Partido: ${a.dia3 ? "✔" : "✖"}
         </div>
-      `;
-    }).join("");
+
+        <div style="margin-top:5px;">
+          ${a.estado}
+        </div>
+
+        <div style="margin-top:5px; font-size:13px; color:#555;">
+          ${a.detalle || ""}
+        </div>
+
+      </div>
+    `).join("");
   }
 
   document.getElementById("modalJugador").classList.add("show");
-}
+};
 
 /* =========================
    CERRAR
