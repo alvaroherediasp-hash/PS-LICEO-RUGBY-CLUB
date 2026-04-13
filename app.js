@@ -5,15 +5,15 @@ let jugadorActual = null;
    CARGAR
 ========================= */
 async function cargar() {
-  showMsg("Cargando...", "loading");
+  showMsg("Cargando...");
 
   try {
     datos.jugadores = await window.getJugadores();
     render();
-    showMsg("OK", "success");
+    showMsg("OK");
   } catch (e) {
     console.error(e);
-    showMsg("Error Firebase", "error");
+    showMsg("Error Firebase");
   }
 }
 
@@ -39,7 +39,7 @@ function render() {
         </div>
 
         <div class="acciones">
-          <button onclick="verJugador('${j.dni}')">👁 Ver</button>
+          <button onclick="verJugador('${j.id}')">👁 Ver</button>
         </div>
 
       </div>
@@ -47,11 +47,11 @@ function render() {
 }
 
 /* =========================
-   VER JUGADOR
+   VER
 ========================= */
-window.verJugador = function(dni) {
+window.verJugador = function(id) {
 
-  let j = datos.jugadores.find(x => x.dni == dni);
+  let j = datos.jugadores.find(x => x.id == id);
   jugadorActual = j;
 
   document.getElementById("detalle").innerHTML = `
@@ -116,12 +116,13 @@ async function guardar() {
   };
 
   if (!data.dni || !data.nombre) {
-    return showMsg("Completa DNI y Nombre", "error");
+    return showMsg("Completa DNI y Nombre");
   }
 
   try {
 
     if (jugadorActual) {
+      data.id = jugadorActual.id; // 🔥 IMPORTANTE
       await window.actualizarJugadorFirebase(data);
     } else {
       await window.guardarJugadorFirebase(data);
@@ -132,7 +133,7 @@ async function guardar() {
 
   } catch (e) {
     console.error(e);
-    showMsg("Error guardando", "error");
+    showMsg("Error guardando");
   }
 }
 
@@ -144,12 +145,12 @@ async function eliminarJugador() {
   if (!confirm("¿Eliminar jugador?")) return;
 
   try {
-    await window.eliminarJugadorFirebase(jugadorActual.dni);
+    await window.eliminarJugadorFirebase(jugadorActual.id); // 🔥 FIX
     cerrar();
     cargar();
   } catch (e) {
     console.error(e);
-    showMsg("Error eliminando", "error");
+    showMsg("Error eliminando");
   }
 }
 
@@ -176,7 +177,6 @@ function initEvents() {
   document.getElementById("btnReload").addEventListener("click", cargar);
   document.getElementById("buscar").addEventListener("input", render);
 
-  // 👇 NUEVOS
   document.getElementById("btnEditar")?.addEventListener("click", editarJugador);
   document.getElementById("btnEliminar")?.addEventListener("click", eliminarJugador);
 }
