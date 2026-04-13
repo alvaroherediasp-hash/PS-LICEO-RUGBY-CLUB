@@ -3,157 +3,139 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Liceo Rugby Club</title>
+<title>Asistencia - Liceo Rugby</title>
 
 <link rel="stylesheet" href="style.css">
-
-
 </head>
 
 <body>
 
-
-<!-- HEADER PRO -->
+<!-- ================= HEADER ================= -->
 <div class="header">
-
   <div class="header-left">
-    <h1>🏉 Liceo Rugby Club</h1>
+    <h1>🏉 Sistema de Asistencia</h1>
   </div>
 
-  <div class="menu">
-
-    <button class="btn-menu active">
-      👥 Jugadores
-    </button>
-
-    <button class="btn-menu" onclick="location.href='asistencia.html'">
-      📊 Asistencia
-    </button>
-
-  </div>
-
-  <button class="btn-nuevo" id="btnNuevo">
-    + Nuevo
+  <button class="btn btn-sec" onclick="location.href='index.html'">
+    ← Volver
   </button>
-
 </div>
 
-<!-- TOOLBAR -->
+<!-- ================= TOOLBAR ================= -->
 <div class="toolbar">
-  <input id="buscar" placeholder="Buscar jugador...">
-  <button id="btnReload">🔄</button>
+  <button class="btn btn-primary" onclick="abrirModalAsistencia()">
+    ➕ Cargar asistencia
+  </button>
 </div>
 
-<!-- MAIN -->
+<!-- ================= MAIN ================= -->
 <div class="main">
-  <div id="estado"></div>
-  <div id="tabla" class="tabla">Cargando...</div>
+
+  <!-- 🔥 TABLA -->
+  <div class="card">
+    <div class="card-head">
+      <h3>📊 Jugadores</h3>
+    </div>
+
+    <div id="tablaAsistencia" class="tabla">
+      <p>Cargando jugadores...</p>
+    </div>
+  </div>
+
+  <!-- 🔥 CALENDARIO PRO -->
+  <div class="card">
+    <div class="card-head">
+      <h3>📅 Calendario de Asistencia</h3>
+    </div>
+
+    <!-- encabezado mes -->
+    <div class="calendar-header">
+      <button onclick="cambiarMes(-1)">◀</button>
+      <h4 id="mesActual"></h4>
+      <button onclick="cambiarMes(1)">▶</button>
+    </div>
+
+    <!-- días -->
+    <div id="calendario"></div>
+  </div>
+
 </div>
 
-<!-- ================= MODAL ================= -->
-<div class="modal" id="modal">
+<!-- ================= MODAL CARGAR / EDITAR ================= -->
+<div class="modal" id="modalAsistencia">
+
   <div class="modal-box">
 
     <div class="modal-head">
-      <h3 id="tituloModal">Nuevo Jugador</h3>
-      <button id="btnCerrar">✖</button>
+      <h3 id="tituloModalAsistencia">Registrar asistencia</h3>
+      <button class="modal-close" onclick="cerrar()">×</button>
     </div>
 
     <div class="modal-body">
 
-      <input id="dni" placeholder="DNI">
-      <input id="nombre" placeholder="Nombre">
-      <input id="apodo" placeholder="Apodo">
-      <input id="celular" placeholder="Celular">
-      <input id="correo" placeholder="Correo">
+      <input type="hidden" id="asistenciaId">
 
-      <!-- SELECTS COMPLETOS -->
-      <select id="p1">
-        <option value="">Puesto 1</option>
-        <option>1-PILAR IZQUIERDO</option>
-        <option>2-HOOKER</option>
-        <option>3-PILAR DERECHO</option>
-        <option>4-SEGUNDA LINEA</option>
-        <option>5-SEGUNDA LINEA</option>
-        <option>6-TERCERA LINEA</option>
-        <option>7-TERCERA LINEA</option>
-        <option>8-TERCERA LINEA</option>
-        <option>9-MEDIO SCRUM</option>
-        <option>10-APERTURA</option>
-        <option>11-WING</option>
-        <option>12-CENTRO</option>
-        <option>13-CENTRO</option>
-        <option>14-WING</option>
-        <option>15-FULLBACK</option>
-      </select>
+      <div class="form-group">
+        <label>Jugador</label>
+        <select id="jugadorSelect"></select>
+      </div>
 
-      <select id="p2">
-        <option value="">Puesto 2</option>
-        <option>1-PILAR IZQUIERDO</option>
-        <option>2-HOOKER</option>
-        <option>3-PILAR DERECHO</option>
-        <option>4-SEGUNDA LINEA</option>
-        <option>5-SEGUNDA LINEA</option>
-        <option>6-TERCERA LINEA</option>
-        <option>7-TERCERA LINEA</option>
-        <option>8-TERCERA LINEA</option>
-        <option>9-MEDIO SCRUM</option>
-        <option>10-APERTURA</option>
-        <option>11-WING</option>
-        <option>12-CENTRO</option>
-        <option>13-CENTRO</option>
-        <option>14-WING</option>
-        <option>15-FULLBACK</option>
-      </select>
+      <div class="form-group">
+        <label>Semana</label>
+        <select id="semana"></select>
+      </div>
 
-      <select id="p3">
-        <option value="">Puesto 3</option>
-        <option>1-PILAR IZQUIERDO</option>
-        <option>2-HOOKER</option>
-        <option>3-PILAR DERECHO</option>
-        <option>4-SEGUNDA LINEA</option>
-        <option>5-SEGUNDA LINEA</option>
-        <option>6-TERCERA LINEA</option>
-        <option>7-TERCERA LINEA</option>
-        <option>8-TERCERA LINEA</option>
-        <option>9-MEDIO SCRUM</option>
-        <option>10-APERTURA</option>
-        <option>11-WING</option>
-        <option>12-CENTRO</option>
-        <option>13-CENTRO</option>
-        <option>14-WING</option>
-        <option>15-FULLBACK</option>
-      </select>
+      <div class="form-group">
+        <label>Fecha (lunes de la semana)</label>
+        <input type="date" id="fechaSemana">
+      </div>
 
-      <div class="acciones">
-        <button id="btnGuardar">💾 Guardar</button>
+      <div class="form-row">
+        <label><input type="checkbox" id="dia1"> Martes</label>
+        <label><input type="checkbox" id="dia2"> Jueves</label>
+        <label><input type="checkbox" id="dia3"> Domingo (Partido)</label>
+      </div>
+
+      <div class="form-group">
+        <label>Detalle</label>
+        <textarea id="detalleSemana"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Estado</label>
+        <input id="estadoSemana" disabled>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-sec" onclick="cerrar()">Cancelar</button>
+        <button class="btn btn-primary" onclick="guardarAsistencia()">
+          💾 Guardar
+        </button>
       </div>
 
     </div>
   </div>
 </div>
 
-<!-- MODAL VER -->
-<div class="modal" id="modalVer">
-  <div class="modal-box">
+<!-- ================= MODAL VER ================= -->
+<div class="modal" id="modalJugador">
+  <div class="modal-box" style="max-width:900px">
 
     <div class="modal-head">
-      <h3>Jugador</h3>
-     <button id="btnCerrarVer">✖</button>
+      <h3>📊 Historial del jugador</h3>
+      <button class="modal-close" onclick="cerrar()">×</button>
     </div>
 
-    <div id="detalle"></div>
-
-    <div class="acciones">
-      <button id="btnEditar">✏️ Editar</button>
-      <button id="btnEliminar">🗑 Eliminar</button>
+    <div class="modal-body">
+      <div id="detalleJugador"></div>
     </div>
 
   </div>
 </div>
 
+<!-- ================= JS ================= -->
 <script type="module" src="firebase.js"></script>
-<script type="module" src="app.js"></script>
+<script src="asistencia.js"></script>
 
 </body>
 </html>
