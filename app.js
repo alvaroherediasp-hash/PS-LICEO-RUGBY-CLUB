@@ -31,15 +31,15 @@ function render() {
       (j.dni || "").includes(filtro)
     )
     .map(j => `
-      <div class="fila">
+      <div class="card">
 
-        <div>
+        <div class="card-info">
           <b>${j.nombre}</b> ${j.apodo ? "(" + j.apodo + ")" : ""}
-          <div>DNI: ${j.dni}</div>
+          <div class="dni">DNI: ${j.dni}</div>
         </div>
 
         <div class="acciones">
-          <button onclick="verJugador('${j.id}')">👁 Ver</button>
+          <button class="btn-ver" onclick="verJugador('${j.id}')">👁 Ver</button>
         </div>
 
       </div>
@@ -116,16 +116,18 @@ async function guardar() {
   };
 
   if (!data.dni || !data.nombre) {
-    return showMsg("Completa DNI y Nombre");
+    return alert("Completa DNI y Nombre");
   }
 
   try {
 
     if (jugadorActual) {
-      data.id = jugadorActual.id; // 🔥 IMPORTANTE
+      data.id = jugadorActual.id;
       await window.actualizarJugadorFirebase(data);
+      alert("Jugador actualizado correctamente ✅");
     } else {
       await window.guardarJugadorFirebase(data);
+      alert("Jugador guardado correctamente ✅");
     }
 
     cerrar();
@@ -133,7 +135,7 @@ async function guardar() {
 
   } catch (e) {
     console.error(e);
-    showMsg("Error guardando");
+    alert("Error guardando ❌");
   }
 }
 
@@ -145,12 +147,13 @@ async function eliminarJugador() {
   if (!confirm("¿Eliminar jugador?")) return;
 
   try {
-    await window.eliminarJugadorFirebase(jugadorActual.id); // 🔥 FIX
+    await window.eliminarJugadorFirebase(jugadorActual.id);
+    alert("Jugador eliminado 🗑️");
     cerrar();
     cargar();
   } catch (e) {
     console.error(e);
-    showMsg("Error eliminando");
+    alert("Error eliminando ❌");
   }
 }
 
