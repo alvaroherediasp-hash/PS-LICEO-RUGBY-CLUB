@@ -14,12 +14,12 @@ import {
    CONFIG
 ========================= */
 const firebaseConfig = {
-  apiKey: "TU_API_KEY",
+  apiKey: "AIzaSyCZ5_7V6-s4mOOgdkGOIi5YfInLCM-kl4I",
   authDomain: "liceo-rugby.firebaseapp.com",
   projectId: "liceo-rugby",
-  storageBucket: "liceo-rugby.appspot.com",
-  messagingSenderId: "XXXX",
-  appId: "XXXX"
+  storageBucket: "liceo-rugby.firebasestorage.app",
+  messagingSenderId: "592245047553",
+  appId: "1:592245047553:web:1a8b64aa53bdc18be7db00"
 };
 
 /* =========================
@@ -29,13 +29,13 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 /* =========================
-   GET (TRAER JUGADORES)
+   GET
 ========================= */
 window.getJugadores = async () => {
   const snap = await getDocs(collection(db, "jugadores"));
 
   return snap.docs.map(d => ({
-    id: d.id, // 🔥 IMPORTANTE
+    id: d.id,
     ...d.data()
   }));
 };
@@ -48,17 +48,17 @@ window.guardarJugadorFirebase = async (data) => {
 };
 
 /* =========================
-   ACTUALIZAR (POR ID)
-========================= */
-window.actualizarJugadorFirebase = async (data) => {
-  const ref = doc(db, "jugadores", data.id);
-  await updateDoc(ref, data);
-};
-
-/* =========================
-   ELIMINAR (POR ID)
+   ELIMINAR
 ========================= */
 window.eliminarJugadorFirebase = async (id) => {
   const ref = doc(db, "jugadores", id);
   await deleteDoc(ref);
+};
+
+/* =========================
+   ACTUALIZAR
+========================= */
+window.actualizarJugadorFirebase = async (data) => {
+  const ref = doc(db, "jugadores", data.id);
+  await updateDoc(ref, data);
 };
