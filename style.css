@@ -1,348 +1,58 @@
-/* =========================
-   BASE
-========================= */
-:root {
-  --bg: #0f172a;
-  --card: #111827;
-  --muted: #94a3b8;
-  --text: #e5e7eb;
-
-  --primary: #3b82f6;
-  --danger: #ef4444;
-  --ok: #22c55e;
-  --warn: #f59e0b;
-
-  --border: rgba(255,255,255,0.08);
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: system-ui, Arial;
-}
-
-body {
-  background: var(--bg);
-  color: var(--text);
-}
-
-/* =========================
-   HEADER
-========================= */
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 18px;
-  background: var(--card);
-  border-bottom: 1px solid var(--border);
-}
-
-.header-left {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-
-.icon {
-  font-size: 28px;
-}
-
-h1 {
-  font-size: 18px;
-}
-
-.conectar-box {
-  font-size: 12px;
-  color: var(--muted);
-  display: flex;
-  gap: 6px;
-  align-items: center;
-}
-
-.conectar-box.error {
-  color: var(--danger);
-}
-
-.punto {
-  width: 8px;
-  height: 8px;
-  background: var(--ok);
-  border-radius: 50%;
-}
-
-/* =========================
-   BOTONES
-========================= */
-button {
-  cursor: pointer;
-  border: none;
-  border-radius: 8px;
-  transition: 0.2s;
-}
-
-.btn-nuevo {
-  background: var(--primary);
-  color: white;
-  padding: 10px 14px;
-  font-weight: bold;
-}
-
-.btn-nuevo:hover {
-  transform: scale(1.05);
-}
-
-.btn {
-  padding: 6px 10px;
-  font-size: 12px;
-}
-
-.btn-sec {
-  background: rgba(255,255,255,0.1);
-  color: var(--text);
-}
-
-.btn-sec:hover {
-  background: rgba(255,255,255,0.2);
-}
-
-/* =========================
-   TABS
-========================= */
-.tabs {
-  display: flex;
-  gap: 10px;
-  padding: 10px 18px;
-  border-bottom: 1px solid var(--border);
-}
-
-.tab {
-  padding: 8px 12px;
-  font-size: 13px;
-  cursor: pointer;
-  color: var(--muted);
-  border-radius: 8px;
-}
-
-.tab.active {
-  background: rgba(59,130,246,0.2);
-  color: white;
-}
-
-/* =========================
-   BUSCADOR
-========================= */
-.toolbar {
-  display: flex;
-  gap: 10px;
-  padding: 12px 18px;
-}
-
-.buscar {
-  flex: 1;
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: var(--card);
-  color: var(--text);
-}
-
-/* =========================
-   TABLA
-========================= */
-.tabla {
-  padding: 10px 18px;
-}
-
-.fila {
-  display: grid;
-  grid-template-columns: 40px 1fr 100px 60px;
-  gap: 10px;
-  align-items: center;
-
-  background: var(--card);
-  margin-bottom: 8px;
-  padding: 10px;
-  border-radius: 10px;
-  border: 1px solid var(--border);
-}
-
-.avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: var(--primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-}
-
-.dato div:first-child {
-  font-weight: 600;
-}
-
-.dato div:last-child {
-  font-size: 12px;
-  color: var(--muted);
-}
-
-/* =========================
-   BADGES
-========================= */
-.badge {
-  padding: 4px 8px;
-  border-radius: 6px;
-  font-size: 11px;
-  background: rgba(255,255,255,0.08);
-}
-
-.badge.ok {
-  background: rgba(34,197,94,0.2);
-  color: var(--ok);
-}
-
-.badge.error {
-  background: rgba(239,68,68,0.2);
-  color: var(--danger);
-}
-
-/* =========================
-   ESTADO
-========================= */
-.estado {
-  margin: 10px 18px;
-  padding: 10px;
-  border-radius: 8px;
-  display: none;
-  font-size: 13px;
-}
-
-.estado.show {
-  display: block;
-  background: rgba(255,255,255,0.05);
-}
-
-.estado.success {
-  color: var(--ok);
-}
-
-.estado.error {
-  color: var(--danger);
-}
-
-/* =========================
-   MODAL
-========================= */
 .modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.6);
   display: none;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
 }
 
 .modal.show {
   display: flex;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  justify-content: center;
+  align-items: center;
 }
 
 .modal-box {
-  background: var(--card);
-  padding: 16px;
+  background: #fff;
+  padding: 20px;
   border-radius: 12px;
-  width: 100%;
-  max-width: 500px;
+  width: 350px;
 }
 
 .modal-head {
   display: flex;
   justify-content: space-between;
-  align-items: center;
   margin-bottom: 10px;
 }
 
-.modal-close {
-  background: transparent;
-  color: white;
-  font-size: 18px;
-}
-
-/* =========================
-   FORM
-========================= */
-input, select {
+.modal-body input,
+.modal-body select {
   width: 100%;
-  padding: 10px;
-  margin-top: 4px;
-  margin-bottom: 10px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: #0b1220;
-  color: white;
+  margin-bottom: 8px;
+  padding: 8px;
 }
 
-label {
-  font-size: 12px;
-  color: var(--muted);
+.puestos select {
+  margin-bottom: 6px;
 }
 
-.form-row {
+.acciones {
   display: flex;
-  gap: 10px;
-}
-
-/* =========================
-   ACTIONS
-========================= */
-.actions {
-  display: flex;
-  justify-content: flex-end;
   gap: 10px;
   margin-top: 10px;
 }
 
 .btn-primary {
-  background: var(--primary);
+  background: green;
+  color: white;
+  padding: 8px;
+}
+
+.btn-sec {
+  background: #444;
   color: white;
 }
 
 .btn-danger {
-  background: var(--danger);
-  color: white;
-}
-
-/* =========================
-   SPINNER
-========================= */
-.spinner {
-  width: 18px;
-  height: 18px;
-  border: 2px solid rgba(255,255,255,0.2);
-  border-top: 2px solid white;
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-.tabla-pro {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 15px;
-}
-
-.tabla-pro th,
-.tabla-pro td {
-  padding: 10px;
-  border-bottom: 1px solid #eee;
-  text-align: center;
-}
-
-.tabla-pro th {
-  background: #111827;
+  background: red;
   color: white;
 }
