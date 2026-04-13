@@ -23,3 +23,45 @@ window.getJugadores = async () => {
 window.guardarJugadorFirebase = async (data) => {
   await addDoc(collection(db, "jugadores"), data);
 };
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  addDoc,
+  deleteDoc,
+  doc,
+  updateDoc
+} from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+
+// 🔥 GET
+window.getJugadores = async () => {
+  const snap = await getDocs(collection(db, "jugadores"));
+  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+};
+
+// 🔥 GUARDAR
+window.guardarJugadorFirebase = async (data) => {
+  await addDoc(collection(db, "jugadores"), data);
+};
+
+// 🔥 ELIMINAR
+window.eliminarJugadorFirebase = async (dni) => {
+  let snap = await getDocs(collection(db, "jugadores"));
+
+  snap.forEach(async d => {
+    if (d.data().dni == dni) {
+      await deleteDoc(doc(db, "jugadores", d.id));
+    }
+  });
+};
+
+// 🔥 ACTUALIZAR
+window.actualizarJugadorFirebase = async (data) => {
+  let snap = await getDocs(collection(db, "jugadores"));
+
+  snap.forEach(async d => {
+    if (d.data().dni == data.dni) {
+      await updateDoc(doc(db, "jugadores", d.id), data);
+    }
+  });
+};
