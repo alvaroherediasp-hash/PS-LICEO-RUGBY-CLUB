@@ -1,134 +1,87 @@
 let jugadores = [];
 let asistencia = [];
+let jugadorActual = null;
 
 /* =========================
    INIT
 ========================= */
 window.onload = async () => {
-  await cargarJugadores();
-  await cargarAsistencia();
+  jugadores = await window.getJugadores();
+  asistencia = await window.getAsistencia();
+
+  renderJugadores();
   cargarSemanas();
 };
 
 /* =========================
-   JUGADORES
+   TABLA JUGADORES
 ========================= */
-async function cargarJugadores() {
-  jugadores = await window.getJugadores();
-  renderTabla();
-}
-
-/* =========================
-   ASISTENCIA
-========================= */
-async function cargarAsistencia() {
-  asistencia = await window.getAsistencia();
-}
-
-/* =========================
-   TABLA PRINCIPAL
-========================= */
-function renderTabla() {
+function renderJugadores() {
 
   let cont = document.getElementById("tablaAsistencia");
 
-  cont.innerHTML = `
-    <table class="tabla-pro">
-      <thead>
-        <tr>
-          <th>DNI</th>
-          <th>Jugador</th>
-          <th>Acción</th>
-        </tr>
-      </thead>
+  cont.innerHTML = jugadores.map(j => `
+    <div class="fila">
 
-      <tbody>
-        ${jugadores.map(j => `
-          <tr>
-            <td>${j.dni}</td>
-            <td>${j.nombre}</td>
-            <td>
-              <button onclick="verJugador('${j.id}')">
-                Ver
-              </button>
-            </td>
-          </tr>
-        `).join("")}
-      </tbody>
-    </table>
-  `;
+      <div>
+        <b>${j.nombre}</b>
+        <div>DNI: ${j.dni}</div>
+      </div>
+
+      <button onclick="verJugador('${j.id}')">
+        👁 Ver
+      </button>
+
+    </div>
+  `).join("");
 }
 
 /* =========================
    VER JUGADOR
 ========================= */
-window.verJugador = function(id) {
+window.verJugador = async function(id) {
 
-  let data = asistencia.filter(a => a.jugadorId === id);
+  jugadorActual = jugadores.find(j => j.id == id);
+
+  let data = await window.getAsistenciaPorJugador(id);
 
   let cont = document.getElementById("detalleJugador");
 
   if (!data.length) {
-    cont.innerHTML = "<p>No tiene asistencia registrada</p>";
+    cont.innerHTML = "<p>Sin asistencia</p>";
   } else {
+    cont.innerHTML = data.map(a => `
+      <div class="card">
 
-    cont.innerHTML = `
-      <table class="tabla-pro">
-        <thead>
-          <tr>
-            <th>Semana</th>
-            <th>D1</th>
-            <th>D2</th>
-            <th>Partido</th>
-            <th>Estado</th>
-            <th>Fecha</th>
-          </tr>
-        </thead>
+        <b>Semana ${a.semana}</b>
+        <div>${a.fechaSemana}</div>
 
-        <tbody>
-          ${data.map(a => `
-            <tr>
-              <td>${a.semana}</td>
-              <td>${a.dia1 ? "✔" : "-"}</td>
-              <td>${a.dia2 ? "✔" : "-"}</td>
-              <td>${a.partido ? "✔" : "-"}</td>
-              <td>${a.estado}</td>
-              <td>${a.fecha}</td>
-            </tr>
-          `).join("")}
-        </tbody>
-      </table>
-    `;
+        <div>
+          Día1: ${a.dia1 ? "✔" : "-"} |
+          Día2: ${a.dia2 ? "✔" : "-"} |
+          Partido: ${a.dia3 ? "✔" : "-"}
+        </div>
+
+        <div><b>${a.estado}</b></div>
+        <div>${a.detalle || ""}</div>
+
+      </div>
+    `).join("");
   }
 
   document.getElementById("modalJugador").classList.add("show");
-}
+};
 
 /* =========================
-   SEMANAS
-========================= */
-function cargarSemanas() {
-
-  let sel = document.getElementById("semana");
-
-  sel.innerHTML = "";
-
-  for (let i = 1; i <= 40; i++) {
-    sel.innerHTML += `<option value="${i}">Semana ${i}</option>`;
-  }
-}
-
-/* =========================
-   ABRIR MODAL
+   MODAL
 ========================= */
 function abrirModalAsistencia() {
-
   document.getElementById("modalAsistencia").classList.add("show");
 
   let sel = document.getElementById("jugadorSelect");
 
   sel.innerHTML = `
-    <option value="">-- Selecciona jugador --</option>
+    <option value="">Seleccionar</option>
   ` + jugadores.map(j => `
     <option value="${j.id}">
       ${j.nombre}
@@ -137,31 +90,23 @@ function abrirModalAsistencia() {
 }
 
 /* =========================
-   LUNES
+   SEMANAS + FECHA LUNES
 ========================= */
-function getLunes(semana) {
+function getFechaLunes(semana) {
+  let hoy = new Date();
+  let primerDia = new Date(hoy.getFullYear(), 0, 1);
+  let dias = (semana - 1) * 7;
+  let fecha = new Date(primerDia.setDate(primerDia.getDate() + dias));
 
-  let año = new Date().getFullYear();
-  let inicio = new Date(año, 0, 1);
-
-  let lunes = new Date(inicio);
-  lunes.setDate(inicio.getDate() + (semana - 1) * 7);
-
-  return lunes.toLocaleDateString();
+  return fecha.toLocaleDateString();
 }
 
-/* =========================
-   ESTADO
-========================= */
-function calcularEstado(d1, d2, p) {
+function cargarSemanas() {
+  let sel = document.getElementById("semana");
 
-  let total = [d1, d2, p].filter(x => x).length;
-
-  return total === 3
-    ? "🟢 Completo"
-    : total > 0
-    ? "🟡 Incompleto"
-    : "🔴 No asistió";
+  for (let i = 1; i <= 52; i++) {
+    sel.innerHTML += `<option value="${i}">Semana ${i}</option>`;
+  }
 }
 
 /* =========================
@@ -169,47 +114,41 @@ function calcularEstado(d1, d2, p) {
 ========================= */
 async function guardarAsistencia() {
 
-  let jugadorId = document.getElementById("jugadorSelect").value;
+  let id = document.getElementById("jugadorSelect").value;
+
+  if (!id) return alert("Selecciona jugador");
+
+  let jugador = jugadores.find(j => j.id == id);
+
   let semana = document.getElementById("semana").value;
-
-  if (!jugadorId) {
-    return alert("Selecciona jugador");
-  }
-
-  // 🔴 VALIDACIÓN
-  let existe = asistencia.find(a =>
-    a.jugadorId === jugadorId && a.semana == semana
-  );
-
-  if (existe) {
-    return alert("⚠️ Ya existe asistencia para esta semana");
-  }
 
   let d1 = document.getElementById("dia1").checked;
   let d2 = document.getElementById("dia2").checked;
-  let p  = document.getElementById("dia3").checked;
+  let d3 = document.getElementById("dia3").checked;
+
+  let estado =
+    (d1 && d2) ? "🟢 COMPLETO" :
+    (d1 || d2 || d3) ? "🟡 INCOMPLETO" :
+    "🔴 NO ASISTIÓ";
 
   let data = {
-    jugadorId,
-    semana,
-    fecha: getLunes(semana),
+    jugadorId: id,
+    dni: jugador.dni,
+    nombre: jugador.nombre,
+    semana: semana,
+    fechaSemana: getFechaLunes(semana),
     dia1: d1,
     dia2: d2,
-    partido: p,
-    estado: calcularEstado(d1, d2, p)
+    dia3: d3,
+    estado: estado,
+    detalle: document.getElementById("detalleSemana")?.value || ""
   };
 
-  try {
-    await window.guardarAsistenciaFirebase(data);
+  await window.guardarAsistenciaFirebase(data);
 
-    alert("✅ Guardado");
-    cerrar();
-    await cargarAsistencia();
+  alert("✅ Asistencia guardada");
 
-  } catch (e) {
-    console.error(e);
-    alert("❌ Error");
-  }
+  cerrar();
 }
 
 /* =========================
