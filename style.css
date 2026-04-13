@@ -1,58 +1,48 @@
+body {
+  font-family: Arial;
+  background: #f5f7fb;
+}
+
+.card {
+  background: white;
+  padding: 15px;
+  margin: 10px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.card-info {
+  font-size: 14px;
+}
+
+.dni {
+  color: gray;
+  font-size: 12px;
+}
+
+button {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-ver {
+  background: #2563eb;
+  color: white;
+}
+
+.btn-ver:hover {
+  background: #1d4ed8;
+}
+
 .modal {
   display: none;
 }
 
 .modal.show {
-  display: flex;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.6);
-  justify-content: center;
-  align-items: center;
-}
-
-.modal-box {
-  background: #fff;
-  padding: 20px;
-  border-radius: 12px;
-  width: 350px;
-}
-
-.modal-head {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
-
-.modal-body input,
-.modal-body select {
-  width: 100%;
-  margin-bottom: 8px;
-  padding: 8px;
-}
-
-.puestos select {
-  margin-bottom: 6px;
-}
-
-.acciones {
-  display: flex;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-.btn-primary {
-  background: green;
-  color: white;
-  padding: 8px;
-}
-
-.btn-sec {
-  background: #444;
-  color: white;
-}
-
-.btn-danger {
-  background: red;
-  color: white;
+  display: block;
 }
