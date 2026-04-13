@@ -148,15 +148,24 @@ button:hover {
   padding: 25px;
   border-radius: 18px;
 
-  /* 🔥 RESPONSIVE PRO */
-  width: min(95vw, 520px);
+  width: min(95vw, 600px);
   max-height: 90vh;
-
   overflow-y: auto;
 
-  box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+  display: flex;
+  flex-direction: column;
 }
-
+.modal-body {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.form-group,
+.actions,
+textarea {
+  grid-column: 1 / -1;
+}
 /* HEADER MODAL */
 .modal-head {
   display: flex;
@@ -164,7 +173,25 @@ button:hover {
   align-items: center;
   margin-bottom: 15px;
 }
+.modal-body input,
+.modal-body select,
+.modal-body textarea {
+  width: 100%;
+  max-width: 420px;   /* 🔥 mismo ancho */
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  background: #1e293b;
+  color: white;
+  font-size: 14px;
+  box-sizing: border-box;
+}
 
+
+.form-group label {
+  font-size: 13px;
+  color: #94a3b8;
+}
 /* =========================
    INPUTS
 ========================= */
@@ -181,12 +208,19 @@ button:hover {
   outline: none;
 }
 
-.modal-body input:focus,
-.modal-body select:focus,
-.modal-body textarea:focus {
-  border-color: #3b82f6;
+.modal-body input,
+.modal-body select,
+.modal-body textarea {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #1e293b;
+  background: #0b1220;
+  color: white;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
 }
-
 /* =========================
    ACCIONES
 ========================= */
@@ -281,6 +315,11 @@ button:hover {
 .nav-link.active {
   background: #3b82f6;
   color: white;
+}
+@media (max-width: 768px) {
+  .modal-body {
+    grid-template-columns: 1fr;
+  }
 }
 .verde { background: rgba(34,197,94,0.15); border-color: #22c55e; }
 .amarillo { background: rgba(245,158,11,0.15); border-color: #f59e0b; }
