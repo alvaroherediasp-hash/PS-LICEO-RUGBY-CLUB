@@ -67,26 +67,26 @@ function render() {
 
       let dni = get(j, 1);
       let nombre = get(j, 2);
+        let apodo = j.apodo || "";
 
-      return `
-        <div class="fila">
+     return `
+  <div class="fila">
 
-          <div class="avatar">${(nombre || "?").charAt(0)}</div>
+    <div class="avatar">${(nombre || "?").charAt(0)}</div>
 
-          <div class="dato">
-            <div>${nombre}</div>
-            <div>DNI: ${dni}</div>
-          </div>
+    <div class="dato">
+      <div>${nombre} ${apodo ? "(" + apodo + ")" : ""}</div>
+      <div>DNI: ${dni}</div>
+    </div>
 
-          <div class="badge">${get(j, 4)}</div>
+    <div class="badge">${get(j, 4)}</div>
 
-          <button class="btn btn-sec" onclick="ver('${dni}')">
-            Ver
-          </button>
+    <button class="btn btn-sec" onclick="ver('${dni}')">
+      Ver
+    </button>
 
-        </div>
-      `;
-    }).join("");
+  </div>
+`;
 }
 
 /* =========================
@@ -110,6 +110,7 @@ function ver(dni) {
     <p><b>DNI:</b> ${j.dni || "-"}</p>
     <p><b>Nombre:</b> ${j.nombre || "-"}</p>
     <p><b>Celular:</b> ${j.celular || "-"}</p>
+    <p><b>Apodo:</b> ${j.apodo || "-"}</p>
     <p><b>Puesto 1:</b> ${j.puesto1 || "-"}</p>
     <p><b>Puesto 2:</b> ${j.puesto2 || "-"}</p>
     <p><b>Puesto 3:</b> ${j.puesto3 || "-"}</p>
@@ -135,15 +136,16 @@ function abrirModal() {
 ========================= */
 async function guardar() {
 
-  let data = {
-    dni: document.getElementById("dni").value,
-    nombre: document.getElementById("nombre").value,
-    celular: document.getElementById("celular").value,
-    correo: document.getElementById("correo").value,
-    puesto1: document.getElementById("p1").value,
-    puesto2: document.getElementById("p2").value,
-    puesto3: document.getElementById("p3").value
-  };
+ let data = {
+  dni: document.getElementById("dni").value,
+  nombre: document.getElementById("nombre").value,
+  apodo: document.getElementById("apodo").value, // 👈 NUEVO
+  celular: document.getElementById("celular").value,
+  correo: document.getElementById("correo").value,
+  puesto1: document.getElementById("p1").value,
+  puesto2: document.getElementById("p2").value,
+  puesto3: document.getElementById("p3").value
+};
 
   if (!data.dni || !data.nombre) {
     return showMsg("Completa DNI y Nombre", "error");
