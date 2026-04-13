@@ -5,9 +5,17 @@ let jugadorActual = null;
    INIT
 ========================= */
 window.onload = async () => {
-  jugadores = await window.getJugadores();
-  renderJugadores();
-  cargarSemanas();
+  try {
+    jugadores = await window.getJugadores();
+    console.log("Jugadores cargados:", jugadores);
+
+    renderJugadores();
+    cargarSemanas();
+
+  } catch (e) {
+    console.error(e);
+    alert("Error Firebase al cargar jugadores");
+  }
 };
 
 /* =========================
@@ -17,11 +25,16 @@ function renderJugadores() {
 
   let cont = document.getElementById("tablaAsistencia");
 
+  if (!jugadores.length) {
+    cont.innerHTML = "<p>No hay jugadores cargados</p>";
+    return;
+  }
+
   cont.innerHTML = jugadores.map(j => `
     <div class="fila">
       <div>
-        <b>${j.nombre}</b>
-        <div>DNI: ${j.dni}</div>
+        <b>${j.nombre || "-"}</b>
+        <div>DNI: ${j.dni || "-"}</div>
       </div>
 
       <button onclick="verJugador('${j.id}')">
@@ -32,11 +45,20 @@ function renderJugadores() {
 }
 
 /* =========================
-   MODAL
+   MODAL (FIX PRINCIPAL)
 ========================= */
-function abrirModalAsistencia() {
+async function abrirModalAsistencia() {
 
-  document.getElementById("modalAsistencia").classList.add("show");
+  // 🔥 SI NO HAY JUGADORES → RECARGA
+  if (!jugadores.length) {
+    try {
+      jugadores = await window.getJugadores();
+    } catch (e) {
+      console.error(e);
+      alert("Error cargando jugadores");
+      return;
+    }
+  }
 
   let sel = document.getElementById("jugadorSelect");
 
@@ -44,11 +66,12 @@ function abrirModalAsistencia() {
     <option value="">Seleccionar jugador</option>
   ` + jugadores.map(j => `
     <option value="${j.id}">
-      ${j.nombre}
+      ${j.nombre} - ${j.dni}
     </option>
   `).join("");
 
-  // 🔥 AUTO HOY
+  document.getElementById("modalAsistencia").classList.add("show");
+
   setFechaHoy();
 }
 
@@ -62,7 +85,7 @@ function setFechaHoy() {
 }
 
 /* =========================
-   SEMANAS PRO (CON FECHA)
+   SEMANAS PRO
 ========================= */
 function cargarSemanas() {
 
@@ -87,7 +110,7 @@ function cargarSemanas() {
 }
 
 /* =========================
-   CALCULAR LUNES DE SEMANA
+   CALCULAR LUNES
 ========================= */
 function getFechaPorSemana(semana) {
 
@@ -104,7 +127,7 @@ function getFechaPorSemana(semana) {
 }
 
 /* =========================
-   ESTADO AUTOMÁTICO PRO
+   ESTADO AUTOMÁTICO
 ========================= */
 function actualizarEstado() {
 
@@ -120,13 +143,13 @@ function actualizarEstado() {
   document.getElementById("estadoSemana").value = estado;
 }
 
-// 🔥 FIX EVENTOS (ANTES ESTABA MAL)
+// 🔥 FIX EVENTOS
 ["dia1","dia2","dia3"].forEach(id => {
   document.getElementById(id)?.addEventListener("change", actualizarEstado);
 });
 
 /* =========================
-   GUARDAR PRO
+   GUARDAR
 ========================= */
 async function guardarAsistencia() {
 
@@ -150,11 +173,10 @@ async function guardarAsistencia() {
 
   let data = {
     jugadorId: id,
-    dni: jugador.dni,
-    nombre: jugador.nombre,
+    dni: jugador?.dni || "",
+    nombre: jugador?.nombre || "",
     semana: semana,
 
-    // 🔥 FIX FIREBASE
     fechaSemana: new Date(fechaInput),
     createdAt: new Date(),
 
@@ -181,7 +203,7 @@ async function guardarAsistencia() {
 }
 
 /* =========================
-   VER JUGADOR PRO
+   VER JUGADOR
 ========================= */
 window.verJugador = async function(id) {
 
@@ -189,7 +211,7 @@ window.verJugador = async function(id) {
 
   let cont = document.getElementById("detalleJugador");
 
-  if (!data.length) {
+  if (!data || !data.length) {
     cont.innerHTML = "<p>Sin asistencia</p>";
   } else {
 
@@ -197,7 +219,7 @@ window.verJugador = async function(id) {
 
       let fecha = a.fechaSemana?.toDate
         ? a.fechaSemana.toDate().toLocaleDateString()
-        : a.fechaSemana || "-";
+        : (a.fechaSemana || "-");
 
       return `
         <div class="card">
