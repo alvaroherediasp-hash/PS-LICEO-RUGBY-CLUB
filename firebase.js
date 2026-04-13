@@ -116,3 +116,14 @@ window.actualizarAsistenciaFirebase = async (data) => {
   const ref = doc(db, "asistencia", data.id);
   await updateDoc(ref, data);
 };
+
+window.existeAsistencia = async (jugadorId, semana) => {
+  const q = query(
+    collection(db, "asistencia"),
+    where("jugadorId", "==", jugadorId),
+    where("semana", "==", semana)
+  );
+
+  const snap = await getDocs(q);
+  return !snap.empty;
+};
