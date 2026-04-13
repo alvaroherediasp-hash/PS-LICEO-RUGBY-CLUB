@@ -7,12 +7,11 @@ import {
   addDoc,
   deleteDoc,
   doc,
-  updateDoc
+  updateDoc,
+  query,
+  where
 } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
-/* =========================
-   CONFIG
-========================= */
 const firebaseConfig = {
   apiKey: "AIzaSyCZ5_7V6-s4mOOgdkGOIi5YfInLCM-kl4I",
   authDomain: "liceo-rugby.firebaseapp.com",
@@ -22,58 +21,31 @@ const firebaseConfig = {
   appId: "1:592245047553:web:1a8b64aa53bdc18be7db00"
 };
 
-/* =========================
-   INIT
-========================= */
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 /* =========================
-   GET
+   JUGADORES
 ========================= */
 window.getJugadores = async () => {
   const snap = await getDocs(collection(db, "jugadores"));
-
-  return snap.docs.map(d => ({
-    id: d.id,
-    ...d.data()
-  }));
+  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
 };
 
 /* =========================
-   GUARDAR
+   ASISTENCIA
 ========================= */
-window.guardarJugadorFirebase = async (data) => {
-  await addDoc(collection(db, "jugadores"), data);
-};
-
-/* =========================
-   ELIMINAR
-========================= */
-window.eliminarJugadorFirebase = async (id) => {
-  const ref = doc(db, "jugadores", id);
-  await deleteDoc(ref);
-};
-
-/* =========================
-   ACTUALIZAR
-========================= */
-window.actualizarJugadorFirebase = async (data) => {
-  const ref = doc(db, "jugadores", data.id);
-  await updateDoc(ref, data);
-};
-
-// 🔥 GUARDAR ASISTENCIA
 window.guardarAsistenciaFirebase = async (data) => {
   await addDoc(collection(db, "asistencia"), data);
 };
 
-// 🔥 OBTENER ASISTENCIA
 window.getAsistencia = async () => {
   const snap = await getDocs(collection(db, "asistencia"));
+  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+};
 
-  return snap.docs.map(d => ({
-    id: d.id,
-    ...d.data()
-  }));
+window.getAsistenciaPorJugador = async (jugadorId) => {
+  const q = query(collection(db, "asistencia"), where("jugadorId", "==", jugadorId));
+  const snap = await getDocs(q);
+  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
 };
