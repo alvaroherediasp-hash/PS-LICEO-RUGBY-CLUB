@@ -1,6 +1,36 @@
-<div id="tabla" class="tabla"></div>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Liceo Rugby Club</title>
+<link rel="stylesheet" href="style.css">
+</head>
 
-<!-- MODAL NUEVO / EDITAR -->
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <h1>🏉 Liceo Rugby Club</h1>
+  </div>
+
+  <button class="btn-nuevo" id="btnNuevo">+ Nuevo</button>
+</div>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <input id="buscar" placeholder="Buscar jugador...">
+  <button id="btnReload">🔄</button>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div id="estado"></div>
+  <div id="tabla" class="tabla">Cargando...</div>
+</div>
+
+<!-- ================= MODAL NUEVO / EDITAR ================= -->
 <div class="modal" id="modal">
   <div class="modal-box">
 
@@ -17,9 +47,63 @@
       <input id="celular" placeholder="Celular">
       <input id="correo" placeholder="Correo">
 
-      <select id="p1">...</select>
-      <select id="p2">...</select>
-      <select id="p3">...</select>
+      <!-- PUESTOS -->
+      <select id="p1">
+        <option value="">Puesto 1</option>
+        <option>1-PILAR IZQUIERDO</option>
+        <option>2-HOOKER</option>
+        <option>3-PILAR DERECHO</option>
+        <option>4-SEGUNDA LINEA</option>
+        <option>5-SEGUNDA LINEA</option>
+        <option>6-TERCERA LINEA</option>
+        <option>7-TERCERA LINEA</option>
+        <option>8-TERCERA LINEA</option>
+        <option>9-MEDIO SCRUM</option>
+        <option>10-APERTURA</option>
+        <option>11-WING</option>
+        <option>12-CENTRO</option>
+        <option>13-CENTRO</option>
+        <option>14-WING</option>
+        <option>15-FULLBACK</option>
+      </select>
+
+      <select id="p2">
+        <option value="">Puesto 2</option>
+        <option>1-PILAR IZQUIERDO</option>
+        <option>2-HOOKER</option>
+        <option>3-PILAR DERECHO</option>
+        <option>4-SEGUNDA LINEA</option>
+        <option>5-SEGUNDA LINEA</option>
+        <option>6-TERCERA LINEA</option>
+        <option>7-TERCERA LINEA</option>
+        <option>8-TERCERA LINEA</option>
+        <option>9-MEDIO SCRUM</option>
+        <option>10-APERTURA</option>
+        <option>11-WING</option>
+        <option>12-CENTRO</option>
+        <option>13-CENTRO</option>
+        <option>14-WING</option>
+        <option>15-FULLBACK</option>
+      </select>
+
+      <select id="p3">
+        <option value="">Puesto 3</option>
+        <option>1-PILAR IZQUIERDO</option>
+        <option>2-HOOKER</option>
+        <option>3-PILAR DERECHO</option>
+        <option>4-SEGUNDA LINEA</option>
+        <option>5-SEGUNDA LINEA</option>
+        <option>6-TERCERA LINEA</option>
+        <option>7-TERCERA LINEA</option>
+        <option>8-TERCERA LINEA</option>
+        <option>9-MEDIO SCRUM</option>
+        <option>10-APERTURA</option>
+        <option>11-WING</option>
+        <option>12-CENTRO</option>
+        <option>13-CENTRO</option>
+        <option>14-WING</option>
+        <option>15-FULLBACK</option>
+      </select>
 
       <div class="acciones">
         <button id="btnGuardar">💾 Guardar</button>
@@ -29,7 +113,7 @@
   </div>
 </div>
 
-<!-- MODAL VER -->
+<!-- ================= MODAL VER ================= -->
 <div class="modal" id="modalVer">
   <div class="modal-box">
 
@@ -47,3 +131,10 @@
 
   </div>
 </div>
+
+<!-- JS -->
+<script type="module" src="firebase.js"></script>
+<script type="module" src="app.js"></script>
+
+</body>
+</html>
