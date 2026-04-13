@@ -1,14 +1,7 @@
-
-/* ===== RESET ===== */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: system-ui, Arial;
-}
-
-/* ===== BODY ===== */
+/* ===== BASE ===== */
 body {
+  margin: 0;
+  font-family: system-ui, Arial;
   background: #0f172a;
   color: #e5e7eb;
 }
@@ -29,20 +22,21 @@ body {
 
 /* ===== BOTONES ===== */
 button {
-  cursor: pointer;
   border: none;
+  cursor: pointer;
+  transition: 0.2s;
 }
 
 .btn-nuevo {
-  background: #22c55e;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
   color: white;
   padding: 10px 18px;
-  border-radius: 10px;
+  border-radius: 12px;
   font-weight: bold;
 }
 
 .btn-nuevo:hover {
-  background: #16a34a;
+  transform: scale(1.05);
 }
 
 /* ===== TOOLBAR ===== */
@@ -54,8 +48,8 @@ button {
 
 .toolbar input {
   flex: 1;
-  padding: 10px;
-  border-radius: 10px;
+  padding: 12px;
+  border-radius: 12px;
   border: none;
   background: #1e293b;
   color: white;
@@ -64,8 +58,8 @@ button {
 .toolbar button {
   background: #334155;
   color: white;
-  padding: 10px 15px;
-  border-radius: 10px;
+  padding: 12px;
+  border-radius: 12px;
 }
 
 /* ===== MAIN ===== */
@@ -76,27 +70,31 @@ button {
 /* ===== TABLA ===== */
 .tabla {
   display: grid;
-  gap: 10px;
+  gap: 12px;
 }
 
+/* CARD JUGADOR */
 .fila {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #1e293b;
-  padding: 15px;
-  border-radius: 12px;
+  background: linear-gradient(135deg, #1e293b, #020617);
+  padding: 15px 18px;
+  border-radius: 14px;
+  border: 1px solid #1e293b;
   transition: 0.2s;
 }
 
 .fila:hover {
-  background: #334155;
+  transform: translateY(-2px);
+  border-color: #3b82f6;
 }
 
+/* ACCIONES */
 .acciones button {
   background: #3b82f6;
   color: white;
-  padding: 6px 10px;
+  padding: 6px 12px;
   border-radius: 8px;
 }
 
@@ -107,10 +105,11 @@ button {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.6);
+  background: rgba(0,0,0,0.7);
   display: none;
   align-items: center;
   justify-content: center;
+  backdrop-filter: blur(4px);
 }
 
 .modal.show {
@@ -119,10 +118,11 @@ button {
 
 .modal-box {
   background: #020617;
-  padding: 20px;
-  border-radius: 16px;
-  width: 400px;
+  padding: 25px;
+  border-radius: 18px;
+  width: 420px;
   max-width: 95%;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.6);
 }
 
 .modal-head {
@@ -131,18 +131,19 @@ button {
   margin-bottom: 15px;
 }
 
+/* INPUTS */
 .modal-body input,
 .modal-body select {
   width: 100%;
-  margin-bottom: 10px;
-  padding: 10px;
+  margin-bottom: 12px;
+  padding: 12px;
   border-radius: 10px;
   border: none;
   background: #1e293b;
   color: white;
 }
 
-/* ===== ACCIONES ===== */
+/* ACCIONES */
 .acciones {
   display: flex;
   gap: 10px;
@@ -153,7 +154,7 @@ button {
   flex: 1;
   background: #22c55e;
   color: white;
-  padding: 10px;
+  padding: 12px;
   border-radius: 10px;
 }
 
@@ -169,4 +170,10 @@ button {
   color: white;
   padding: 10px;
   border-radius: 10px;
+}
+
+/* ===== DETALLE ===== */
+#detalle p {
+  margin: 6px 0;
+  font-size: 14px;
 }
