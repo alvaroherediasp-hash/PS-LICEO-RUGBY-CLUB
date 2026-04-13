@@ -186,7 +186,15 @@ textarea {
   font-size: 14px;
   box-sizing: border-box;
 }
-
+.week-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.week-date{
+  color:#94a3b8;
+  font-size:12px;
+}
 
 .form-group label {
   font-size: 13px;
