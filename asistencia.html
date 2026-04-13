@@ -73,13 +73,14 @@
       
 
       <!-- SEMANA -->
-  <div class="form-group">
-  <label>Semana</label>
-  <div style="display:flex; gap:10px; align-items:center;">
-    <select id="semana"></select>
-    <span id="fechaSemanaLabel" style="color:#94a3b8; font-size:13px;"></span>
-  </div>
+<div style="font-weight:bold;">
+  Semana ${a.semana}
+  <span style="color:#94a3b8; font-size:12px; margin-left:8px;">
+    — ${new Date(a.fechaSemana).toLocaleDateString("es-AR")}
+  </span>
 </div>
+
+<div>${a.estado}</div>
 
       <!-- FECHA -->
       <div class="form-group">
