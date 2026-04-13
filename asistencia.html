@@ -12,27 +12,34 @@
 
 <!-- ================= HEADER ================= -->
 <div class="header">
-  <h1>🏉 Sistema de Asistencia</h1>
+  <div class="header-left">
+    <h1>🏉 Sistema de Asistencia</h1>
+  </div>
 
   <button class="btn btn-sec" onclick="location.href='index.html'">
     ← Volver
   </button>
 </div>
 
-<!-- ================= CONTROLES ================= -->
+<!-- ================= TOOLBAR ================= -->
 <div class="toolbar">
+
   <button class="btn btn-primary" onclick="abrirModalAsistencia()">
     ➕ Cargar asistencia
   </button>
+
 </div>
 
-<!-- ================= TABLA PRINCIPAL ================= -->
+<!-- ================= MAIN ================= -->
 <div class="main">
 
   <div class="card">
-    <h3>📊 Jugadores</h3>
 
-    <div id="tablaAsistencia">
+    <div class="card-head">
+      <h3>📊 Jugadores</h3>
+    </div>
+
+    <div id="tablaAsistencia" class="tabla">
       <p>Cargando jugadores...</p>
     </div>
 
@@ -40,7 +47,7 @@
 
 </div>
 
-<!-- ================= MODAL ================= -->
+<!-- ================= MODAL CARGAR ================= -->
 <div class="modal" id="modalAsistencia">
 
   <div class="modal-box">
@@ -64,25 +71,44 @@
         <select id="semana"></select>
       </div>
 
+      <!-- FECHA AUTOMATICA -->
+      <div class="form-group">
+        <label>Fecha (lunes de la semana)</label>
+        <input id="fechaSemana" disabled>
+      </div>
+
       <!-- CHECKS -->
       <div class="form-row">
         <label><input type="checkbox" id="dia1"> Día 1</label>
         <label><input type="checkbox" id="dia2"> Día 2</label>
-        <label><input type="checkbox" id="dia3"> Día 3</label>
+        <label><input type="checkbox" id="dia3"> Partido</label>
+      </div>
+
+      <!-- DETALLE -->
+      <div class="form-group">
+        <label>Detalle</label>
+        <textarea id="detalleSemana" placeholder="Ej: llegó tarde, lesionado, etc."></textarea>
+      </div>
+
+      <!-- ESTADO AUTO -->
+      <div class="form-group">
+        <label>Estado</label>
+        <input id="estadoSemana" disabled>
       </div>
 
       <!-- BOTONES -->
       <div class="actions">
         <button class="btn btn-sec" onclick="cerrar()">Cancelar</button>
         <button class="btn btn-primary" onclick="guardarAsistencia()">
-          Guardar
+          💾 Guardar
         </button>
       </div>
 
     </div>
   </div>
 </div>
-<!-- MODAL VER JUGADOR -->
+
+<!-- ================= MODAL VER JUGADOR ================= -->
 <div class="modal" id="modalJugador">
   <div class="modal-box" style="max-width:900px">
 
@@ -98,6 +124,8 @@
   </div>
 </div>
 
+<!-- ================= JS ================= -->
+<script type="module" src="firebase.js"></script>
 <script src="asistencia.js"></script>
 
 </body>
