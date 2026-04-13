@@ -19,7 +19,7 @@ window.onload = async () => {
 };
 
 /* =========================
-   TABLA JUGADORES
+   RENDER
 ========================= */
 function renderJugadores() {
 
@@ -47,6 +47,8 @@ function renderJugadores() {
 ========================= */
 function abrirModalAsistencia() {
 
+  cerrar(); // 🔥 IMPORTANTE
+
   let sel = document.getElementById("jugadorSelect");
 
   sel.innerHTML = `
@@ -67,14 +69,15 @@ function abrirModalAsistencia() {
 }
 
 /* =========================
-   LIMPIAR FORM
+   LIMPIAR
 ========================= */
 function limpiarFormulario() {
+
   document.getElementById("asistenciaId").value = "";
   document.getElementById("jugadorSelect").value = "";
   document.getElementById("detalleSemana").value = "";
 
-  ["dia1","dia2","dia3"].forEach(id => {
+  ["dia1", "dia2", "dia3"].forEach(id => {
     document.getElementById(id).checked = false;
   });
 }
@@ -89,12 +92,12 @@ function setFechaHoy() {
 }
 
 /* =========================
-   SEMANAS (FIX DUPLICADO)
+   SEMANAS
 ========================= */
 function cargarSemanas() {
 
   let sel = document.getElementById("semana");
-  sel.innerHTML = ""; // 🔥 IMPORTANTE (evita duplicados)
+  sel.innerHTML = "";
 
   for (let i = 1; i <= 52; i++) {
     sel.innerHTML += `<option value="${i}">Semana ${i}</option>`;
@@ -106,11 +109,12 @@ function cargarSemanas() {
   });
 
   sel.value = 1;
-  document.getElementById("fechaSemana").value = getFechaPorSemana(1);
+  document.getElementById("fechaSemana").value =
+    getFechaPorSemana(1);
 }
 
 /* =========================
-   CALCULAR LUNES
+   FECHA SEMANA
 ========================= */
 function getFechaPorSemana(semana) {
 
@@ -126,7 +130,7 @@ function getFechaPorSemana(semana) {
 }
 
 /* =========================
-   ESTADO AUTOMÁTICO
+   ESTADO
 ========================= */
 function actualizarEstado() {
 
@@ -143,16 +147,16 @@ function actualizarEstado() {
 }
 
 /* =========================
-   EVENTOS CHECKS
+   CHECKS
 ========================= */
 function initEventosChecks() {
-  ["dia1","dia2","dia3"].forEach(id => {
+  ["dia1", "dia2", "dia3"].forEach(id => {
     document.getElementById(id)?.addEventListener("change", actualizarEstado);
   });
 }
 
 /* =========================
-   GUARDAR / EDITAR
+   GUARDAR
 ========================= */
 async function guardarAsistencia() {
 
@@ -165,14 +169,6 @@ async function guardarAsistencia() {
 
   let semana = Number(document.getElementById("semana").value);
   let fechaInput = document.getElementById("fechaSemana").value;
-
-  if (!asistenciaId) {
-    let existe = await window.existeAsistencia(idJugador, semana);
-    if (existe) {
-      alert("⚠️ Ya existe asistencia para esta semana");
-      return;
-    }
-  }
 
   let d1 = document.getElementById("dia1").checked;
   let d2 = document.getElementById("dia2").checked;
@@ -187,12 +183,12 @@ async function guardarAsistencia() {
     jugadorId: idJugador,
     dni: jugador?.dni || "",
     nombre: jugador?.nombre || "",
-    semana: semana,
+    semana,
     fechaSemana: fechaInput,
     dia1: d1,
     dia2: d2,
     dia3: d3,
-    estado: estado,
+    estado,
     detalle: document.getElementById("detalleSemana").value
   };
 
@@ -201,10 +197,10 @@ async function guardarAsistencia() {
     if (asistenciaId) {
       data.id = asistenciaId;
       await window.actualizarAsistenciaFirebase(data);
-      alert("✏️ Asistencia actualizada");
+      alert("✏️ Actualizado");
     } else {
       await window.guardarAsistenciaFirebase(data);
-      alert("✅ Asistencia guardada");
+      alert("✅ Guardado");
     }
 
     cerrar();
@@ -218,32 +214,25 @@ async function guardarAsistencia() {
 /* =========================
    EDITAR (FIX PRO)
 ========================= */
-function editarAsistencia(id) {
+function editarAsistencia(a) {
 
-  window.getAsistencia().then(lista => {
+  cerrar(); // 🔥 FIX CLAVE
 
-    let a = lista.find(x => x.id == id);
+  document.getElementById("asistenciaId").value = a.id;
+  document.getElementById("jugadorSelect").value = a.jugadorId;
+  document.getElementById("semana").value = a.semana;
+  document.getElementById("fechaSemana").value = a.fechaSemana;
 
-    if (!a) return alert("Error cargando asistencia");
+  document.getElementById("dia1").checked = a.dia1;
+  document.getElementById("dia2").checked = a.dia2;
+  document.getElementById("dia3").checked = a.dia3;
 
-    document.getElementById("asistenciaId").value = a.id;
-    document.getElementById("jugadorSelect").value = a.jugadorId;
-    document.getElementById("semana").value = a.semana;
-    document.getElementById("fechaSemana").value = a.fechaSemana;
+  document.getElementById("detalleSemana").value = a.detalle || "";
 
-    document.getElementById("dia1").checked = a.dia1;
-    document.getElementById("dia2").checked = a.dia2;
-    document.getElementById("dia3").checked = a.dia3;
+  actualizarEstado();
 
-    document.getElementById("detalleSemana").value = a.detalle || "";
-
-    actualizarEstado();
-
-    document.getElementById("tituloModalAsistencia").innerText = "Editar asistencia";
-    document.getElementById("modalAsistencia").classList.add("show");
-
-  });
-
+  document.getElementById("tituloModalAsistencia").innerText = "Editar asistencia";
+  document.getElementById("modalAsistencia").classList.add("show");
 }
 
 /* =========================
@@ -273,7 +262,7 @@ window.verJugador = async function(id) {
         <b>Semana ${a.semana}</b>
         <div>${a.estado}</div>
 
-        <button onclick="editarAsistencia('${a.id}')">
+        <button onclick='editarAsistencia(${JSON.stringify(a)})'>
           ✏️ Editar
         </button>
 
@@ -285,9 +274,10 @@ window.verJugador = async function(id) {
 };
 
 /* =========================
-   CERRAR
+   CERRAR (FIX GLOBAL)
 ========================= */
 function cerrar() {
-  document.querySelectorAll(".modal")
-    .forEach(m => m.classList.remove("show"));
+  document.querySelectorAll(".modal").forEach(m => {
+    m.classList.remove("show");
+  });
 }
