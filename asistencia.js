@@ -101,6 +101,7 @@ function setFechaHoy() {
 function cargarSemanas() {
 
   let sel = document.getElementById("semana");
+
   sel.innerHTML = "";
 
   for (let i = 1; i <= 52; i++) {
@@ -108,15 +109,24 @@ function cargarSemanas() {
   }
 
   sel.addEventListener("change", () => {
-    document.getElementById("fechaSemana").value =
-      getFechaPorSemana(sel.value);
+    actualizarFechaSemana();
   });
 
   sel.value = 1;
-  document.getElementById("fechaSemana").value =
-    getFechaPorSemana(1);
+  actualizarFechaSemana();
 }
 
+function actualizarFechaSemana() {
+
+  let semana = document.getElementById("semana").value;
+
+  let fecha = getFechaPorSemana(semana);
+
+  document.getElementById("fechaSemana").value = fecha;
+
+  document.getElementById("fechaSemanaLabel").innerText =
+    "Inicio: " + new Date(fecha).toLocaleDateString("es-AR");
+}
 /* =========================
    FECHA SEMANA
 ========================= */
@@ -219,6 +229,11 @@ async function guardarAsistencia() {
    EDITAR (FIX PRO)
 ========================= */
 function editarAsistencia(a) {
+   document.getElementById("semana").value = a.semana;
+document.getElementById("fechaSemana").value = a.fechaSemana;
+
+document.getElementById("fechaSemanaLabel").innerText =
+  "Guardado: " + new Date(a.fechaSemana).toLocaleDateString("es-AR");
 
   cerrar(); // evita conflicto de modales
 
