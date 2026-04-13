@@ -25,7 +25,7 @@ const firebaseConfig = {
 };
 
 /* =========================
-   INIT
+   INIT FIREBASE
 ========================= */
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -46,15 +46,13 @@ window.getJugadores = async () => {
    ASISTENCIA
 ========================= */
 
-// 🔥 GUARDAR
 window.guardarAsistenciaFirebase = async (data) => {
   return await addDoc(collection(db, "asistencia"), {
     ...data,
-    fechaCreacion: new Date() // 🔥 SIEMPRE guardar fecha real
+    fechaCreacion: new Date()
   });
 };
 
-// 🔥 TRAER TODO
 window.getAsistencia = async () => {
   const snap = await getDocs(collection(db, "asistencia"));
 
@@ -64,7 +62,6 @@ window.getAsistencia = async () => {
   }));
 };
 
-// 🔥 POR JUGADOR (OPTIMIZADO)
 window.getAsistenciaPorJugador = async (jugadorId) => {
 
   const q = query(
@@ -79,45 +76,13 @@ window.getAsistenciaPorJugador = async (jugadorId) => {
     ...d.data()
   }));
 
-  // 🔥 ORDENAR POR SEMANA (IMPORTANTE)
   lista.sort((a, b) => Number(a.semana) - Number(b.semana));
 
   return lista;
 };
 
-/* =========================
-   VALIDAR DUPLICADO
-========================= */
 window.existeAsistencia = async (jugadorId, semana) => {
 
-  const q = query(
-    collection(db, "asistencia"),
-    where("jugadorId", "==", jugadorId),
-    where("semana", "==", semana)
-  );
-
-  const snap = await getDocs(q);
-
-  return !snap.empty; // 🔥 true si existe
-};
-
-/* =========================
-   ELIMINAR ASISTENCIA
-========================= */
-window.eliminarAsistenciaFirebase = async (id) => {
-  const ref = doc(db, "asistencia", id);
-  await deleteDoc(ref);
-};
-
-/* =========================
-   ACTUALIZAR ASISTENCIA
-========================= */
-window.actualizarAsistenciaFirebase = async (data) => {
-  const ref = doc(db, "asistencia", data.id);
-  await updateDoc(ref, data);
-};
-
-window.existeAsistencia = async (jugadorId, semana) => {
   const q = query(
     collection(db, "asistencia"),
     where("jugadorId", "==", jugadorId),
@@ -126,4 +91,17 @@ window.existeAsistencia = async (jugadorId, semana) => {
 
   const snap = await getDocs(q);
   return !snap.empty;
+};
+
+window.eliminarAsistenciaFirebase = async (id) => {
+  const ref = doc(db, "asistencia", id);
+  await deleteDoc(ref);
+};
+
+window.actualizarAsistenciaFirebase = async (data) => {
+  const ref = doc(db, "asistencia", data.id);
+
+  const { id, ...cleanData } = data; // 🔥 evita error Firestore
+
+  await updateDoc(ref, cleanData);
 };
