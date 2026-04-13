@@ -170,12 +170,20 @@ function calcularEstado(d1, d2, p) {
 async function guardarAsistencia() {
 
   let jugadorId = document.getElementById("jugadorSelect").value;
+  let semana = document.getElementById("semana").value;
 
   if (!jugadorId) {
     return alert("Selecciona jugador");
   }
 
-  let semana = document.getElementById("semana").value;
+  // 🔴 VALIDACIÓN
+  let existe = asistencia.find(a =>
+    a.jugadorId === jugadorId && a.semana == semana
+  );
+
+  if (existe) {
+    return alert("⚠️ Ya existe asistencia para esta semana");
+  }
 
   let d1 = document.getElementById("dia1").checked;
   let d2 = document.getElementById("dia2").checked;
@@ -185,21 +193,18 @@ async function guardarAsistencia() {
     jugadorId,
     semana,
     fecha: getLunes(semana),
-
     dia1: d1,
     dia2: d2,
     partido: p,
-
     estado: calcularEstado(d1, d2, p)
   };
 
   try {
     await window.guardarAsistenciaFirebase(data);
 
-    alert("✅ Asistencia guardada");
-
+    alert("✅ Guardado");
     cerrar();
-    cargarAsistencia();
+    await cargarAsistencia();
 
   } catch (e) {
     console.error(e);
