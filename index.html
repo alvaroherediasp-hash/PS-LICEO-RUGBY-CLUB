@@ -1,140 +1,144 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Liceo Rugby Club</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Liceo Rugby Club</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
+  <!-- HEADER -->
+  <header class="header">
+    <h1><span>🏉</span> Liceo Rugby Club</h1>
+    <button class="btn-nuevo" id="btnNuevo">+ Nuevo Jugador</button>
+  </header>
 
-<!-- HEADER -->
-<div class="header">
-  <div class="header-left">
-    <h1>🏉 Liceo Rugby Club</h1>
+  <!-- TOOLBAR -->
+  <div class="toolbar">
+    <input type="text" id="buscar" placeholder="Buscar jugador por nombre, apellido o DNI...">
+    <button id="btnReload">🔄</button>
   </div>
 
-  <button class="btn-nuevo" id="btnNuevo">+ Nuevo</button>
-</div>
+  <!-- MAIN -->
+  <main class="main">
+    <div id="tabla"></div>
+  </main>
 
-<!-- TOOLBAR -->
-<div class="toolbar">
-  <input id="buscar" placeholder="Buscar jugador...">
-  <button id="btnReload">🔄</button>
-</div>
-
-<!-- MAIN -->
-<div class="main">
-  <div id="estado"></div>
-  <div id="tabla" class="tabla">Cargando...</div>
-</div>
-
-<!-- ================= MODAL NUEVO / EDITAR ================= -->
-<div class="modal" id="modal">
-  <div class="modal-box">
-
-    <div class="modal-head">
-      <h3 id="tituloModal">Nuevo Jugador</h3>
-      <button id="btnCerrar">✖</button>
-    </div>
-
-    <div class="modal-body">
-
-      <input id="dni" placeholder="DNI">
-      <input id="nombre" placeholder="Nombre">
-      <input id="apodo" placeholder="Apodo">
-      <input id="celular" placeholder="Celular">
-      <input id="correo" placeholder="Correo">
-
-      <!-- PUESTOS -->
-      <select id="p1">
-        <option value="">Puesto 1</option>
-        <option>1-PILAR IZQUIERDO</option>
-        <option>2-HOOKER</option>
-        <option>3-PILAR DERECHO</option>
-        <option>4-SEGUNDA LINEA</option>
-        <option>5-SEGUNDA LINEA</option>
-        <option>6-TERCERA LINEA</option>
-        <option>7-TERCERA LINEA</option>
-        <option>8-TERCERA LINEA</option>
-        <option>9-MEDIO SCRUM</option>
-        <option>10-APERTURA</option>
-        <option>11-WING</option>
-        <option>12-CENTRO</option>
-        <option>13-CENTRO</option>
-        <option>14-WING</option>
-        <option>15-FULLBACK</option>
-      </select>
-
-      <select id="p2">
-        <option value="">Puesto 2</option>
-        <option>1-PILAR IZQUIERDO</option>
-        <option>2-HOOKER</option>
-        <option>3-PILAR DERECHO</option>
-        <option>4-SEGUNDA LINEA</option>
-        <option>5-SEGUNDA LINEA</option>
-        <option>6-TERCERA LINEA</option>
-        <option>7-TERCERA LINEA</option>
-        <option>8-TERCERA LINEA</option>
-        <option>9-MEDIO SCRUM</option>
-        <option>10-APERTURA</option>
-        <option>11-WING</option>
-        <option>12-CENTRO</option>
-        <option>13-CENTRO</option>
-        <option>14-WING</option>
-        <option>15-FULLBACK</option>
-      </select>
-
-      <select id="p3">
-        <option value="">Puesto 3</option>
-        <option>1-PILAR IZQUIERDO</option>
-        <option>2-HOOKER</option>
-        <option>3-PILAR DERECHO</option>
-        <option>4-SEGUNDA LINEA</option>
-        <option>5-SEGUNDA LINEA</option>
-        <option>6-TERCERA LINEA</option>
-        <option>7-TERCERA LINEA</option>
-        <option>8-TERCERA LINEA</option>
-        <option>9-MEDIO SCRUM</option>
-        <option>10-APERTURA</option>
-        <option>11-WING</option>
-        <option>12-CENTRO</option>
-        <option>13-CENTRO</option>
-        <option>14-WING</option>
-        <option>15-FULLBACK</option>
-      </select>
-
+  <!-- MODAL NUEVO / EDITAR -->
+  <div class="modal" id="modal">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3 id="tituloModal">Nuevo Jugador</h3>
+        <button id="btnCerrar">✖</button>
+      </div>
+      <div class="modal-body">
+        <div>
+          <label>DNI</label>
+          <input type="text" id="dni" placeholder="Ingrese DNI">
+        </div>
+        <div>
+          <label>Nombre</label>
+          <input type="text" id="nombre" placeholder="Ingrese nombre">
+        </div>
+        <div>
+          <label>Apodo</label>
+          <input type="text" id="apodo" placeholder="Ingrese apodo (opcional)">
+        </div>
+        <div class="form-row">
+          <div>
+            <label>Celular</label>
+            <input type="text" id="celular" placeholder="Celular">
+          </div>
+          <div>
+            <label>Correo</label>
+            <input type="email" id="correo" placeholder="Correo">
+          </div>
+        </div>
+        <div>
+          <label>Puesto 1</label>
+          <select id="p1">
+            <option value="">Seleccionar...</option>
+            <option>1 - Pilar Izquierdo</option>
+            <option>2 - Hooker</option>
+            <option>3 - Pilar Derecho</option>
+            <option>4 - Segunda Línea</option>
+            <option>5 - Segunda Línea</option>
+            <option>6 - Tercera Línea</option>
+            <option>7 - Tercera Línea</option>
+            <option>8 - Tercera Línea</option>
+            <option>9 - Medio Scrum</option>
+            <option>10 - Apertura</option>
+            <option>11 - Wing</option>
+            <option>12 - Centro</option>
+            <option>13 - Centro</option>
+            <option>14 - Wing</option>
+            <option>15 - Fullback</option>
+          </select>
+        </div>
+        <div>
+          <label>Puesto 2</label>
+          <select id="p2">
+            <option value="">Seleccionar...</option>
+            <option>1 - Pilar Izquierdo</option>
+            <option>2 - Hooker</option>
+            <option>3 - Pilar Derecho</option>
+            <option>4 - Segunda Línea</option>
+            <option>5 - Segunda Línea</option>
+            <option>6 - Tercera Línea</option>
+            <option>7 - Tercera Línea</option>
+            <option>8 - Tercera Línea</option>
+            <option>9 - Medio Scrum</option>
+            <option>10 - Apertura</option>
+            <option>11 - Wing</option>
+            <option>12 - Centro</option>
+            <option>13 - Centro</option>
+            <option>14 - Wing</option>
+            <option>15 - Fullback</option>
+          </select>
+        </div>
+        <div>
+          <label>Puesto 3</label>
+          <select id="p3">
+            <option value="">Seleccionar...</option>
+            <option>1 - Pilar Izquierdo</option>
+            <option>2 - Hooker</option>
+            <option>3 - Pilar Derecho</option>
+            <option>4 - Segunda Línea</option>
+            <option>5 - Segunda Línea</option>
+            <option>6 - Tercera Línea</option>
+            <option>7 - Tercera Línea</option>
+            <option>8 - Tercera Línea</option>
+            <option>9 - Medio Scrum</option>
+            <option>10 - Apertura</option>
+            <option>11 - Wing</option>
+            <option>12 - Centro</option>
+            <option>13 - Centro</option>
+            <option>14 - Wing</option>
+            <option>15 - Fullback</option>
+          </select>
+        </div>
+      </div>
       <div class="acciones">
         <button id="btnGuardar">💾 Guardar</button>
       </div>
-
     </div>
   </div>
-</div>
 
-<!-- ================= MODAL VER ================= -->
-<div class="modal" id="modalVer">
-  <div class="modal-box">
-
-    <div class="modal-head">
-      <h3>Jugador</h3>
-      <button onclick="cerrar()">✖</button>
+  <!-- MODAL VER -->
+  <div class="modal" id="modalVer">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3>Detalles del Jugador</h3>
+        <button id="btnCerrarVer">✖</button>
+      </div>
+      <div class="detalle" id="detalle"></div>
+      <div class="acciones">
+        <button id="btnEditar">✏️ Editar</button>
+        <button id="btnEliminar">🗑 Eliminar</button>
+      </div>
     </div>
-
-    <div id="detalle"></div>
-
-    <div class="acciones">
-      <button id="btnEditar">✏️ Editar</button>
-      <button id="btnEliminar">🗑 Eliminar</button>
-    </div>
-
   </div>
-</div>
 
-<!-- JS -->
-<script type="module" src="firebase.js"></script>
-<script type="module" src="app.js"></script>
-
+  <script src="app.js"></script>
 </body>
 </html>
