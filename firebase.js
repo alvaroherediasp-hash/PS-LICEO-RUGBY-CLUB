@@ -62,3 +62,18 @@ window.actualizarJugadorFirebase = async (data) => {
   const ref = doc(db, "jugadores", data.id);
   await updateDoc(ref, data);
 };
+
+// 🔥 GUARDAR ASISTENCIA
+window.guardarAsistenciaFirebase = async (data) => {
+  await addDoc(collection(db, "asistencia"), data);
+};
+
+// 🔥 OBTENER ASISTENCIA
+window.getAsistencia = async () => {
+  const snap = await getDocs(collection(db, "asistencia"));
+
+  return snap.docs.map(d => ({
+    id: d.id,
+    ...d.data()
+  }));
+};
