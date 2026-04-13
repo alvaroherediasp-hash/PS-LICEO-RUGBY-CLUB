@@ -58,11 +58,19 @@
       <!-- 🔥 ID OCULTO PARA EDITAR -->
       <input type="hidden" id="asistenciaId">
 
-      <!-- JUGADOR -->
+      <div class="form-group">
+        <label>DNI</label>
+        <input id="jugadorDni" disabled>
+      </div>
+
+      <!-- JUGADOR (SOLO VISUAL) -->
       <div class="form-group">
         <label>Jugador</label>
-        <select id="jugadorSelect"></select>
+        <input id="jugadorNombre" disabled>
       </div>
+
+<input type="hidden" id="jugadorSelect">
+      
 
       <!-- SEMANA -->
       <div class="form-group">
