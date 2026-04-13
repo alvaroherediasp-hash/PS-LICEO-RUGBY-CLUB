@@ -5,49 +5,55 @@ let jugadorActual = null;
    CARGAR
 ========================= */
 async function cargar() {
-  showMsg("Cargando...");
+  showMsg("⏳ Cargando jugadores...");
 
   try {
     datos.jugadores = await window.getJugadores();
     render();
-    showMsg("OK");
+    showMsg("✅ Datos actualizados");
   } catch (e) {
     console.error(e);
-    showMsg("Error Firebase");
+    showMsg("❌ Error Firebase");
   }
 }
 
 /* =========================
-   RENDER
+   RENDER PRO
 ========================= */
 function render() {
 
   let cont = document.getElementById("tabla");
   let filtro = document.getElementById("buscar").value.toLowerCase();
 
-  cont.innerHTML = datos.jugadores
+  let lista = datos.jugadores
     .filter(j =>
       (j.nombre || "").toLowerCase().includes(filtro) ||
       (j.dni || "").includes(filtro)
-    )
-    .map(j => `
-      <div class="card">
+    );
 
-        <div class="card-info">
-          <b>${j.nombre}</b> ${j.apodo ? "(" + j.apodo + ")" : ""}
-          <div class="dni">DNI: ${j.dni}</div>
-        </div>
+  if (lista.length === 0) {
+    cont.innerHTML = `<div style="opacity:0.6">No hay jugadores</div>`;
+    return;
+  }
 
-        <div class="acciones">
-          <button class="btn-ver" onclick="verJugador('${j.id}')">👁 Ver</button>
-        </div>
+  cont.innerHTML = lista.map(j => `
+    <div class="fila">
 
+      <div>
+        <b>${j.nombre}</b> ${j.apodo ? `<span style="opacity:.6">(${j.apodo})</span>` : ""}
+        <div style="font-size:12px;opacity:.6">DNI: ${j.dni}</div>
       </div>
-    `).join("");
+
+      <div class="acciones">
+        <button onclick="verJugador('${j.id}')">👁 Ver</button>
+      </div>
+
+    </div>
+  `).join("");
 }
 
 /* =========================
-   VER
+   VER JUGADOR
 ========================= */
 window.verJugador = function(id) {
 
@@ -67,11 +73,13 @@ window.verJugador = function(id) {
 }
 
 /* =========================
-   MODAL NUEVO
+   NUEVO
 ========================= */
 function abrirModal() {
 
   jugadorActual = null;
+
+  document.getElementById("tituloModal").innerText = "Nuevo Jugador";
 
   document.querySelectorAll("#modal input, #modal select")
     .forEach(e => e.value = "");
@@ -85,6 +93,8 @@ function abrirModal() {
 function editarJugador() {
 
   cerrar();
+
+  document.getElementById("tituloModal").innerText = "Editar Jugador";
 
   document.getElementById("dni").value = jugadorActual.dni;
   document.getElementById("nombre").value = jugadorActual.nombre;
@@ -116,7 +126,7 @@ async function guardar() {
   };
 
   if (!data.dni || !data.nombre) {
-    return alert("Completa DNI y Nombre");
+    return alert("⚠️ Completa DNI y Nombre");
   }
 
   try {
@@ -124,10 +134,10 @@ async function guardar() {
     if (jugadorActual) {
       data.id = jugadorActual.id;
       await window.actualizarJugadorFirebase(data);
-      alert("Jugador actualizado correctamente ✅");
+      alert("✏️ Jugador actualizado correctamente");
     } else {
       await window.guardarJugadorFirebase(data);
-      alert("Jugador guardado correctamente ✅");
+      alert("✅ Jugador guardado correctamente");
     }
 
     cerrar();
@@ -135,7 +145,7 @@ async function guardar() {
 
   } catch (e) {
     console.error(e);
-    alert("Error guardando ❌");
+    alert("❌ Error guardando");
   }
 }
 
@@ -148,12 +158,12 @@ async function eliminarJugador() {
 
   try {
     await window.eliminarJugadorFirebase(jugadorActual.id);
-    alert("Jugador eliminado 🗑️");
+    alert("🗑 Jugador eliminado");
     cerrar();
     cargar();
   } catch (e) {
     console.error(e);
-    alert("Error eliminando ❌");
+    alert("❌ Error eliminando");
   }
 }
 
