@@ -345,3 +345,10 @@ function cerrar() {
     m.classList.remove("show");
   });
 }
+document.addEventListener("DOMContentLoaded", () => {
+
+  document.querySelectorAll(".btn-cerrar").forEach(btn => {
+    btn.addEventListener("click", cerrar);
+  });
+
+});
