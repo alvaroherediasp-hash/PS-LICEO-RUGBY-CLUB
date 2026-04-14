@@ -28,24 +28,7 @@ window.onload = async () => {
     alert("Error: " + e.message);
   }
 };
-/* =========================
-   nueva asistencia
-========================= */
-window.abrirModalAsistenciaDesdeJugador = function(jugador) {
 
-  cerrar();
-
-  limpiarFormulario();
-
-  document.getElementById("jugadorSelect").value = jugador.id;
-  document.getElementById("jugadorNombre").value = jugador.nombre;
-  document.getElementById("jugadorDni").value = jugador.dni;
-
-  document.getElementById("modalAsistencia").classList.add("show");
-
-  setFechaHoy();
-  actualizarEstado();
-};
 
 /* =========================
    RENDER
@@ -74,10 +57,9 @@ function renderJugadores() {
 /* =========================
    ABRIR MODAL
 ========================= */
-function abrirModalAsistencia() {
+window.abrirModalAsistencia = function() {
 
   cerrar();
-
   limpiarFormulario();
 
   document.getElementById("tituloModalAsistencia").innerText =
@@ -87,7 +69,7 @@ function abrirModalAsistencia() {
 
   setFechaHoy();
   actualizarEstado();
-}
+};
 
 /* =========================
    LIMPIAR
