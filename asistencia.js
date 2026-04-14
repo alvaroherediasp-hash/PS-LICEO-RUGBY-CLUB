@@ -10,28 +10,32 @@ window.onload = async () => {
     jugadores = await window.getJugadores();
 
     renderJugadores();
-    cargarSemanas();
-    initEventosChecks();
 
     // BOTONES
     document.getElementById("btnNuevaAsistencia")
-      .addEventListener("click", abrirModalNuevaAsistencia);
+      ?.addEventListener("click", abrirModalNuevaAsistencia);
 
     document.getElementById("btnGuardarNueva")
-      .addEventListener("click", guardarNuevaAsistencia);
+      ?.addEventListener("click", guardarNuevaAsistencia);
 
     document.getElementById("btnGuardar")
-      .addEventListener("click", guardarAsistencia);
+      ?.addEventListener("click", guardarAsistencia);
 
-    // cerrar
+    // CERRAR
     document.querySelectorAll(".btn-cerrar").forEach(btn => {
       btn.addEventListener("click", cerrar);
     });
 
-    // checks nuevo
+    // CHECKS NUEVO
     ["nuevoDia1","nuevoDia2","nuevoDia3"].forEach(id => {
       document.getElementById(id)
         ?.addEventListener("change", actualizarEstadoNuevo);
+    });
+
+    // CHECKS EDITAR
+    ["dia1","dia2","dia3"].forEach(id => {
+      document.getElementById(id)
+        ?.addEventListener("change", actualizarEstado);
     });
 
   } catch (e) {
@@ -41,7 +45,7 @@ window.onload = async () => {
 };
 
 //////////////////////////////////////////////////
-// RENDER
+// RENDER JUGADORES
 //////////////////////////////////////////////////
 function renderJugadores() {
 
@@ -55,8 +59,8 @@ function renderJugadores() {
   cont.innerHTML = jugadores.map(j => `
     <div class="fila">
       <div>
-       <b>${j.nombre} (${j.apodo || "-"})</b>
-      <div>DNI: ${j.dni}</div>
+        <b>${j.nombre} (${j.apodo || "-"})</b>
+        <div>DNI: ${j.dni}</div>
       </div>
 
       <button class="btn-ver" data-id="${j.id}">👁 Ver</button>
@@ -71,6 +75,14 @@ function renderJugadores() {
 }
 
 //////////////////////////////////////////////////
+// VALIDAR DUPLICADO
+//////////////////////////////////////////////////
+async function existeAsistencia(jugadorId, semana) {
+  let data = await window.getAsistenciaPorJugador(jugadorId);
+  return data.some(a => a.semana == semana);
+}
+
+//////////////////////////////////////////////////
 // MODAL NUEVO
 //////////////////////////////////////////////////
 function abrirModalNuevaAsistencia() {
@@ -82,9 +94,9 @@ function abrirModalNuevaAsistencia() {
   select.innerHTML = `
     <option value="">Seleccionar jugador</option>
   ` + jugadores.map(j => `
-   <option value="${j.id}">
-  ${j.dni} - ${j.nombre} (${j.apodo || "-"})
-</option>
+    <option value="${j.id}">
+      ${j.dni} - ${j.nombre} (${j.apodo || "-"})
+    </option>
   `).join("");
 
   const semana = document.getElementById("nuevoSemana");
@@ -126,10 +138,19 @@ function actualizarEstadoNuevo() {
   document.getElementById("nuevoEstado").value = estado;
 }
 
+//////////////////////////////////////////////////
+// GUARDAR NUEVA
+//////////////////////////////////////////////////
 async function guardarNuevaAsistencia() {
 
   let idJugador = document.getElementById("nuevoJugadorSelect").value;
   if (!idJugador) return alert("Selecciona jugador");
+
+  let semana = Number(document.getElementById("nuevoSemana").value);
+
+  if (await existeAsistencia(idJugador, semana)) {
+    return alert("❌ Ya existe asistencia en esa semana");
+  }
 
   let jugador = jugadores.find(j => j.id == idJugador);
 
@@ -145,8 +166,9 @@ async function guardarNuevaAsistencia() {
   let data = {
     jugadorId: idJugador,
     nombre: jugador.nombre,
+    apodo: jugador.apodo || "",
     dni: jugador.dni,
-    semana: Number(document.getElementById("nuevoSemana").value),
+    semana,
     fechaSemana: document.getElementById("nuevoFecha").value,
     dia1: d1,
     dia2: d2,
@@ -166,7 +188,7 @@ async function guardarNuevaAsistencia() {
 }
 
 //////////////////////////////////////////////////
-// EDITAR (MODAL VIEJO)
+// EDITAR
 //////////////////////////////////////////////////
 function editarAsistencia(a) {
 
@@ -174,27 +196,25 @@ function editarAsistencia(a) {
 
   setTimeout(() => {
 
-    // llenar select
     const select = document.getElementById("jugadorSelect");
+
     select.innerHTML = jugadores.map(j => `
       <option value="${j.id}">
-        ${j.apodo || j.nombre} - DNI: ${j.dni}
+        ${j.dni} - ${j.nombre} (${j.apodo || "-"})
       </option>
     `).join("");
 
-    // jugador
     const jugador = jugadores.find(j => j.id == a.jugadorId);
 
     document.getElementById("asistenciaId").value = a.id;
     document.getElementById("jugadorSelect").value = a.jugadorId;
 
     document.getElementById("jugadorNombre").value =
-      jugador?.nombre || "";
+      `${jugador?.nombre || ""} (${jugador?.apodo || "-"})`;
 
     document.getElementById("jugadorDni").value =
       jugador?.dni || "";
 
-    // datos
     document.getElementById("semana").value = a.semana;
     document.getElementById("fechaSemana").value = a.fechaSemana;
 
@@ -206,43 +226,33 @@ function editarAsistencia(a) {
 
     actualizarEstado();
 
-    document.getElementById("tituloModalAsistencia").innerText =
-      "Editar asistencia";
-
     document.getElementById("modalAsistencia").classList.add("show");
 
   }, 50);
 }
 
+//////////////////////////////////////////////////
+// GUARDAR EDITADO
+//////////////////////////////////////////////////
 async function guardarAsistencia() {
 
+  let id = document.getElementById("asistenciaId").value;
   let idJugador = document.getElementById("jugadorSelect").value;
-  let asistenciaId = document.getElementById("asistenciaId").value;
-
-  if (!idJugador) return alert("Selecciona jugador");
 
   let jugador = jugadores.find(j => j.id == idJugador);
 
-  let d1 = document.getElementById("dia1").checked;
-  let d2 = document.getElementById("dia2").checked;
-  let d3 = document.getElementById("dia3").checked;
-
-  let estado =
-    (d1 && d2 && d3) ? "🟢 COMPLETO" :
-    (d1 || d2 || d3) ? "🟡 INCOMPLETO" :
-    "🔴 NO ASISTIÓ";
-
   let data = {
-    id: asistenciaId,
+    id,
     jugadorId: idJugador,
     nombre: jugador.nombre,
+    apodo: jugador.apodo || "",
     dni: jugador.dni,
     semana: Number(document.getElementById("semana").value),
     fechaSemana: document.getElementById("fechaSemana").value,
-    dia1: d1,
-    dia2: d2,
-    dia3: d3,
-    estado,
+    dia1: document.getElementById("dia1").checked,
+    dia2: document.getElementById("dia2").checked,
+    dia3: document.getElementById("dia3").checked,
+    estado: document.getElementById("estadoSemana").value,
     detalle: document.getElementById("detalleSemana").value
   };
 
@@ -268,34 +278,42 @@ async function verJugador(id) {
 
   cont.innerHTML = `
     <div class="card">
-      <h3>${jugador.apodo || jugador.nombre}</h3>
+      <h3>${jugador.nombre} (${jugador.apodo || "-"})</h3>
       <p>DNI: ${jugador.dni}</p>
     </div>
   `;
 
-  cont.innerHTML += data.map(a => `
-    <div class="card">
-      <b>Semana ${a.semana}</b>
-      <div>${a.estado}</div>
+  if (!data.length) {
+    cont.innerHTML += "<p>Sin asistencias</p>";
+  } else {
 
-      <button class="btn-editar" data-id="${a.id}">✏️</button>
-      <button class="btn-eliminar" data-id="${a.id}">🗑️</button>
-    </div>
-  `).join("");
+    cont.innerHTML += data.map(a => {
+      const fecha = new Date(a.fechaSemana).toLocaleDateString("es-AR");
 
-  // eventos
-  cont.querySelectorAll(".btn-editar").forEach(btn => {
-    btn.addEventListener("click", async () => {
-      const asistencia = await window.getAsistenciaById(btn.dataset.id);
-      editarAsistencia(asistencia);
+      return `
+        <div class="card">
+          <b>Semana ${a.semana} - ${fecha}</b>
+          <div>${a.estado}</div>
+
+          <button class="btn-editar" data-id="${a.id}">✏️</button>
+          <button class="btn-eliminar" data-id="${a.id}">🗑️</button>
+        </div>
+      `;
+    }).join("");
+
+    cont.querySelectorAll(".btn-editar").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        const a = await window.getAsistenciaById(btn.dataset.id);
+        editarAsistencia(a);
+      });
     });
-  });
 
-  cont.querySelectorAll(".btn-eliminar").forEach(btn => {
-    btn.addEventListener("click", () => {
-      eliminarAsistencia(btn.dataset.id);
+    cont.querySelectorAll(".btn-eliminar").forEach(btn => {
+      btn.addEventListener("click", () => {
+        eliminarAsistencia(btn.dataset.id);
+      });
     });
-  });
+  }
 
   document.getElementById("modalJugador").classList.add("show");
 }
@@ -304,36 +322,18 @@ async function verJugador(id) {
 // ELIMINAR
 //////////////////////////////////////////////////
 async function eliminarAsistencia(id) {
-
   if (!confirm("Eliminar?")) return;
 
   await window.eliminarAsistenciaFirebase(id);
-  alert("Eliminado");
+  alert("🗑️ Eliminado");
   cerrar();
 }
 
 //////////////////////////////////////////////////
-// OTROS
+// ESTADO EDITAR
 //////////////////////////////////////////////////
-function cargarSemanas() {
-  let sel = document.getElementById("semana");
-  if (!sel) return;
-
-  sel.innerHTML = "";
-
-  for (let i = 1; i <= 52; i++) {
-    sel.innerHTML += `<option value="${i}">Semana ${i}</option>`;
-  }
-}
-
-function initEventosChecks() {
-  ["dia1","dia2","dia3"].forEach(id => {
-    document.getElementById(id)
-      ?.addEventListener("change", actualizarEstado);
-  });
-}
-
 function actualizarEstado() {
+
   let d1 = document.getElementById("dia1")?.checked;
   let d2 = document.getElementById("dia2")?.checked;
   let d3 = document.getElementById("dia3")?.checked;
@@ -347,6 +347,9 @@ function actualizarEstado() {
     document.getElementById("estadoSemana").value = estado;
 }
 
+//////////////////////////////////////////////////
+// CERRAR
+//////////////////////////////////////////////////
 function cerrar() {
   document.querySelectorAll(".modal").forEach(m => {
     m.classList.remove("show");
