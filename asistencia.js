@@ -37,6 +37,30 @@ window.onload = async () => {
     alert("Error: " + e.message);
   }
 };
+function abrirModalAsistencia() {
+
+  cerrar();
+  limpiarFormulario();
+
+  const select = document.getElementById("jugadorSelect");
+
+  // 🔥 llenar select con jugadores
+  select.innerHTML = `
+    <option value="">Seleccionar jugador</option>
+  ` + jugadores.map(j => `
+    <option value="${j.id}">
+      ${j.nombre} - DNI: ${j.dni}
+    </option>
+  `).join("");
+
+  document.getElementById("tituloModalAsistencia").innerText =
+    "Registrar asistencia";
+
+  document.getElementById("modalAsistencia").classList.add("show");
+
+  setFechaHoy();
+  actualizarEstado();
+}
 
 /* =========================
    RENDER JUGADORES
