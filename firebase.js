@@ -10,7 +10,7 @@ import {
   updateDoc,
   query,
   where,
-  getDoc   // 🔥 FALTABA ESTO
+  getDoc
 } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
 /* =========================
@@ -38,94 +38,130 @@ window.firebaseReady = true;
    JUGADORES
 ========================= */
 window.getJugadores = async () => {
-  const snap = await getDocs(collection(db, "jugadores"));
+  try {
+    const snap = await getDocs(collection(db, "jugadores"));
 
-  return snap.docs.map(d => ({
-    id: d.id,
-    ...d.data()
-  }));
+    return snap.docs.map(d => ({
+      id: d.id,
+      ...d.data()
+    }));
+  } catch (error) {
+    console.error("Error getJugadores:", error);
+    return [];
+  }
 };
 
 /* =========================
    ASISTENCIA
 ========================= */
 
-/* 🔥 CREAR */
+/* CREAR */
 window.guardarAsistenciaFirebase = async (data) => {
-  return await addDoc(collection(db, "asistencia"), {
-    ...data,
-    fechaCreacion: new Date()
-  });
+  try {
+    return await addDoc(collection(db, "asistencia"), {
+      ...data,
+      fechaCreacion: new Date()
+    });
+  } catch (error) {
+    console.error("Error guardarAsistencia:", error);
+    throw error;
+  }
 };
 
-/* 🔥 TRAER TODAS */
+/* TRAER TODAS */
 window.getAsistencia = async () => {
-  const snap = await getDocs(collection(db, "asistencia"));
+  try {
+    const snap = await getDocs(collection(db, "asistencia"));
 
-  return snap.docs.map(d => ({
-    id: d.id,
-    ...d.data()
-  }));
+    return snap.docs.map(d => ({
+      id: d.id,
+      ...d.data()
+    }));
+  } catch (error) {
+    console.error("Error getAsistencia:", error);
+    return [];
+  }
 };
 
-/* 🔥 TRAER POR JUGADOR */
+/* POR JUGADOR */
 window.getAsistenciaPorJugador = async (jugadorId) => {
+  try {
+    const q = query(
+      collection(db, "asistencia"),
+      where("jugadorId", "==", jugadorId)
+    );
 
-  const q = query(
-    collection(db, "asistencia"),
-    where("jugadorId", "==", jugadorId)
-  );
+    const snap = await getDocs(q);
 
-  const snap = await getDocs(q);
+    const lista = snap.docs.map(d => ({
+      id: d.id,
+      ...d.data()
+    }));
 
-  let lista = snap.docs.map(d => ({
-    id: d.id,
-    ...d.data()
-  }));
+    return lista.sort((a, b) => Number(a.semana) - Number(b.semana));
 
-  lista.sort((a, b) => Number(a.semana) - Number(b.semana));
-
-  return lista;
+  } catch (error) {
+    console.error("Error getAsistenciaPorJugador:", error);
+    return [];
+  }
 };
 
-/* 🔥 TRAER UNA SOLA POR ID (ESTO TE FALTABA) */
+/* POR ID */
 window.getAsistenciaById = async (id) => {
-  const ref = doc(db, "asistencia", id);
-  const snap = await getDoc(ref);
+  try {
+    const ref = doc(db, "asistencia", id);
+    const snap = await getDoc(ref);
 
-  if (!snap.exists()) return null;
+    if (!snap.exists()) return null;
 
-  return {
-    id: snap.id,
-    ...snap.data()
-  };
+    return {
+      id: snap.id,
+      ...snap.data()
+    };
+
+  } catch (error) {
+    console.error("Error getAsistenciaById:", error);
+    return null;
+  }
 };
 
-/* 🔥 EXISTE */
+/* EXISTE */
 window.existeAsistencia = async (jugadorId, semana) => {
+  try {
+    const q = query(
+      collection(db, "asistencia"),
+      where("jugadorId", "==", jugadorId),
+      where("semana", "==", semana)
+    );
 
-  const q = query(
-    collection(db, "asistencia"),
-    where("jugadorId", "==", jugadorId),
-    where("semana", "==", semana)
-  );
+    const snap = await getDocs(q);
+    return !snap.empty;
 
-  const snap = await getDocs(q);
-  return !snap.empty;
+  } catch (error) {
+    console.error("Error existeAsistencia:", error);
+    return false;
+  }
 };
 
-/* 🔥 ELIMINAR */
+/* ELIMINAR */
 window.eliminarAsistenciaFirebase = async (id) => {
-  const ref = doc(db, "asistencia", id);
-  await deleteDoc(ref);
+  try {
+    await deleteDoc(doc(db, "asistencia", id));
+  } catch (error) {
+    console.error("Error eliminarAsistencia:", error);
+  }
 };
 
-/* 🔥 ACTUALIZAR */
+/* ACTUALIZAR */
 window.actualizarAsistenciaFirebase = async (data) => {
+  try {
+    const { id, ...cleanData } = data;
 
-  const ref = doc(db, "asistencia", data.id);
+    const ref = doc(db, "asistencia", id);
+    await updateDoc(ref, cleanData);
 
-  const { id, ...cleanData } = data;
-
-  await updateDoc(ref, cleanData);
+  } catch (error) {
+    console.error("Error actualizarAsistencia:", error);
+    throw error;
+  }
 };
