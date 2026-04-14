@@ -21,24 +21,21 @@ window.onload = async () => {
     document.getElementById("btnGuardar")
       ?.addEventListener("click", guardarAsistencia);
 
-    // CERRAR MODALES
+    // CERRAR
     document.querySelectorAll(".btn-cerrar").forEach(btn => {
       btn.addEventListener("click", cerrar);
     });
 
-    // CHECKS NUEVO
+    // CHECKS
     ["nuevoDia1","nuevoDia2","nuevoDia3"].forEach(id => {
-      document.getElementById(id)
-        ?.addEventListener("change", actualizarEstadoNuevo);
+      document.getElementById(id)?.addEventListener("change", actualizarEstadoNuevo);
     });
 
-    // CHECKS EDITAR
     ["dia1","dia2","dia3"].forEach(id => {
-      document.getElementById(id)
-        ?.addEventListener("change", actualizarEstado);
+      document.getElementById(id)?.addEventListener("change", actualizarEstado);
     });
 
-    // FECHA AUTOMÁTICA
+    // FECHAS AUTOMÁTICAS
     document.getElementById("nuevoSemana")
       ?.addEventListener("change", actualizarFechaNueva);
 
@@ -87,6 +84,20 @@ function getFechaPorSemana(semana) {
 }
 
 //////////////////////////////////////////////////
+// FECHAS (FIX CRÍTICO QUE TE FALTABA)
+//////////////////////////////////////////////////
+
+function actualizarFechaNueva() {
+  let semana = document.getElementById("nuevoSemana").value;
+  document.getElementById("nuevoFecha").value = getFechaPorSemana(semana);
+}
+
+function actualizarFechaEditar() {
+  let semana = document.getElementById("semana").value;
+  document.getElementById("fechaSemana").value = getFechaPorSemana(semana);
+}
+
+//////////////////////////////////////////////////
 // RENDER
 //////////////////////////////////////////////////
 
@@ -116,7 +127,7 @@ function renderJugadores() {
 }
 
 //////////////////////////////////////////////////
-// VALIDACIÓN DUPLICADO
+// DUPLICADOS
 //////////////////////////////////////////////////
 
 async function existeAsistencia(jugadorId, semana, excludeId = null) {
@@ -146,13 +157,14 @@ function abrirModalNuevaAsistencia() {
     `).join("");
 
   cargarSemanas("nuevoSemana", 1);
-  document.getElementById("nuevoFecha").value = getFechaPorSemana(1);
+  actualizarFechaNueva();
 
   ["nuevoDia1","nuevoDia2","nuevoDia3"].forEach(id => {
     document.getElementById(id).checked = false;
   });
 
   document.getElementById("nuevoDetalle").value = "";
+
   actualizarEstadoNuevo();
 
   document.getElementById("modalNuevaAsistencia").classList.add("show");
@@ -207,7 +219,7 @@ async function guardarNuevaAsistencia() {
 }
 
 //////////////////////////////////////////////////
-// VER JUGADOR (FIX CRÍTICO)
+// VER JUGADOR (CORREGIDO)
 //////////////////////////////////////////////////
 
 async function verJugador(id) {
@@ -242,16 +254,14 @@ async function verJugador(id) {
       `;
     }).join("");
 
-    // ✅ EDITAR CORRECTO
     cont.querySelectorAll(".btn-editar").forEach(btn => {
       btn.addEventListener("click", async () => {
         const a = await window.getAsistenciaById(btn.dataset.id);
-        cerrar(); // evita conflicto visual
+        cerrar();
         editarAsistencia(a);
       });
     });
 
-    // ✅ ELIMINAR
     cont.querySelectorAll(".btn-eliminar").forEach(btn => {
       btn.addEventListener("click", () => {
         eliminarAsistencia(btn.dataset.id);
@@ -263,7 +273,7 @@ async function verJugador(id) {
 }
 
 //////////////////////////////////////////////////
-// EDITAR ASISTENCIA
+// EDITAR
 //////////////////////////////////////////////////
 
 function editarAsistencia(a) {
@@ -280,7 +290,7 @@ function editarAsistencia(a) {
     jugador?.dni || "";
 
   cargarSemanas("semana", a.semana);
-  document.getElementById("fechaSemana").value = a.fechaSemana;
+  actualizarFechaEditar();
 
   document.getElementById("dia1").checked = a.dia1;
   document.getElementById("dia2").checked = a.dia2;
@@ -341,6 +351,7 @@ async function eliminarAsistencia(id) {
   if (!confirm("Eliminar?")) return;
 
   await window.eliminarAsistenciaFirebase(id);
+
   alert("🗑️ Eliminado");
 
   cerrar();
