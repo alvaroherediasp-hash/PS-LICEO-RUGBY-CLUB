@@ -23,7 +23,7 @@ window.onload = async () => {
 
     // CERRAR
     document.querySelectorAll(".btn-cerrar").forEach(btn => {
-      btn.addEventListener("click", cerrar);
+      btn.addEventListener("click", () => cerrar());
     });
 
     // CHECKS
@@ -35,7 +35,7 @@ window.onload = async () => {
       document.getElementById(id)?.addEventListener("change", actualizarEstado);
     });
 
-    // CAMBIO FECHA
+    // FECHA AUTOMÁTICA
     document.getElementById("nuevoSemana")
       ?.addEventListener("change", actualizarFechaNueva);
 
@@ -49,8 +49,33 @@ window.onload = async () => {
 };
 
 //////////////////////////////////////////////////
-// FECHA PRO
+// UTILIDADES
 //////////////////////////////////////////////////
+
+function cerrar(id = null) {
+  if (id) {
+    document.getElementById(id)?.classList.remove("show");
+    return;
+  }
+
+  document.querySelectorAll(".modal").forEach(m => {
+    m.classList.remove("show");
+  });
+}
+
+function cargarSemanas(selectId, selected = 1) {
+  const sel = document.getElementById(selectId);
+  if (!sel) return;
+
+  sel.innerHTML = "";
+
+  for (let i = 1; i <= 52; i++) {
+    sel.innerHTML += `<option value="${i}">Semana ${i}</option>`;
+  }
+
+  sel.value = selected;
+}
+
 function getFechaPorSemana(semana) {
   let año = new Date().getFullYear();
   let fecha = new Date(año, 0, 1 + (semana - 1) * 7);
@@ -63,21 +88,10 @@ function getFechaPorSemana(semana) {
   return fecha.toISOString().split("T")[0];
 }
 
-function actualizarFechaNueva() {
-  let semana = document.getElementById("nuevoSemana").value;
-  document.getElementById("nuevoFecha").value =
-    getFechaPorSemana(semana);
-}
-
-function actualizarFechaEditar() {
-  let semana = document.getElementById("semana").value;
-  document.getElementById("fechaSemana").value =
-    getFechaPorSemana(semana);
-}
-
 //////////////////////////////////////////////////
 // RENDER
 //////////////////////////////////////////////////
+
 function renderJugadores() {
 
   let cont = document.getElementById("tablaAsistencia");
@@ -99,15 +113,14 @@ function renderJugadores() {
   `).join("");
 
   cont.querySelectorAll(".btn-ver").forEach(btn => {
-    btn.addEventListener("click", () => {
-      verJugador(btn.dataset.id);
-    });
+    btn.addEventListener("click", () => verJugador(btn.dataset.id));
   });
 }
 
 //////////////////////////////////////////////////
-// VALIDAR DUPLICADO
+// VALIDACIÓN
 //////////////////////////////////////////////////
+
 async function existeAsistencia(jugadorId, semana, excludeId = null) {
   let data = await window.getAsistenciaPorJugador(jugadorId);
 
@@ -117,8 +130,9 @@ async function existeAsistencia(jugadorId, semana, excludeId = null) {
 }
 
 //////////////////////////////////////////////////
-// MODAL NUEVO
+// NUEVA ASISTENCIA
 //////////////////////////////////////////////////
+
 function abrirModalNuevaAsistencia() {
 
   cerrar();
@@ -133,14 +147,7 @@ function abrirModalNuevaAsistencia() {
     </option>
   `).join("");
 
-  const semana = document.getElementById("nuevoSemana");
-  semana.innerHTML = "";
-
-  for (let i = 1; i <= 52; i++) {
-    semana.innerHTML += `<option value="${i}">Semana ${i}</option>`;
-  }
-
-  semana.value = 1;
+  cargarSemanas("nuevoSemana", 1);
   actualizarFechaNueva();
 
   ["nuevoDia1","nuevoDia2","nuevoDia3"].forEach(id => {
@@ -151,11 +158,16 @@ function abrirModalNuevaAsistencia() {
 
   actualizarEstadoNuevo();
 
-  document.getElementById("modalNuevaAsistencia")
-    .classList.add("show");
+  document.getElementById("modalNuevaAsistencia").classList.add("show");
+}
+
+function actualizarFechaNueva() {
+  let semana = document.getElementById("nuevoSemana").value;
+  document.getElementById("nuevoFecha").value = getFechaPorSemana(semana);
 }
 
 function actualizarEstadoNuevo() {
+
   let d1 = document.getElementById("nuevoDia1").checked;
   let d2 = document.getElementById("nuevoDia2").checked;
   let d3 = document.getElementById("nuevoDia3").checked;
@@ -168,9 +180,6 @@ function actualizarEstadoNuevo() {
   document.getElementById("nuevoEstado").value = estado;
 }
 
-//////////////////////////////////////////////////
-// GUARDAR NUEVA
-//////////////////////////////////////////////////
 async function guardarNuevaAsistencia() {
 
   let idJugador = document.getElementById("nuevoJugadorSelect").value;
@@ -198,47 +207,36 @@ async function guardarNuevaAsistencia() {
     detalle: document.getElementById("nuevoDetalle").value
   };
 
-  try {
-    await window.guardarAsistenciaFirebase(data);
-    alert("✅ Guardado");
-    cerrar();
-  } catch (e) {
-    console.error(e);
-    alert("Error");
-  }
+  await window.guardarAsistenciaFirebase(data);
+
+  alert("✅ Guardado");
+  cerrar();
+
+  jugadores = await window.getJugadores();
+  renderJugadores();
 }
 
 //////////////////////////////////////////////////
 // EDITAR
 //////////////////////////////////////////////////
+
 function editarAsistencia(a) {
 
-  cerrar();
+  cerrar("modalJugador");
 
   setTimeout(() => {
 
     const jugador = jugadores.find(j => j.id == a.jugadorId);
 
-    // 🔥 GUARDAR ID OCULTO
     document.getElementById("jugadorIdHidden").value = a.jugadorId;
-
     document.getElementById("asistenciaId").value = a.id;
 
     document.getElementById("jugadorNombre").value =
       `${jugador?.nombre || ""} (${jugador?.apodo || "-"})`;
 
-    document.getElementById("jugadorDni").value =
-      jugador?.dni || "";
+    document.getElementById("jugadorDni").value = jugador?.dni || "";
 
-    // 🔥 CARGAR SEMANAS
-    const selSemana = document.getElementById("semana");
-    selSemana.innerHTML = "";
-
-    for (let i = 1; i <= 52; i++) {
-      selSemana.innerHTML += `<option value="${i}">Semana ${i}</option>`;
-    }
-
-    document.getElementById("semana").value = a.semana;
+    cargarSemanas("semana", a.semana);
     actualizarFechaEditar();
 
     document.getElementById("dia1").checked = a.dia1;
@@ -251,12 +249,14 @@ function editarAsistencia(a) {
 
     document.getElementById("modalAsistencia").classList.add("show");
 
-  }, 50);
+  }, 100);
 }
 
-//////////////////////////////////////////////////
-// GUARDAR EDITADO
-//////////////////////////////////////////////////
+function actualizarFechaEditar() {
+  let semana = document.getElementById("semana").value;
+  document.getElementById("fechaSemana").value = getFechaPorSemana(semana);
+}
+
 async function guardarAsistencia() {
 
   let id = document.getElementById("asistenciaId").value;
@@ -284,19 +284,19 @@ async function guardarAsistencia() {
     detalle: document.getElementById("detalleSemana").value
   };
 
-  try {
-    await window.actualizarAsistenciaFirebase(data);
-    alert("✏️ Actualizado");
-    cerrar();
-  } catch (e) {
-    console.error(e);
-    alert("Error");
-  }
+  await window.actualizarAsistenciaFirebase(data);
+
+  alert("✏️ Actualizado");
+  cerrar();
+
+  jugadores = await window.getJugadores();
+  renderJugadores();
 }
 
 //////////////////////////////////////////////////
 // VER JUGADOR
 //////////////////////////////////////////////////
+
 async function verJugador(id) {
 
   let jugador = jugadores.find(j => j.id == id);
@@ -349,17 +349,23 @@ async function verJugador(id) {
 //////////////////////////////////////////////////
 // ELIMINAR
 //////////////////////////////////////////////////
+
 async function eliminarAsistencia(id) {
   if (!confirm("Eliminar?")) return;
 
   await window.eliminarAsistenciaFirebase(id);
   alert("🗑️ Eliminado");
+
   cerrar();
+
+  jugadores = await window.getJugadores();
+  renderJugadores();
 }
 
 //////////////////////////////////////////////////
 // ESTADO EDITAR
 //////////////////////////////////////////////////
+
 function actualizarEstado() {
 
   let d1 = document.getElementById("dia1")?.checked;
@@ -373,13 +379,4 @@ function actualizarEstado() {
 
   if (document.getElementById("estadoSemana"))
     document.getElementById("estadoSemana").value = estado;
-}
-
-//////////////////////////////////////////////////
-// CERRAR
-//////////////////////////////////////////////////
-function cerrar() {
-  document.querySelectorAll(".modal").forEach(m => {
-    m.classList.remove("show");
-  });
 }
