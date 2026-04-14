@@ -192,6 +192,30 @@ window.editar = async function(id) {
   document.getElementById("modalAsistencia")?.classList.add("show");
 };
 
+
+window.eliminar = async function(id) {
+
+  if (!confirm("¿Eliminar asistencia?")) return;
+
+  try {
+    await window.api.deleteAsistencia(id);
+
+    alert("🗑 Eliminado correctamente");
+
+    // 🔄 refrescar historial abierto
+    const abierto = document.getElementById("modalJugador")?.classList.contains("show");
+
+    if (abierto && window.ver) {
+      // recarga el historial del jugador actual
+      const j = jugadores.find(x => x.id);
+      if (j) window.ver(j.id);
+    }
+
+  } catch (e) {
+    console.error(e);
+    alert("❌ Error al eliminar");
+  }
+};
 /* =========================
    GUARDAR EDIT
 ========================= */
