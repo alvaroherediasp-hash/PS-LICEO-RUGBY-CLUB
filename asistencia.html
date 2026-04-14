@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Asistencia – Liceo Rugby</title>
+  <link rel="stylesheet" href="style.css" /> <!-- FIX: era "styles.css" -->
+</head>
+
+<body>
+
+<!-- ================= NAVBAR ================= -->
+<nav class="navbar">
+  <div class="nav-left">
+    <h1>🏉 Liceo Rugby</h1>
+  </div>
+  <div class="nav-right">
+    <a href="index.html" class="nav-link">Jugadores</a>
+    <a href="asistencia.html" class="nav-link active">Asistencia</a>
+  </div>
+</nav>
+
+<!-- ================= HEADER ================= -->
+<div class="header">
+  <div>
+    <h2>Asistencia</h2>
+    <p class="sub">Registro semanal del plantel</p>
+  </div>
+  <button id="btnNuevaAsistencia" class="btn-nuevo">+ Nueva asistencia</button>
+</div>
+
+<!-- ================= MAIN ================= -->
+<div class="main">
+  <div id="tablaAsistencia" class="tabla"></div>
+</div>
+
+<!-- =========================
+     MODAL VER HISTORIAL
+========================== -->
+<div id="modalJugador" class="modal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3>Historial de asistencia</h3>
+      <button class="modal-close btn-cerrar">✖</button>
+    </div>
+    <div id="detalleJugador"></div>
+  </div>
+</div>
+
+<!-- =========================
+     MODAL NUEVA ASISTENCIA
+========================== -->
+<div id="modalNuevaAsistencia" class="modal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3>Nueva asistencia</h3>
+      <button class="modal-close btn-cerrar">✖</button>
+    </div>
+    <div class="modal-body">
+      <select id="nuevoJugadorSelect"></select>
+
+      <select id="nuevoSemana">
+        <!-- Generado por JS -->
+        <option value="">Semana...</option>
+      </select>
+
+      <label><input type="checkbox" id="nuevoDia1"> Día 1</label>
+      <label><input type="checkbox" id="nuevoDia2"> Día 2</label>
+      <label><input type="checkbox" id="nuevoDia3"> Día 3</label>
+
+      <input id="nuevoEstado" placeholder="Estado (ej: Presente, Ausente...)" />
+      <textarea id="nuevoDetalle" placeholder="Observaciones (opcional)"></textarea>
+
+      <div class="acciones">
+        <button id="btnGuardarNueva" class="btn-primary">💾 Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =========================
+     MODAL EDITAR ASISTENCIA
+========================== -->
+<div id="modalAsistencia" class="modal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3>Editar asistencia</h3>
+      <button class="modal-close btn-cerrar">✖</button>
+    </div>
+    <div class="modal-body">
+      <select id="semana"></select>
+
+      <label><input type="checkbox" id="dia1"> Día 1</label>
+      <label><input type="checkbox" id="dia2"> Día 2</label>
+      <label><input type="checkbox" id="dia3"> Día 3</label>
+
+      <input id="estadoSemana" placeholder="Estado" />
+      <textarea id="detalleSemana" placeholder="Observaciones"></textarea>
+
+      <div class="acciones">
+        <button id="btnGuardar" class="btn-primary">💾 Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FIREBASE (module) -->
+<script type="module" src="firebase.js"></script>
+
+<!-- LÓGICA (regular, espera window.api) -->
+<script src="asistencia.js"></script>
+
+<!-- Poblar select semanas -->
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    ["nuevoSemana"].forEach(id => {
+      const sel = document.getElementById(id);
+      if (!sel) return;
+      sel.innerHTML = `<option value="">Semana...</option>` +
+        Array.from({length: 30}, (_, i) =>
+          `<option value="${i+1}">Semana ${i+1}</option>`
+        ).join("");
+    });
+  });
+</script>
+
+</body>
+</html>
