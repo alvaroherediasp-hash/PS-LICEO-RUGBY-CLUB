@@ -637,9 +637,9 @@ window.verJugador = async function(id) {
 
   document.getElementById("modalJugador").classList.add("show");
 };
-window.editarAsistenciaPorId = function(id) {
+window.editarAsistenciaPorId = async function(id) {
 
-  let asistencia = window.asistencias?.find(a => a.id === id);
+  const asistencia = await window.getAsistenciaById(id);
 
   if (!asistencia) {
     alert("No se encontró la asistencia");
