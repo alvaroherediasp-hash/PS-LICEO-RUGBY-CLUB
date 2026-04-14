@@ -15,7 +15,6 @@ window.addEventListener("DOMContentLoaded", async () => {
   renderJugadores();
   poblarSelect();
 
-  // eventos
   document.getElementById("btnNuevaAsistencia")
     ?.addEventListener("click", abrirNueva);
 
@@ -25,13 +24,14 @@ window.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("btnGuardar")
     ?.addEventListener("click", guardarEdit);
 
-  document.querySelectorAll(".btn-cerrar").forEach(b =>
-    b.addEventListener("click", cerrar)
-  );
+  document.querySelectorAll(".btn-cerrar")
+    .forEach(b => b.addEventListener("click", cerrar));
+
+  document.addEventListener("change", handleEstadoAuto);
 });
 
 /* =========================
-   RENDER JUGADORES
+   LISTA JUGADORES
 ========================= */
 function renderJugadores() {
   const cont = document.getElementById("tablaAsistencia");
@@ -71,11 +71,12 @@ function abrirNueva() {
 
   document.getElementById("modalNuevaAsistencia").classList.add("show");
 
+  document.getElementById("nuevoJugadorSelect").value = "";
   document.getElementById("nuevoSemana").value = 1;
   document.getElementById("nuevoFecha").value = hoy();
 
   resetChecks("nuevo");
-  actualizarEstadoNuevo();
+  setEstadoNuevo();
 }
 
 async function guardarNueva() {
@@ -91,7 +92,7 @@ async function guardarNueva() {
     dia1: document.getElementById("nuevoDia1").checked,
     dia2: document.getElementById("nuevoDia2").checked,
     dia3: document.getElementById("nuevoDia3").checked,
-    estado: getEstado("nuevo"),
+    estado: document.getElementById("nuevoEstado").value,
     detalle: document.getElementById("nuevoDetalle").value
   };
 
@@ -105,7 +106,7 @@ async function guardarNueva() {
 ========================= */
 window.ver = async function(id) {
 
-  const data = await window.api.getAsistenciaByJugador(id);
+  const lista = await window.api.getAsistenciaPorJugador(id);
   const j = jugadores.find(x => x.id === id);
 
   const cont = document.getElementById("detalleJugador");
@@ -115,7 +116,7 @@ window.ver = async function(id) {
     <p>${j.apodo || "-"}</p>
   `;
 
-  cont.innerHTML += data.map(a => `
+  cont.innerHTML += lista.map(a => `
     <div class="card">
       <b>Semana ${a.semana}</b>
       <div>${a.estado}</div>
@@ -152,6 +153,8 @@ window.editar = async function(id) {
   document.getElementById("estadoSemana").value = a.estado;
   document.getElementById("detalleSemana").value = a.detalle;
 
+  setEstadoEdit();
+
   document.getElementById("modalAsistencia").classList.add("show");
 };
 
@@ -167,7 +170,7 @@ async function guardarEdit() {
     dia1: document.getElementById("dia1").checked,
     dia2: document.getElementById("dia2").checked,
     dia3: document.getElementById("dia3").checked,
-    estado: getEstado("edit"),
+    estado: document.getElementById("estadoSemana").value,
     detalle: document.getElementById("detalleSemana").value
   };
 
@@ -181,7 +184,7 @@ async function guardarEdit() {
 ========================= */
 window.eliminar = async function(id) {
 
-  if (!confirm("Eliminar?")) return;
+  if (!confirm("¿Eliminar?")) return;
 
   await window.api.deleteAsistencia(id);
 
@@ -189,19 +192,45 @@ window.eliminar = async function(id) {
 };
 
 /* =========================
-   ESTADO
+   ESTADO AUTOMÁTICO
 ========================= */
-function getEstado(prefix) {
+function handleEstadoAuto(e) {
 
-  const d1 = document.getElementById(prefix + "Dia1")?.checked;
-  const d2 = document.getElementById(prefix + "Dia2")?.checked;
-  const d3 = document.getElementById(prefix + "Dia3")?.checked;
+  if (e.target.id.startsWith("nuevoDia")) {
+    setEstadoNuevo();
+  }
+
+  if (e.target.id.startsWith("dia") && !e.target.id.startsWith("nuevo")) {
+    setEstadoEdit();
+  }
+}
+
+function setEstadoNuevo() {
+
+  const d1 = document.getElementById("nuevoDia1").checked;
+  const d2 = document.getElementById("nuevoDia2").checked;
+  const d3 = document.getElementById("nuevoDia3").checked;
 
   const total = [d1, d2, d3].filter(Boolean).length;
 
-  if (total === 3) return "🟢 COMPLETO";
-  if (total > 0) return "🟡 INCOMPLETO";
-  return "🔴 NO ASISTIÓ";
+  document.getElementById("nuevoEstado").value =
+    total === 3 ? "🟢 COMPLETO" :
+    total > 0 ? "🟡 INCOMPLETO" :
+    "🔴 NO ASISTIÓ";
+}
+
+function setEstadoEdit() {
+
+  const d1 = document.getElementById("dia1").checked;
+  const d2 = document.getElementById("dia2").checked;
+  const d3 = document.getElementById("dia3").checked;
+
+  const total = [d1, d2, d3].filter(Boolean).length;
+
+  document.getElementById("estadoSemana").value =
+    total === 3 ? "🟢 COMPLETO" :
+    total > 0 ? "🟡 INCOMPLETO" :
+    "🔴 NO ASISTIÓ";
 }
 
 /* =========================
