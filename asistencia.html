@@ -57,19 +57,17 @@
       <button class="modal-close btn-cerrar">✖</button>
     </div>
     <div class="modal-body">
-      <select id="nuevoJugadorSelect"></select>
+     <select id="nuevoJugadorSelect"></select>
 
-      <select id="nuevoSemana">
-        <!-- Generado por JS -->
-        <option value="">Semana...</option>
-      </select>
+<input id="nuevoSemana" type="number" min="1" max="40">
+<input id="nuevoFecha" type="date" readonly>
 
-      <label><input type="checkbox" id="nuevoDia1"> Día 1</label>
-      <label><input type="checkbox" id="nuevoDia2"> Día 2</label>
-      <label><input type="checkbox" id="nuevoDia3"> Día 3</label>
+<label><input type="checkbox" id="nuevoDia1"> Día 1</label>
+<label><input type="checkbox" id="nuevoDia2"> Día 2</label>
+<label><input type="checkbox" id="nuevoDia3"> Día 3</label>
 
-      <input id="nuevoEstado" placeholder="Estado (ej: Presente, Ausente...)" />
-      <textarea id="nuevoDetalle" placeholder="Observaciones (opcional)"></textarea>
+<input id="nuevoEstado" readonly>
+<textarea id="nuevoDetalle"></textarea>
 
       <div class="acciones">
         <button id="btnGuardarNueva" class="btn-primary">💾 Guardar</button>
@@ -88,15 +86,19 @@
       <button class="modal-close btn-cerrar">✖</button>
     </div>
     <div class="modal-body">
-      <select id="semana"></select>
+     <input id="editDni" readonly>
+<input id="editNombre" readonly>
+<input id="editApodo" readonly>
 
-      <label><input type="checkbox" id="dia1"> Día 1</label>
-      <label><input type="checkbox" id="dia2"> Día 2</label>
-      <label><input type="checkbox" id="dia3"> Día 3</label>
+<input id="semana" type="number">
+<input id="fechaSemana" type="date">
 
-      <input id="estadoSemana" placeholder="Estado" />
-      <textarea id="detalleSemana" placeholder="Observaciones"></textarea>
+<label><input type="checkbox" id="dia1"> Día 1</label>
+<label><input type="checkbox" id="dia2"> Día 2</label>
+<label><input type="checkbox" id="dia3"> Día 3</label>
 
+<input id="estadoSemana" readonly>
+<textarea id="detalleSemana"></textarea>
       <div class="acciones">
         <button id="btnGuardar" class="btn-primary">💾 Guardar</button>
       </div>
