@@ -17,12 +17,15 @@ let jugadorActual = null;
 window.onload = async () => {
   try {
 
-    // 🔥 espera Firebase listo
     if (!window.getJugadores) {
       throw new Error("Firebase aún no inicializado");
     }
 
+    // ✔ jugadores
     jugadores = await window.getJugadores();
+
+    // ✔ asistencias (IMPORTANTE PARA EDITAR POR ID)
+    window.asistencias = await window.getAsistenciaPorJugador?.() || [];
 
     renderJugadores();
     cargarSemanas();
