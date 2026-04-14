@@ -325,6 +325,17 @@ window.verJugador = async function(id) {
 
   document.getElementById("modalJugador").classList.add("show");
 };
+window.editarAsistenciaPorId = async function(id) {
+
+  const asistencia = await window.getAsistenciaById(id);
+
+  if (!asistencia) {
+    alert("No se encontró la asistencia");
+    return;
+  }
+
+  editarAsistencia(asistencia);
+};
 
 /* =========================
    CERRAR (FIX GLOBAL)
@@ -334,4 +345,3 @@ function cerrar() {
     m.classList.remove("show");
   });
 }
-    
