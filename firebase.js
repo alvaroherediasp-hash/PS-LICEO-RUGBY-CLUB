@@ -41,12 +41,17 @@ window.getJugadores = async () => {
   try {
     const snap = await getDocs(collection(db, "jugadores"));
 
-    return snap.docs.map(d => ({
+    const data = snap.docs.map(d => ({
       id: d.id,
       ...d.data()
     }));
-  } catch (error) {
-    console.error("Error getJugadores:", error);
+
+    console.log("🔥 Firebase jugadores:", data);
+
+    return data;
+
+  } catch (e) {
+    console.error("❌ ERROR getJugadores:", e);
     return [];
   }
 };
