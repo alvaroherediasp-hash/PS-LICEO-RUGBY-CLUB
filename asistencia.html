@@ -1,153 +1,57 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Asistencia - Liceo Rugby</title>
-
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <title>Asistencia</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
 
-<!-- ================= HEADER ================= -->
-<div class="header">
-  <h1>🏉 Sistema de Asistencia</h1>
+  <div class="header">
+    <h1>Asistencia</h1>
+  </div>
 
-  <button class="btn btn-sec" onclick="location.href='index.html'">
-    ← Volver
-  </button>
-</div>
+  <div class="main">
 
-<!-- ================= TOOLBAR ================= -->
-<div class="toolbar">
-  <button id="btnNuevaAsistencia" class="btn btn-primary">
-    ➕ Cargar asistencia
-  </button>
-</div>
+    <div id="tablaAsistencia"></div>
 
-<!-- ================= MAIN ================= -->
-<div class="main">
-  <div class="card">
-    <h3>📊 Jugadores</h3>
+  </div>
 
-    <div id="tablaAsistencia">
-      <p>Cargando jugadores...</p>
+  <!-- MODAL VER -->
+  <div id="modalJugador" class="modal">
+    <div class="modal-box">
+      <div id="detalleJugador"></div>
+      <button class="btn-cerrar" data-close="modal">Cerrar</button>
     </div>
   </div>
-</div>
 
-<!-- ================= MODAL NUEVA ================= -->
-<div class="modal" id="modalNuevaAsistencia">
+  <!-- MODAL ASISTENCIA -->
+  <div id="modalAsistencia" class="modal">
+    <div class="modal-box">
 
-  <div class="modal-box">
+      <input id="semana" placeholder="Semana">
+      <input id="fechaSemana" placeholder="Fecha">
 
-    <div class="modal-head">
-      <h3>➕ Nueva asistencia</h3>
-      <button type="button" class="btn-cerrar">❌</button>
-    </div>
+      <label><input type="checkbox" id="dia1"> Día 1</label>
+      <label><input type="checkbox" id="dia2"> Día 2</label>
+      <label><input type="checkbox" id="dia3"> Día 3</label>
 
-    <div class="modal-body">
+      <input id="estadoSemana" readonly>
 
-      <label>Jugador</label>
-      <select id="nuevoJugadorSelect"></select>
-
-      <label>Semana</label>
-      <select id="nuevoSemana"></select>
-
-      <label>Fecha</label>
-      <input type="date" id="nuevoFecha">
-
-      <div>
-        <label><input type="checkbox" id="nuevoDia1"> Día 1</label>
-        <label><input type="checkbox" id="nuevoDia2"> Día 2</label>
-        <label><input type="checkbox" id="nuevoDia3"> Partido</label>
-      </div>
-
-      <label>Detalle</label>
-      <textarea id="nuevoDetalle"></textarea>
-
-      <label>Estado</label>
-      <input id="nuevoEstado" disabled>
-
-      <div>
-        <button type="button" class="btn-cerrar">Cancelar</button>
-        <button id="btnGuardarNueva">💾 Guardar</button>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-<!-- ================= MODAL EDITAR ================= -->
-<div class="modal" id="modalAsistencia">
-
-  <div class="modal-box">
-
-    <div class="modal-head">
-      <h3>Editar asistencia</h3>
-      <button type="button" class="btn-cerrar">❌</button>
-    </div>
-
-    <div class="modal-body">
-
-      <!-- 🔥 IMPORTANTE -->
-      <input type="hidden" id="asistenciaId">
-      <input type="hidden" id="jugadorIdHidden">
-
-      <label>DNI</label>
-      <input id="jugadorDni" disabled>
-
-      <label>Jugador</label>
-      <input id="jugadorNombre" disabled>
-
-      <label>Semana</label>
-      <select id="semana"></select>
-
-      <label>Fecha</label>
-      <input type="date" id="fechaSemana">
-
-      <div>
-        <label><input type="checkbox" id="dia1"> Día 1</label>
-        <label><input type="checkbox" id="dia2"> Día 2</label>
-        <label><input type="checkbox" id="dia3"> Partido</label>
-      </div>
-
-      <label>Detalle</label>
       <textarea id="detalleSemana"></textarea>
 
-      <label>Estado</label>
-      <input id="estadoSemana" disabled>
-
-      <div>
-        <button type="button" class="btn-cerrar">Cancelar</button>
-        <button id="btnGuardar">💾 Guardar</button>
-      </div>
+      <button id="btnGuardar">Guardar</button>
+      <button class="btn-cerrar" data-close="modal">Cancelar</button>
 
     </div>
   </div>
-</div>
 
-<!-- ================= MODAL HISTORIAL ================= -->
-<div class="modal" id="modalJugador">
+  <!-- FIREBASE (SIEMPRE PRIMERO) -->
+  <script type="module" src="firebase.js"></script>
 
-  <div class="modal-box" style="max-width:900px">
-
-    <div class="modal-head">
-      <h3>📊 Historial del jugador</h3>
-      <button type="button" class="btn-cerrar">❌</button>
-    </div>
-
-    <div class="modal-body">
-      <div id="detalleJugador"></div>
-    </div>
-
-  </div>
-</div>
-
-<!-- ================= JS ================= -->
-<script type="module" src="firebase.js"></script>
-<script type="module" src="asistencia.js"></script>
+  <!-- LOGICA -->
+  <script src="asistencia.js"></script>
 
 </body>
 </html>
