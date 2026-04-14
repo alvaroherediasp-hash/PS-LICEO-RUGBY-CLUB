@@ -334,13 +334,10 @@ async function verJugador(id) {
       `;
     }).join("");
 
-    cont.querySelectorAll(".btn-editar").forEach(btn => {
-      btn.addEventListener("click", async () => {
-        const a = await window.getAsistenciaById(btn.dataset.id);
-        editarAsistencia(a);
-      });
-    });
-
+ btn.addEventListener("click", async () => {
+  const a = await window.getAsistenciaById(btn.dataset.id);
+  editarAsistencia(a);
+});
     cont.querySelectorAll(".btn-eliminar").forEach(btn => {
       btn.addEventListener("click", () => {
         eliminarAsistencia(btn.dataset.id);
