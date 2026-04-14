@@ -76,21 +76,13 @@ function renderJugadores() {
 ========================= */
 function abrirModalAsistencia() {
 
-  cerrar(); // 🔥 IMPORTANTE
-
-  let sel = document.getElementById("jugadorSelect");
-
-  sel.innerHTML = `
-    <option value="">Seleccionar jugador</option>
-  ` + jugadores.map(j => `
-    <option value="${j.id}">
-      ${j.nombre} - ${j.dni}
-    </option>
-  `).join("");
+  cerrar();
 
   limpiarFormulario();
 
-  document.getElementById("tituloModalAsistencia").innerText = "Registrar asistencia";
+  document.getElementById("tituloModalAsistencia").innerText =
+    "Registrar asistencia";
+
   document.getElementById("modalAsistencia").classList.add("show");
 
   setFechaHoy();
