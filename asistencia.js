@@ -309,17 +309,18 @@ window.verJugador = async function(id) {
   const fecha = new Date(a.fechaSemana).toLocaleDateString("es-AR");
 
   return `
-    <div class="card">
+  <div class="card">
 
-      <b>Semana ${a.semana} - ${fecha}</b>
+    <b>Semana ${a.semana} - ${fecha}</b>
 
-      <div>${a.estado}</div>
+    <div>${a.estado}</div>
 
-      <button onclick="editarAsistenciaPorId('${a.id}')">
-  ✏️ Editar
-</button>
-    </div>
-  `;
+    <button onclick="editarAsistenciaPorId('${a.id}')">✏️ Editar</button>
+
+    <button onclick="eliminarAsistencia('${a.id}')">🗑️ Eliminar</button>
+
+  </div>
+`;
 }).join("");
   }
 
