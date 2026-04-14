@@ -265,6 +265,15 @@ async function guardarAsistencia() {
   cerrar();
   jugadores = await window.getJugadores();
   renderJugadores();
+
+  alert("✅ Modificación realizada correctamente");
+};
+
+  await window.actualizarAsistenciaFirebase(data);
+
+  cerrar();
+  jugadores = await window.getJugadores();
+  renderJugadores();
 }
 
 //////////////////////////////////////////////////
