@@ -26,17 +26,21 @@ window.onload = async () => {
       btn.addEventListener("click", cerrar);
     });
 
-    // CHECKS NUEVO
+    // CHECKS
     ["nuevoDia1","nuevoDia2","nuevoDia3"].forEach(id => {
-      document.getElementById(id)
-        ?.addEventListener("change", actualizarEstadoNuevo);
+      document.getElementById(id)?.addEventListener("change", actualizarEstadoNuevo);
     });
 
-    // CHECKS EDITAR
     ["dia1","dia2","dia3"].forEach(id => {
-      document.getElementById(id)
-        ?.addEventListener("change", actualizarEstado);
+      document.getElementById(id)?.addEventListener("change", actualizarEstado);
     });
+
+    // 🔥 CAMBIO AUTOMÁTICO DE FECHA
+    document.getElementById("nuevoSemana")
+      ?.addEventListener("change", actualizarFechaNueva);
+
+    document.getElementById("semana")
+      ?.addEventListener("change", actualizarFechaEditar);
 
   } catch (e) {
     console.error(e);
@@ -45,7 +49,35 @@ window.onload = async () => {
 };
 
 //////////////////////////////////////////////////
-// RENDER JUGADORES
+// FUNCION PRO: CALCULAR FECHA (LUNES)
+//////////////////////////////////////////////////
+function getFechaPorSemana(semana) {
+
+  let año = new Date().getFullYear();
+  let fecha = new Date(año, 0, 1 + (semana - 1) * 7);
+
+  let dia = fecha.getDay();
+  let diff = (dia <= 1 ? 1 - dia : 8 - dia);
+
+  fecha.setDate(fecha.getDate() + diff);
+
+  return fecha.toISOString().split("T")[0];
+}
+
+function actualizarFechaNueva() {
+  let semana = document.getElementById("nuevoSemana").value;
+  document.getElementById("nuevoFecha").value =
+    getFechaPorSemana(semana);
+}
+
+function actualizarFechaEditar() {
+  let semana = document.getElementById("semana").value;
+  document.getElementById("fechaSemana").value =
+    getFechaPorSemana(semana);
+}
+
+//////////////////////////////////////////////////
+// RENDER
 //////////////////////////////////////////////////
 function renderJugadores() {
 
@@ -77,9 +109,13 @@ function renderJugadores() {
 //////////////////////////////////////////////////
 // VALIDAR DUPLICADO
 //////////////////////////////////////////////////
-async function existeAsistencia(jugadorId, semana) {
+async function existeAsistencia(jugadorId, semana, excludeId = null) {
+
   let data = await window.getAsistenciaPorJugador(jugadorId);
-  return data.some(a => a.semana == semana);
+
+  return data.some(a =>
+    a.semana == semana && a.id != excludeId
+  );
 }
 
 //////////////////////////////////////////////////
@@ -107,10 +143,7 @@ function abrirModalNuevaAsistencia() {
   }
 
   semana.value = 1;
-
-  let hoy = new Date();
-  document.getElementById("nuevoFecha").value =
-    hoy.toISOString().split("T")[0];
+  actualizarFechaNueva();
 
   ["nuevoDia1","nuevoDia2","nuevoDia3"].forEach(id => {
     document.getElementById(id).checked = false;
@@ -149,19 +182,10 @@ async function guardarNuevaAsistencia() {
   let semana = Number(document.getElementById("nuevoSemana").value);
 
   if (await existeAsistencia(idJugador, semana)) {
-    return alert("❌ Ya existe asistencia en esa semana");
+    return alert("❌ Ya existe esa semana");
   }
 
   let jugador = jugadores.find(j => j.id == idJugador);
-
-  let d1 = document.getElementById("nuevoDia1").checked;
-  let d2 = document.getElementById("nuevoDia2").checked;
-  let d3 = document.getElementById("nuevoDia3").checked;
-
-  let estado =
-    (d1 && d2 && d3) ? "🟢 COMPLETO" :
-    (d1 || d2 || d3) ? "🟡 INCOMPLETO" :
-    "🔴 NO ASISTIÓ";
 
   let data = {
     jugadorId: idJugador,
@@ -170,10 +194,10 @@ async function guardarNuevaAsistencia() {
     dni: jugador.dni,
     semana,
     fechaSemana: document.getElementById("nuevoFecha").value,
-    dia1: d1,
-    dia2: d2,
-    dia3: d3,
-    estado,
+    dia1: document.getElementById("nuevoDia1").checked,
+    dia2: document.getElementById("nuevoDia2").checked,
+    dia3: document.getElementById("nuevoDia3").checked,
+    estado: document.getElementById("nuevoEstado").value,
     detalle: document.getElementById("nuevoDetalle").value
   };
 
@@ -196,14 +220,6 @@ function editarAsistencia(a) {
 
   setTimeout(() => {
 
-    const select = document.getElementById("jugadorSelect");
-
-    select.innerHTML = jugadores.map(j => `
-      <option value="${j.id}">
-        ${j.dni} - ${j.nombre} (${j.apodo || "-"})
-      </option>
-    `).join("");
-
     const jugador = jugadores.find(j => j.id == a.jugadorId);
 
     document.getElementById("asistenciaId").value = a.id;
@@ -216,7 +232,7 @@ function editarAsistencia(a) {
       jugador?.dni || "";
 
     document.getElementById("semana").value = a.semana;
-    document.getElementById("fechaSemana").value = a.fechaSemana;
+    actualizarFechaEditar();
 
     document.getElementById("dia1").checked = a.dia1;
     document.getElementById("dia2").checked = a.dia2;
@@ -232,12 +248,17 @@ function editarAsistencia(a) {
 }
 
 //////////////////////////////////////////////////
-// GUARDAR EDITADO
+// GUARDAR EDITADO (VALIDACIÓN PRO)
 //////////////////////////////////////////////////
 async function guardarAsistencia() {
 
   let id = document.getElementById("asistenciaId").value;
   let idJugador = document.getElementById("jugadorSelect").value;
+  let semana = Number(document.getElementById("semana").value);
+
+  if (await existeAsistencia(idJugador, semana, id)) {
+    return alert("❌ Ya existe esa semana");
+  }
 
   let jugador = jugadores.find(j => j.id == idJugador);
 
@@ -247,7 +268,7 @@ async function guardarAsistencia() {
     nombre: jugador.nombre,
     apodo: jugador.apodo || "",
     dni: jugador.dni,
-    semana: Number(document.getElementById("semana").value),
+    semana,
     fechaSemana: document.getElementById("fechaSemana").value,
     dia1: document.getElementById("dia1").checked,
     dia2: document.getElementById("dia2").checked,
