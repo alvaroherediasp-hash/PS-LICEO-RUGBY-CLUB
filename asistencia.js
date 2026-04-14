@@ -6,6 +6,12 @@ let jugadorActual = null;
 ========================= */
 window.onload = async () => {
   try {
+
+    // 🔥 espera Firebase listo
+    if (!window.getJugadores) {
+      throw new Error("Firebase aún no inicializado");
+    }
+
     jugadores = await window.getJugadores();
 
     renderJugadores();
@@ -13,7 +19,7 @@ window.onload = async () => {
     initEventosChecks();
 
   } catch (e) {
-    console.error(e);
+    console.error("ERROR REAL:", e);
     alert("Error Firebase al cargar jugadores");
   }
 };
