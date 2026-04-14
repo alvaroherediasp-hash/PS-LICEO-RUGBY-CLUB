@@ -73,10 +73,12 @@
       
 
       <!-- SEMANA -->
-<div style="display:flex; gap:8px; font-size:13px; color:#94a3b8;">
-  <span>📆 Semana ${a.semana}</span>
+<!-- SEMANA + FECHA (FIX PRO) -->
+<div class="semana-info">
+  <span>📆 Semana</span>
+  <span id="semanaLabel">-</span>
   <span>•</span>
-  <span>${new Date(a.fechaSemana).toLocaleDateString("es-AR")}</span>
+  <span id="fechaSemanaLabel">-</span>
 </div>
 
       <!-- FECHA -->
