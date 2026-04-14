@@ -352,3 +352,26 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 });
+
+/* =========================
+  ELIMINAR ASISTENCIA
+========================= */
+
+window.eliminarAsistencia = async function(id) {
+
+  if (!confirm("¿Seguro que querés eliminar esta asistencia?")) return;
+
+  try {
+
+    await window.eliminarAsistenciaFirebase(id);
+
+    alert("🗑️ Eliminado");
+
+    // 👉 refrescar vista
+    cerrar();
+
+  } catch (e) {
+    console.error(e);
+    alert("❌ Error al eliminar");
+  }
+};
