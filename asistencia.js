@@ -4,9 +4,17 @@ let jugadorActual = null;
 window.onload = async () => {
   try {
 
-    // 🔥 ESPERAR Firebase realmente
-    if (!window.firebaseReady || !window.getJugadores) {
-      throw new Error("Firebase aún no cargó");
+    console.log("⏳ Esperando Firebase...");
+
+    // 🔥 esperar correctamente
+    let intentos = 0;
+    while (!window.firebaseReady && intentos < 20) {
+      await new Promise(r => setTimeout(r, 200));
+      intentos++;
+    }
+
+    if (!window.getJugadores) {
+      throw new Error("Firebase no inicializado");
     }
 
     console.log("🔥 Firebase OK");
@@ -15,9 +23,8 @@ window.onload = async () => {
     jugadores = await window.getJugadores();
     console.log("👥 jugadores:", jugadores);
 
-    // ✔ asistencia
+    // ✔ asistencias
     window.asistencias = await window.getAsistencia();
-    console.log("📊 asistencias:", window.asistencias);
 
     renderJugadores();
     cargarSemanas();
@@ -25,7 +32,7 @@ window.onload = async () => {
 
   } catch (e) {
     console.error("❌ ERROR REAL:", e);
-    alert("Error cargando Firebase: " + e.message);
+    alert("Error Firebase: " + e.message);
   }
 };
 
