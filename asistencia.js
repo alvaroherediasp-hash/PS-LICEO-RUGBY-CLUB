@@ -113,13 +113,25 @@ function abrirNueva() {
 }
 
 async function guardarNueva() {
-
   const jugadorId = document.getElementById("nuevoJugadorSelect").value;
   if (!jugadorId) return alert("Seleccioná jugador");
 
+  const semana = Number(document.getElementById("nuevoSemana").value);
+
+  // 🔎 TRAER ASISTENCIAS DEL JUGADOR
+  const existentes = await window.api.getAsistenciaByJugador(jugadorId);
+
+  // 🚫 VERIFICAR SI YA EXISTE ESA SEMANA
+  const yaExiste = existentes.some(a => Number(a.semana) === semana);
+
+  if (yaExiste) {
+    alert("⚠️ Este jugador ya tiene cargada la semana " + semana);
+    return;
+  }
+
   const data = {
     jugadorId,
-    semana: Number(document.getElementById("nuevoSemana").value),
+    semana,
     fechaSemana: document.getElementById("nuevoFecha").value,
     dia1: document.getElementById("nuevoDia1").checked,
     dia2: document.getElementById("nuevoDia2").checked,
@@ -129,10 +141,8 @@ async function guardarNueva() {
   };
 
   await window.api.addAsistencia(data);
-
   cerrar();
 }
-
 /* =========================
    VER
 ========================= */
