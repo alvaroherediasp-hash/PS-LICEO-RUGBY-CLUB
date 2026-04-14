@@ -1,19 +1,6 @@
 let jugadores = [];
 let jugadorActual = null;
 
-/* =========================
-   INIT
-========================= */
-window.onload = async () => {
-  try {
-
-    // 🔥 espera Firebase listo
-    if (!window.getJugadores) {let jugadores = [];
-let jugadorActual = null;
-
-/* =========================
-   INIT
-========================= */
 window.onload = async () => {
   try {
 
@@ -21,11 +8,12 @@ window.onload = async () => {
       throw new Error("Firebase aún no inicializado");
     }
 
-    // ✔ jugadores
+    // ✔ cargar jugadores
     jugadores = await window.getJugadores();
 
-    // ✔ asistencias (IMPORTANTE PARA EDITAR POR ID)
-    window.asistencias = await window.getAsistenciaPorJugador?.() || [];
+    // ✔ cache asistencias (IMPORTANTE)
+window.asistencias =
+  (await window.getTodasAsistencias?.()) || [];
 
     renderJugadores();
     cargarSemanas();
