@@ -6,24 +6,19 @@ window.onload = async () => {
 
     console.log("⏳ Esperando Firebase...");
 
-    // 🔥 esperar correctamente
-    let intentos = 0;
-    while (!window.firebaseReady && intentos < 20) {
+    // 🔥 esperar hasta que Firebase esté listo
+    while (!window.getJugadores) {
       await new Promise(r => setTimeout(r, 200));
-      intentos++;
     }
 
-    if (!window.getJugadores) {
-      throw new Error("Firebase no inicializado");
-    }
+    console.log("🔥 Firebase listo");
 
-    console.log("🔥 Firebase OK");
-
-    // ✔ jugadores
+    // ✔ traer jugadores
     jugadores = await window.getJugadores();
+
     console.log("👥 jugadores:", jugadores);
 
-    // ✔ asistencias
+    // ✔ traer asistencia
     window.asistencias = await window.getAsistencia();
 
     renderJugadores();
@@ -31,8 +26,8 @@ window.onload = async () => {
     initEventosChecks();
 
   } catch (e) {
-    console.error("❌ ERROR REAL:", e);
-    alert("Error Firebase: " + e.message);
+    console.error("❌ ERROR:", e);
+    alert("Error: " + e.message);
   }
 };
 
