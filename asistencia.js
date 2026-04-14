@@ -171,10 +171,14 @@ window.editar = async function(id) {
 
   editId = a.id;
 
-  document.getElementById("editDni").value = a.dni || "";
-  document.getElementById("editNombre").value = a.nombre || "";
-  document.getElementById("editApodo").value = a.apodo || "";
+  const j = jugadores.find(x => x.id === a.jugadorId);
 
+  // 👇 INFO DEL JUGADOR (SIEMPRE ACTUALIZADA)
+  document.getElementById("editDni").value = j?.dni || "";
+  document.getElementById("editNombre").value = j?.nombre || "";
+  document.getElementById("editApodo").value = j?.apodo || "-";
+
+  // 👇 ASISTENCIA
   cargarSemanas("semana", a.semana);
 
   document.getElementById("fechaSemana").value = a.fechaSemana || "";
