@@ -57,17 +57,17 @@
       <button class="modal-close btn-cerrar">✖</button>
     </div>
     <div class="modal-body">
-     <select id="nuevoJugadorSelect"></select>
+     <select id="nuevoJugadorSelect" required></select>
 
-<select id="nuevoSemana"></select>
-<input type="date" id="nuevoFecha">
+<select id="nuevoSemana" required></select>
+<input type="date" id="nuevoFecha" required>
 
 <label><input type="checkbox" id="nuevoDia1"> Día 1</label>
 <label><input type="checkbox" id="nuevoDia2"> Día 2</label>
 <label><input type="checkbox" id="nuevoDia3"> Día 3</label>
 
 <input id="nuevoEstado" readonly>
-<textarea id="nuevoDetalle"></textarea>
+<textarea id="nuevoDetalle" required></textarea>
 
       <div class="acciones">
         <button id="btnGuardarNueva" class="btn-primary">💾 Guardar</button>
