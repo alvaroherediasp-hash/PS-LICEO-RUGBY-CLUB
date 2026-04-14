@@ -55,8 +55,8 @@ function renderJugadores() {
   cont.innerHTML = jugadores.map(j => `
     <div class="fila">
       <div>
-        <b>${j.apodo || j.nombre}</b>
-        <div>DNI: ${j.dni}</div>
+       <b>${j.nombre} (${j.apodo || "-"})</b>
+      <div>DNI: ${j.dni}</div>
       </div>
 
       <button class="btn-ver" data-id="${j.id}">👁 Ver</button>
@@ -82,9 +82,9 @@ function abrirModalNuevaAsistencia() {
   select.innerHTML = `
     <option value="">Seleccionar jugador</option>
   ` + jugadores.map(j => `
-    <option value="${j.id}">
-      ${j.apodo || j.nombre} - DNI: ${j.dni}
-    </option>
+   <option value="${j.id}">
+  ${j.dni} - ${j.nombre} (${j.apodo || "-"})
+</option>
   `).join("");
 
   const semana = document.getElementById("nuevoSemana");
