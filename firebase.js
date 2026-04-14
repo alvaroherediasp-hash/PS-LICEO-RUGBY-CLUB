@@ -9,7 +9,8 @@ import {
   doc,
   updateDoc,
   query,
-  where
+  where,
+  getDoc   // 🔥 FALTABA ESTO
 } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
 /* =========================
@@ -29,8 +30,10 @@ const firebaseConfig = {
 ========================= */
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+
 window.db = db;
 window.firebaseReady = true;
+
 /* =========================
    JUGADORES
 ========================= */
@@ -47,6 +50,7 @@ window.getJugadores = async () => {
    ASISTENCIA
 ========================= */
 
+/* 🔥 CREAR */
 window.guardarAsistenciaFirebase = async (data) => {
   return await addDoc(collection(db, "asistencia"), {
     ...data,
@@ -54,6 +58,7 @@ window.guardarAsistenciaFirebase = async (data) => {
   });
 };
 
+/* 🔥 TRAER TODAS */
 window.getAsistencia = async () => {
   const snap = await getDocs(collection(db, "asistencia"));
 
@@ -63,6 +68,7 @@ window.getAsistencia = async () => {
   }));
 };
 
+/* 🔥 TRAER POR JUGADOR */
 window.getAsistenciaPorJugador = async (jugadorId) => {
 
   const q = query(
@@ -82,6 +88,20 @@ window.getAsistenciaPorJugador = async (jugadorId) => {
   return lista;
 };
 
+/* 🔥 TRAER UNA SOLA POR ID (ESTO TE FALTABA) */
+window.getAsistenciaById = async (id) => {
+  const ref = doc(db, "asistencia", id);
+  const snap = await getDoc(ref);
+
+  if (!snap.exists()) return null;
+
+  return {
+    id: snap.id,
+    ...snap.data()
+  };
+};
+
+/* 🔥 EXISTE */
 window.existeAsistencia = async (jugadorId, semana) => {
 
   const q = query(
@@ -94,15 +114,18 @@ window.existeAsistencia = async (jugadorId, semana) => {
   return !snap.empty;
 };
 
+/* 🔥 ELIMINAR */
 window.eliminarAsistenciaFirebase = async (id) => {
   const ref = doc(db, "asistencia", id);
   await deleteDoc(ref);
 };
 
+/* 🔥 ACTUALIZAR */
 window.actualizarAsistenciaFirebase = async (data) => {
+
   const ref = doc(db, "asistencia", data.id);
 
-  const { id, ...cleanData } = data; // 🔥 evita error Firestore
+  const { id, ...cleanData } = data;
 
   await updateDoc(ref, cleanData);
 };
