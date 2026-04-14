@@ -1,51 +1,41 @@
 let jugadores = [];
 
 window.onload = async () => {
-  try {
-
-    while (!window.getJugadores) {
-      await new Promise(r => setTimeout(r, 200));
-    }
-
-    jugadores = await window.getJugadores();
-
-    renderJugadores();
-
-    // BOTONES
-    document.getElementById("btnNuevaAsistencia")
-      ?.addEventListener("click", abrirModalNuevaAsistencia);
-
-    document.getElementById("btnGuardarNueva")
-      ?.addEventListener("click", guardarNuevaAsistencia);
-
-    document.getElementById("btnGuardar")
-      ?.addEventListener("click", guardarAsistencia);
-
-    // CERRAR
-    document.querySelectorAll(".btn-cerrar").forEach(btn => {
-      btn.addEventListener("click", cerrar);
-    });
-
-    // CHECKS
-    ["nuevoDia1","nuevoDia2","nuevoDia3"].forEach(id => {
-      document.getElementById(id)?.addEventListener("change", actualizarEstadoNuevo);
-    });
-
-    ["dia1","dia2","dia3"].forEach(id => {
-      document.getElementById(id)?.addEventListener("change", actualizarEstado);
-    });
-
-    // FECHAS AUTOMÁTICAS
-    document.getElementById("nuevoSemana")
-      ?.addEventListener("change", actualizarFechaNueva);
-
-    document.getElementById("semana")
-      ?.addEventListener("change", actualizarFechaEditar);
-
-  } catch (e) {
-    console.error(e);
-    alert("Error: " + e.message);
+  while (!window.getJugadores) {
+    await new Promise(r => setTimeout(r, 200));
   }
+
+  jugadores = await window.getJugadores();
+  renderJugadores();
+
+  document.getElementById("btnNuevaAsistencia")
+    ?.addEventListener("click", abrirModalNuevaAsistencia);
+
+  document.getElementById("btnGuardarNueva")
+    ?.addEventListener("click", guardarNuevaAsistencia);
+
+  document.getElementById("btnGuardar")
+    ?.addEventListener("click", guardarAsistencia);
+
+  document.querySelectorAll(".btn-cerrar").forEach(btn => {
+    btn.addEventListener("click", cerrar);
+  });
+
+  ["nuevoDia1","nuevoDia2","nuevoDia3"].forEach(id => {
+    document.getElementById(id)
+      ?.addEventListener("change", actualizarEstadoNuevo);
+  });
+
+  ["dia1","dia2","dia3"].forEach(id => {
+    document.getElementById(id)
+      ?.addEventListener("change", actualizarEstado);
+  });
+
+  document.getElementById("nuevoSemana")
+    ?.addEventListener("change", actualizarFechaNueva);
+
+  document.getElementById("semana")
+    ?.addEventListener("change", actualizarFechaEditar);
 };
 
 //////////////////////////////////////////////////
@@ -58,8 +48,8 @@ function cerrar() {
   });
 }
 
-function cargarSemanas(selectId, selected = 1) {
-  const sel = document.getElementById(selectId);
+function cargarSemanas(id, selected = 1) {
+  const sel = document.getElementById(id);
   if (!sel) return;
 
   sel.innerHTML = "";
@@ -84,31 +74,11 @@ function getFechaPorSemana(semana) {
 }
 
 //////////////////////////////////////////////////
-// FECHAS (FIX CRÍTICO QUE TE FALTABA)
-//////////////////////////////////////////////////
-
-function actualizarFechaNueva() {
-  let semana = document.getElementById("nuevoSemana").value;
-  document.getElementById("nuevoFecha").value = getFechaPorSemana(semana);
-}
-
-function actualizarFechaEditar() {
-  let semana = document.getElementById("semana").value;
-  document.getElementById("fechaSemana").value = getFechaPorSemana(semana);
-}
-
-//////////////////////////////////////////////////
 // RENDER
 //////////////////////////////////////////////////
 
 function renderJugadores() {
-
-  let cont = document.getElementById("tablaAsistencia");
-
-  if (!jugadores.length) {
-    cont.innerHTML = "<p>No hay jugadores</p>";
-    return;
-  }
+  const cont = document.getElementById("tablaAsistencia");
 
   cont.innerHTML = jugadores.map(j => `
     <div class="fila">
@@ -127,23 +97,10 @@ function renderJugadores() {
 }
 
 //////////////////////////////////////////////////
-// DUPLICADOS
-//////////////////////////////////////////////////
-
-async function existeAsistencia(jugadorId, semana, excludeId = null) {
-  const data = await window.getAsistenciaPorJugador(jugadorId);
-
-  return data.some(a =>
-    a.semana == semana && a.id != excludeId
-  );
-}
-
-//////////////////////////////////////////////////
-// NUEVA ASISTENCIA
+// NUEVA
 //////////////////////////////////////////////////
 
 function abrirModalNuevaAsistencia() {
-
   cerrar();
 
   const select = document.getElementById("nuevoJugadorSelect");
@@ -157,24 +114,27 @@ function abrirModalNuevaAsistencia() {
     `).join("");
 
   cargarSemanas("nuevoSemana", 1);
-  actualizarFechaNueva();
+  document.getElementById("nuevoFecha").value = getFechaPorSemana(1);
 
   ["nuevoDia1","nuevoDia2","nuevoDia3"].forEach(id => {
     document.getElementById(id).checked = false;
   });
 
   document.getElementById("nuevoDetalle").value = "";
-
   actualizarEstadoNuevo();
 
   document.getElementById("modalNuevaAsistencia").classList.add("show");
 }
 
-function actualizarEstadoNuevo() {
+function actualizarFechaNueva() {
+  const s = document.getElementById("nuevoSemana").value;
+  document.getElementById("nuevoFecha").value = getFechaPorSemana(s);
+}
 
-  let d1 = document.getElementById("nuevoDia1").checked;
-  let d2 = document.getElementById("nuevoDia2").checked;
-  let d3 = document.getElementById("nuevoDia3").checked;
+function actualizarEstadoNuevo() {
+  const d1 = document.getElementById("nuevoDia1").checked;
+  const d2 = document.getElementById("nuevoDia2").checked;
+  const d3 = document.getElementById("nuevoDia3").checked;
 
   document.getElementById("nuevoEstado").value =
     (d1 && d2 && d3) ? "🟢 COMPLETO" :
@@ -182,44 +142,8 @@ function actualizarEstadoNuevo() {
     "🔴 NO ASISTIÓ";
 }
 
-async function guardarNuevaAsistencia() {
-
-  let idJugador = document.getElementById("nuevoJugadorSelect").value;
-  if (!idJugador) return alert("Selecciona jugador");
-
-  let semana = Number(document.getElementById("nuevoSemana").value);
-
-  if (await existeAsistencia(idJugador, semana)) {
-    return alert("❌ Ya existe esa semana");
-  }
-
-  let jugador = jugadores.find(j => j.id == idJugador);
-
-  let data = {
-    jugadorId: idJugador,
-    nombre: jugador.nombre,
-    apodo: jugador.apodo || "",
-    dni: jugador.dni,
-    semana,
-    fechaSemana: document.getElementById("nuevoFecha").value,
-    dia1: document.getElementById("nuevoDia1").checked,
-    dia2: document.getElementById("nuevoDia2").checked,
-    dia3: document.getElementById("nuevoDia3").checked,
-    estado: document.getElementById("nuevoEstado").value,
-    detalle: document.getElementById("nuevoDetalle").value
-  };
-
-  await window.guardarAsistenciaFirebase(data);
-
-  alert("✅ Guardado");
-  cerrar();
-
-  jugadores = await window.getJugadores();
-  renderJugadores();
-}
-
 //////////////////////////////////////////////////
-// VER JUGADOR (CORREGIDO)
+// VER + EDITAR (FIX REAL)
 //////////////////////////////////////////////////
 
 async function verJugador(id) {
@@ -230,94 +154,59 @@ async function verJugador(id) {
   const cont = document.getElementById("detalleJugador");
 
   cont.innerHTML = `
-    <div class="card">
-      <h3>${jugador.nombre} (${jugador.apodo || "-"})</h3>
-      <p>DNI: ${jugador.dni}</p>
-    </div>
+    <h3>${jugador.nombre}</h3>
   `;
 
-  if (!data.length) {
-    cont.innerHTML += "<p>Sin asistencias</p>";
-  } else {
+  cont.innerHTML += data.map(a => `
+    <div class="card">
+      <b>Semana ${a.semana}</b>
+      <div>${a.estado}</div>
 
-    cont.innerHTML += data.map(a => {
-      const fecha = new Date(a.fechaSemana).toLocaleDateString("es-AR");
+      <button class="btn-editar" data-id="${a.id}">✏️</button>
+    </div>
+  `).join("");
 
-      return `
-        <div class="card">
-          <b>Semana ${a.semana} - ${fecha}</b>
-          <div>${a.estado}</div>
+  cont.querySelectorAll(".btn-editar").forEach(btn => {
+    btn.addEventListener("click", async () => {
 
-          <button class="btn-editar" data-id="${a.id}">✏️</button>
-          <button class="btn-eliminar" data-id="${a.id}">🗑️</button>
-        </div>
-      `;
-    }).join("");
+      const a = await window.getAsistenciaById(btn.dataset.id);
 
-    cont.querySelectorAll(".btn-editar").forEach(btn => {
-      btn.addEventListener("click", async () => {
-        const a = await window.getAsistenciaById(btn.dataset.id);
-        cerrar();
-        editarAsistencia(a);
-      });
+      cerrar(); // 🔥 IMPORTANTE: cerrar historial primero
+      setTimeout(() => editarAsistencia(a), 50);
     });
-
-    cont.querySelectorAll(".btn-eliminar").forEach(btn => {
-      btn.addEventListener("click", () => {
-        eliminarAsistencia(btn.dataset.id);
-      });
-    });
-  }
+  });
 
   document.getElementById("modalJugador").classList.add("show");
 }
 
 //////////////////////////////////////////////////
-// EDITAR
+// EDITAR (CORREGIDO TOTAL)
 //////////////////////////////////////////////////
 
 function editarAsistencia(a) {
 
   const jugador = jugadores.find(j => j.id == a.jugadorId);
 
-  const setValue = (id, value) => {
-    const el = document.getElementById(id);
-    if (el) el.value = value ?? "";
-  };
+  document.getElementById("asistenciaId").value = a.id;
+  document.getElementById("jugadorIdHidden").value = a.jugadorId;
 
-  const setCheck = (id, value) => {
-    const el = document.getElementById(id);
-    if (el) el.checked = !!value;
-  };
+  document.getElementById("jugadorNombre").value =
+    `${jugador?.nombre || ""} (${jugador?.apodo || "-"})`;
 
-  // 🔥 VALIDACIÓN SEGURA (NO ROMPE SI FALTA HTML)
-  setValue("jugadorIdHidden", a.jugadorId);
-  setValue("asistenciaId", a.id);
+  document.getElementById("jugadorDni").value = jugador?.dni || "";
 
-  setValue(
-    "jugadorNombre",
-    `${jugador?.nombre || ""} (${jugador?.apodo || "-"})`
-  );
-
-  setValue("jugadorDni", jugador?.dni);
-
-  // semanas
   cargarSemanas("semana", a.semana);
+  document.getElementById("fechaSemana").value = a.fechaSemana;
 
-  setValue("fechaSemana", a.fechaSemana);
+  document.getElementById("dia1").checked = a.dia1;
+  document.getElementById("dia2").checked = a.dia2;
+  document.getElementById("dia3").checked = a.dia3;
 
-  // checks
-  setCheck("dia1", a.dia1);
-  setCheck("dia2", a.dia2);
-  setCheck("dia3", a.dia3);
-
-  setValue("detalleSemana", a.detalle);
+  document.getElementById("detalleSemana").value = a.detalle || "";
 
   actualizarEstado();
 
-  // 🔥 ABRIR MODAL SIEMPRE AL FINAL
-  const modal = document.getElementById("modalAsistencia");
-  if (modal) modal.classList.add("show");
+  document.getElementById("modalAsistencia").classList.add("show");
 }
 
 //////////////////////////////////////////////////
@@ -326,17 +215,13 @@ function editarAsistencia(a) {
 
 async function guardarAsistencia() {
 
-  let id = document.getElementById("asistenciaId").value;
-  let idJugador = document.getElementById("jugadorIdHidden").value;
-  let semana = Number(document.getElementById("semana").value);
+  const id = document.getElementById("asistenciaId").value;
+  const idJugador = document.getElementById("jugadorIdHidden").value;
+  const semana = Number(document.getElementById("semana").value);
 
-  if (await existeAsistencia(idJugador, semana, id)) {
-    return alert("❌ Ya existe esa semana");
-  }
+  const jugador = jugadores.find(j => j.id == idJugador);
 
-  let jugador = jugadores.find(j => j.id == idJugador);
-
-  let data = {
+  const data = {
     id,
     jugadorId: idJugador,
     nombre: jugador.nombre,
@@ -353,39 +238,19 @@ async function guardarAsistencia() {
 
   await window.actualizarAsistenciaFirebase(data);
 
-  alert("✏️ Actualizado");
   cerrar();
-
   jugadores = await window.getJugadores();
   renderJugadores();
 }
 
 //////////////////////////////////////////////////
-// ELIMINAR
-//////////////////////////////////////////////////
-
-async function eliminarAsistencia(id) {
-  if (!confirm("Eliminar?")) return;
-
-  await window.eliminarAsistenciaFirebase(id);
-
-  alert("🗑️ Eliminado");
-
-  cerrar();
-
-  jugadores = await window.getJugadores();
-  renderJugadores();
-}
-
-//////////////////////////////////////////////////
-// ESTADO EDITAR
+// ESTADO
 //////////////////////////////////////////////////
 
 function actualizarEstado() {
-
-  let d1 = document.getElementById("dia1")?.checked;
-  let d2 = document.getElementById("dia2")?.checked;
-  let d3 = document.getElementById("dia3")?.checked;
+  const d1 = document.getElementById("dia1").checked;
+  const d2 = document.getElementById("dia2").checked;
+  const d3 = document.getElementById("dia3").checked;
 
   document.getElementById("estadoSemana").value =
     (d1 && d2 && d3) ? "🟢 COMPLETO" :
