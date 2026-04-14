@@ -55,31 +55,39 @@
 
     <div class="modal-body">
 
-      <!-- 🔥 ID OCULTO PARA EDITAR -->
+      <!-- 🔥 ID OCULTO -->
       <input type="hidden" id="asistenciaId">
 
+      <!-- DNI -->
       <div class="form-group">
         <label>DNI</label>
         <input id="jugadorDni" disabled>
       </div>
 
-      <!-- JUGADOR (SOLO VISUAL) -->
+      <!-- JUGADOR -->
       <div class="form-group">
         <label>Jugador</label>
         <input id="jugadorNombre" disabled>
       </div>
 
-<input type="hidden" id="jugadorSelect">
-      
+      <!-- oculto -->
+      <input type="hidden" id="jugadorSelect">
 
-      <!-- SEMANA -->
-<!-- SEMANA + FECHA (FIX PRO) -->
-<div class="semana-info">
-  <span>📆 Semana</span>
-  <span id="semanaLabel">-</span>
-  <span>•</span>
-  <span id="fechaSemanaLabel">-</span>
-</div>
+      <!-- 🔥 SEMANA INFO (FIX PRO) -->
+      <div class="semana-info">
+        <span>📆 Semana:</span>
+        <span id="semanaLabel">-</span>
+
+        <span style="margin:0 6px;">|</span>
+
+        <span id="fechaSemanaLabel">-</span>
+      </div>
+
+      <!-- SEMANA REAL (SELECT) -->
+      <div class="form-group">
+        <label>Semana</label>
+        <select id="semana"></select>
+      </div>
 
       <!-- FECHA -->
       <div class="form-group">
@@ -110,7 +118,6 @@
       <div class="actions">
         <button class="btn btn-sec" onclick="cerrar()">Cancelar</button>
 
-        <!-- 🔥 CAMBIA AUTOMÁTICO -->
         <button class="btn btn-primary" onclick="guardarAsistencia()">
           💾 Guardar
         </button>
