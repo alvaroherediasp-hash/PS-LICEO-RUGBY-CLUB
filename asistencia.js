@@ -28,6 +28,24 @@ window.onload = async () => {
     alert("Error: " + e.message);
   }
 };
+/* =========================
+   nueva asistencia
+========================= */
+function abrirModalAsistenciaDesdeJugador(jugador) {
+
+  cerrar();
+
+  limpiarFormulario();
+
+  document.getElementById("jugadorSelect").value = jugador.id;
+  document.getElementById("jugadorNombre").value = jugador.nombre;
+  document.getElementById("jugadorDni").value = jugador.dni;
+
+  document.getElementById("modalAsistencia").classList.add("show");
+
+  setFechaHoy();
+  actualizarEstado();
+}
 
 /* =========================
    RENDER
