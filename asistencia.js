@@ -222,34 +222,39 @@ async function guardarNuevaAsistencia() {
 
 function editarAsistencia(a) {
 
-  cerrar("modalJugador");
+  // 🔥 1. cerrar SOLO historial
+  document.getElementById("modalJugador")
+    ?.classList.remove("show");
 
-  setTimeout(() => {
+  // 🔥 2. preparar datos ANTES de abrir
+  const jugador = jugadores.find(j => j.id == a.jugadorId);
 
-    const jugador = jugadores.find(j => j.id == a.jugadorId);
+  document.getElementById("jugadorIdHidden").value = a.jugadorId;
+  document.getElementById("asistenciaId").value = a.id;
 
-    document.getElementById("jugadorIdHidden").value = a.jugadorId;
-    document.getElementById("asistenciaId").value = a.id;
+  document.getElementById("jugadorNombre").value =
+    `${jugador?.nombre || ""} (${jugador?.apodo || "-"})`;
 
-    document.getElementById("jugadorNombre").value =
-      `${jugador?.nombre || ""} (${jugador?.apodo || "-"})`;
+  document.getElementById("jugadorDni").value =
+    jugador?.dni || "";
 
-    document.getElementById("jugadorDni").value = jugador?.dni || "";
+  // 🔥 3. cargar semanas
+  cargarSemanas("semana", a.semana);
 
-    cargarSemanas("semana", a.semana);
-    actualizarFechaEditar();
+  document.getElementById("fechaSemana").value = a.fechaSemana;
 
-    document.getElementById("dia1").checked = a.dia1;
-    document.getElementById("dia2").checked = a.dia2;
-    document.getElementById("dia3").checked = a.dia3;
+  // 🔥 4. checks
+  document.getElementById("dia1").checked = a.dia1;
+  document.getElementById("dia2").checked = a.dia2;
+  document.getElementById("dia3").checked = a.dia3;
 
-    document.getElementById("detalleSemana").value = a.detalle || "";
+  document.getElementById("detalleSemana").value = a.detalle || "";
 
-    actualizarEstado();
+  actualizarEstado();
 
-    document.getElementById("modalAsistencia").classList.add("show");
-
-  }, 100);
+  // 🔥 5. abrir modal (SIN delay)
+  document.getElementById("modalAsistencia")
+    ?.classList.add("show");
 }
 
 function actualizarFechaEditar() {
