@@ -8,12 +8,10 @@ window.onload = async () => {
       throw new Error("Firebase aún no inicializado");
     }
 
-    // ✔ cargar jugadores
     jugadores = await window.getJugadores();
 
-    // ✔ cache asistencias (IMPORTANTE)
-window.asistencias =
-  (await window.getTodasAsistencias?.()) || [];
+    // ✅ FIX IMPORTANTE
+    window.asistencias = await window.getAsistencia();
 
     renderJugadores();
     cargarSemanas();
