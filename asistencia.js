@@ -280,27 +280,44 @@ function editarAsistencia(a) {
 
   const jugador = jugadores.find(j => j.id == a.jugadorId);
 
-  document.getElementById("jugadorIdHidden").value = a.jugadorId;
-  document.getElementById("asistenciaId").value = a.id;
+  const setValue = (id, value) => {
+    const el = document.getElementById(id);
+    if (el) el.value = value ?? "";
+  };
 
-  document.getElementById("jugadorNombre").value =
-    `${jugador?.nombre || ""} (${jugador?.apodo || "-"})`;
+  const setCheck = (id, value) => {
+    const el = document.getElementById(id);
+    if (el) el.checked = !!value;
+  };
 
-  document.getElementById("jugadorDni").value =
-    jugador?.dni || "";
+  // 🔥 VALIDACIÓN SEGURA (NO ROMPE SI FALTA HTML)
+  setValue("jugadorIdHidden", a.jugadorId);
+  setValue("asistenciaId", a.id);
 
+  setValue(
+    "jugadorNombre",
+    `${jugador?.nombre || ""} (${jugador?.apodo || "-"})`
+  );
+
+  setValue("jugadorDni", jugador?.dni);
+
+  // semanas
   cargarSemanas("semana", a.semana);
-  actualizarFechaEditar();
 
-  document.getElementById("dia1").checked = a.dia1;
-  document.getElementById("dia2").checked = a.dia2;
-  document.getElementById("dia3").checked = a.dia3;
+  setValue("fechaSemana", a.fechaSemana);
 
-  document.getElementById("detalleSemana").value = a.detalle || "";
+  // checks
+  setCheck("dia1", a.dia1);
+  setCheck("dia2", a.dia2);
+  setCheck("dia3", a.dia3);
+
+  setValue("detalleSemana", a.detalle);
 
   actualizarEstado();
 
-  document.getElementById("modalAsistencia").classList.add("show");
+  // 🔥 ABRIR MODAL SIEMPRE AL FINAL
+  const modal = document.getElementById("modalAsistencia");
+  if (modal) modal.classList.add("show");
 }
 
 //////////////////////////////////////////////////
