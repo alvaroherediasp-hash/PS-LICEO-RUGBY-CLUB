@@ -292,18 +292,23 @@ window.verJugador = async function(id) {
     cont.innerHTML += "<p>Sin asistencia registrada</p>";
   } else {
 
-    cont.innerHTML += data.map(a => `
-      <div class="card">
+    cont.innerHTML += data.map(a => {
+  const fecha = new Date(a.fechaSemana).toLocaleDateString("es-AR");
 
-        <b>Semana ${a.semana}</b>
-        <div>${a.estado}</div>
+  return `
+    <div class="card">
 
-        <button onclick='editarAsistencia(${JSON.stringify(a)})'>
-          ✏️ Editar
-        </button>
+      <b>Semana ${a.semana} - ${fecha}</b>
 
-      </div>
-    `).join("");
+      <div>${a.estado}</div>
+
+      <button onclick='editarAsistencia(${JSON.stringify(a)})'>
+        ✏️ Editar
+      </button>
+
+    </div>
+  `;
+}).join("");
   }
 
   document.getElementById("modalJugador").classList.add("show");
