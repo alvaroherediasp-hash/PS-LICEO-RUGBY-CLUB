@@ -18,36 +18,37 @@ async function cargar() {
 }
 
 /* =========================
-   RENDER PRO
+   RENDER SEGURO
 ========================= */
 function render() {
 
-  let cont = document.getElementById("tabla");
-  let filtro = document.getElementById("buscar").value.toLowerCase();
+  const cont = document.getElementById("tabla");
+  if (!cont) return;
 
-  let lista = datos.jugadores
-    .filter(j =>
-      (j.nombre || "").toLowerCase().includes(filtro) ||
-      (j.dni || "").includes(filtro)
-    );
+  const filtroInput = document.getElementById("buscar");
+  const filtro = (filtroInput?.value || "").toLowerCase();
 
-  if (lista.length === 0) {
+  const lista = datos.jugadores.filter(j =>
+    (j.nombre || "").toLowerCase().includes(filtro) ||
+    (j.dni || "").includes(filtro)
+  );
+
+  if (!lista.length) {
     cont.innerHTML = `<div style="opacity:0.6">No hay jugadores</div>`;
     return;
   }
 
   cont.innerHTML = lista.map(j => `
     <div class="fila">
-
       <div>
-        <b>${j.nombre}</b> ${j.apodo ? `<span style="opacity:.6">(${j.apodo})</span>` : ""}
+        <b>${j.nombre}</b>
+        ${j.apodo ? `<span style="opacity:.6">(${j.apodo})</span>` : ""}
         <div style="font-size:12px;opacity:.6">DNI: ${j.dni}</div>
       </div>
 
       <div class="acciones">
         <button onclick="verJugador('${j.id}')">👁 Ver</button>
       </div>
-
     </div>
   `).join("");
 }
@@ -55,9 +56,11 @@ function render() {
 /* =========================
    VER JUGADOR
 ========================= */
-window.verJugador = function(id) {
+window.verJugador = function (id) {
 
-  let j = datos.jugadores.find(x => x.id == id);
+  const j = datos.jugadores.find(x => x.id == id);
+  if (!j) return;
+
   jugadorActual = j;
 
   document.getElementById("detalle").innerHTML = `
@@ -69,8 +72,8 @@ window.verJugador = function(id) {
     <p><b>Puestos:</b> ${j.puesto1 || "-"} / ${j.puesto2 || "-"} / ${j.puesto3 || "-"}</p>
   `;
 
-  document.getElementById("modalVer").classList.add("show");
-}
+  document.getElementById("modalVer")?.classList.add("show");
+};
 
 /* =========================
    NUEVO
@@ -84,29 +87,34 @@ function abrirModal() {
   document.querySelectorAll("#modal input, #modal select")
     .forEach(e => e.value = "");
 
-  document.getElementById("modal").classList.add("show");
+  document.getElementById("modal")?.classList.add("show");
 }
 
 /* =========================
-   EDITAR
+   EDITAR (SEGURO)
 ========================= */
 function editarJugador() {
+
+  if (!jugadorActual) {
+    alert("Primero selecciona un jugador");
+    return;
+  }
 
   cerrar();
 
   document.getElementById("tituloModal").innerText = "Editar Jugador";
 
-  document.getElementById("dni").value = jugadorActual.dni;
-  document.getElementById("nombre").value = jugadorActual.nombre;
-  document.getElementById("apodo").value = jugadorActual.apodo;
-  document.getElementById("celular").value = jugadorActual.celular;
-  document.getElementById("correo").value = jugadorActual.correo;
+  document.getElementById("dni").value = jugadorActual.dni || "";
+  document.getElementById("nombre").value = jugadorActual.nombre || "";
+  document.getElementById("apodo").value = jugadorActual.apodo || "";
+  document.getElementById("celular").value = jugadorActual.celular || "";
+  document.getElementById("correo").value = jugadorActual.correo || "";
 
-  document.getElementById("p1").value = jugadorActual.puesto1;
-  document.getElementById("p2").value = jugadorActual.puesto2;
-  document.getElementById("p3").value = jugadorActual.puesto3;
+  document.getElementById("p1").value = jugadorActual.puesto1 || "";
+  document.getElementById("p2").value = jugadorActual.puesto2 || "";
+  document.getElementById("p3").value = jugadorActual.puesto3 || "";
 
-  document.getElementById("modal").classList.add("show");
+  document.getElementById("modal")?.classList.add("show");
 }
 
 /* =========================
@@ -114,7 +122,7 @@ function editarJugador() {
 ========================= */
 async function guardar() {
 
-  let data = {
+  const data = {
     dni: document.getElementById("dni").value,
     nombre: document.getElementById("nombre").value,
     apodo: document.getElementById("apodo").value,
@@ -131,7 +139,7 @@ async function guardar() {
 
   try {
 
-    if (jugadorActual) {
+    if (jugadorActual?.id) {
       data.id = jugadorActual.id;
       await window.actualizarJugadorFirebase(data);
       alert("✏️ Jugador actualizado correctamente");
@@ -154,13 +162,20 @@ async function guardar() {
 ========================= */
 async function eliminarJugador() {
 
+  if (!jugadorActual?.id) {
+    alert("No hay jugador seleccionado");
+    return;
+  }
+
   if (!confirm("¿Eliminar jugador?")) return;
 
   try {
     await window.eliminarJugadorFirebase(jugadorActual.id);
+
     alert("🗑 Jugador eliminado");
     cerrar();
     cargar();
+
   } catch (e) {
     console.error(e);
     alert("❌ Error eliminando");
@@ -176,29 +191,28 @@ function cerrar() {
 }
 
 function showMsg(msg) {
-  document.getElementById("estado").innerText = msg;
+  const el = document.getElementById("estado");
+  if (el) el.innerText = msg;
 }
-
-/* =========================
-   EVENTOS
-========================= */
-function initEvents() {
-
-  document.getElementById("btnNuevo").addEventListener("click", abrirModal);
-  document.getElementById("btnCerrar").addEventListener("click", cerrar);
-  document.getElementById("btnGuardar").addEventListener("click", guardar);
-  document.getElementById("btnReload").addEventListener("click", cargar);
-  document.getElementById("buscar").addEventListener("input", render);
-
-  document.getElementById("btnEditar")?.addEventListener("click", editarJugador);
-  document.getElementById("btnEliminar")?.addEventListener("click", eliminarJugador);
-}
-document.getElementById("btnCerrarVer")
-  ?.addEventListener("click", cerrar);
 
 /* =========================
    INIT
 ========================= */
+function initEvents() {
+
+  document.getElementById("btnNuevo")?.addEventListener("click", abrirModal);
+  document.getElementById("btnCerrar")?.addEventListener("click", cerrar);
+  document.getElementById("btnGuardar")?.addEventListener("click", guardar);
+  document.getElementById("btnReload")?.addEventListener("click", cargar);
+  document.getElementById("buscar")?.addEventListener("input", render);
+
+  document.getElementById("btnEditar")?.addEventListener("click", editarJugador);
+  document.getElementById("btnEliminar")?.addEventListener("click", eliminarJugador);
+}
+
+document.getElementById("btnCerrarVer")
+  ?.addEventListener("click", cerrar);
+
 window.addEventListener("DOMContentLoaded", () => {
   initEvents();
   cargar();
