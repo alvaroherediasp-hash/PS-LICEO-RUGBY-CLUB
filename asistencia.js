@@ -35,7 +35,7 @@ window.onload = async () => {
       document.getElementById(id)?.addEventListener("change", actualizarEstado);
     });
 
-    // 🔥 CAMBIO AUTOMÁTICO DE FECHA
+    // CAMBIO FECHA
     document.getElementById("nuevoSemana")
       ?.addEventListener("change", actualizarFechaNueva);
 
@@ -49,10 +49,9 @@ window.onload = async () => {
 };
 
 //////////////////////////////////////////////////
-// FUNCION PRO: CALCULAR FECHA (LUNES)
+// FECHA PRO
 //////////////////////////////////////////////////
 function getFechaPorSemana(semana) {
-
   let año = new Date().getFullYear();
   let fecha = new Date(año, 0, 1 + (semana - 1) * 7);
 
@@ -110,7 +109,6 @@ function renderJugadores() {
 // VALIDAR DUPLICADO
 //////////////////////////////////////////////////
 async function existeAsistencia(jugadorId, semana, excludeId = null) {
-
   let data = await window.getAsistenciaPorJugador(jugadorId);
 
   return data.some(a =>
@@ -158,7 +156,6 @@ function abrirModalNuevaAsistencia() {
 }
 
 function actualizarEstadoNuevo() {
-
   let d1 = document.getElementById("nuevoDia1").checked;
   let d2 = document.getElementById("nuevoDia2").checked;
   let d3 = document.getElementById("nuevoDia3").checked;
@@ -222,14 +219,24 @@ function editarAsistencia(a) {
 
     const jugador = jugadores.find(j => j.id == a.jugadorId);
 
+    // 🔥 GUARDAR ID OCULTO
+    document.getElementById("jugadorIdHidden").value = a.jugadorId;
+
     document.getElementById("asistenciaId").value = a.id;
-    document.getElementById("jugadorSelect").value = a.jugadorId;
 
     document.getElementById("jugadorNombre").value =
       `${jugador?.nombre || ""} (${jugador?.apodo || "-"})`;
 
     document.getElementById("jugadorDni").value =
       jugador?.dni || "";
+
+    // 🔥 CARGAR SEMANAS
+    const selSemana = document.getElementById("semana");
+    selSemana.innerHTML = "";
+
+    for (let i = 1; i <= 52; i++) {
+      selSemana.innerHTML += `<option value="${i}">Semana ${i}</option>`;
+    }
 
     document.getElementById("semana").value = a.semana;
     actualizarFechaEditar();
@@ -248,12 +255,12 @@ function editarAsistencia(a) {
 }
 
 //////////////////////////////////////////////////
-// GUARDAR EDITADO (VALIDACIÓN PRO)
+// GUARDAR EDITADO
 //////////////////////////////////////////////////
 async function guardarAsistencia() {
 
   let id = document.getElementById("asistenciaId").value;
-  let idJugador = document.getElementById("jugadorSelect").value;
+  let idJugador = document.getElementById("jugadorIdHidden").value;
   let semana = Number(document.getElementById("semana").value);
 
   if (await existeAsistencia(idJugador, semana, id)) {
