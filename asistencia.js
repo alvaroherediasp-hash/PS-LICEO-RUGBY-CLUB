@@ -6,24 +6,22 @@ window.onload = async () => {
 
     console.log("⏳ Esperando Firebase...");
 
-    // 🔥 esperar hasta que Firebase esté listo
     while (!window.getJugadores) {
       await new Promise(r => setTimeout(r, 200));
     }
 
     console.log("🔥 Firebase listo");
 
-    // ✔ traer jugadores
     jugadores = await window.getJugadores();
-
-    console.log("👥 jugadores:", jugadores);
-
-    // ✔ traer asistencia
     window.asistencias = await window.getAsistencia();
 
     renderJugadores();
     cargarSemanas();
     initEventosChecks();
+
+    // ✅ 👉 ACÁ VA ESTO
+    document.getElementById("btnGuardar")
+      .addEventListener("click", guardarAsistencia);
 
   } catch (e) {
     console.error("❌ ERROR:", e);
