@@ -236,12 +236,11 @@ async function guardarAsistencia() {
 ========================= */
 function editarAsistencia(a) {
 
-  cerrar(); // cerrar todo primero (IMPORTANTE)
+  cerrar();
 
   setTimeout(() => {
 
     document.getElementById("asistenciaId").value = a.id;
-
     document.getElementById("jugadorSelect").value = a.jugadorId;
 
     document.getElementById("semana").value = a.semana;
@@ -258,12 +257,17 @@ function editarAsistencia(a) {
     document.getElementById("tituloModalAsistencia").innerText =
       "Editar asistencia";
 
-    // 🔥 actualizar label SOLO si existe
-    let label = document.getElementById("fechaSemanaLabel");
-    if (label) {
-      label.innerText =
-        "Guardado: " +
-        new Date(a.fechaSemana).toLocaleDateString("es-AR");
+    // ✅ AQUÍ ESTÁ LA CORRECCIÓN
+    const labelSemana = document.getElementById("semanaLabel");
+    const labelFecha = document.getElementById("fechaSemanaLabel");
+
+    if (labelSemana) {
+      labelSemana.innerText = a.semana;
+    }
+
+    if (labelFecha) {
+      labelFecha.innerText =
+        "Guardado: " + new Date(a.fechaSemana).toLocaleDateString("es-AR");
     }
 
     document.getElementById("modalAsistencia").classList.add("show");
