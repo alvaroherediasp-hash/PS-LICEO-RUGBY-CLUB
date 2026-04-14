@@ -4,22 +4,28 @@ let jugadorActual = null;
 window.onload = async () => {
   try {
 
-    if (!window.getJugadores) {
-      throw new Error("Firebase aún no inicializado");
+    // 🔥 ESPERAR Firebase realmente
+    if (!window.firebaseReady || !window.getJugadores) {
+      throw new Error("Firebase aún no cargó");
     }
 
-    jugadores = await window.getJugadores();
+    console.log("🔥 Firebase OK");
 
-    // ✅ FIX IMPORTANTE
+    // ✔ jugadores
+    jugadores = await window.getJugadores();
+    console.log("👥 jugadores:", jugadores);
+
+    // ✔ asistencia
     window.asistencias = await window.getAsistencia();
+    console.log("📊 asistencias:", window.asistencias);
 
     renderJugadores();
     cargarSemanas();
     initEventosChecks();
 
   } catch (e) {
-    console.error("ERROR REAL:", e);
-    alert("Error Firebase al cargar jugadores");
+    console.error("❌ ERROR REAL:", e);
+    alert("Error cargando Firebase: " + e.message);
   }
 };
 
