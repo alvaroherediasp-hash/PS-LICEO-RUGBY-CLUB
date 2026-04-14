@@ -21,18 +21,21 @@ window.onload = async () => {
     document.getElementById("btnGuardar")
       ?.addEventListener("click", guardarAsistencia);
 
-    // CERRAR
+    // CERRAR MODALES
     document.querySelectorAll(".btn-cerrar").forEach(btn => {
-      btn.addEventListener("click", () => cerrar());
+      btn.addEventListener("click", cerrar);
     });
 
-    // CHECKS
+    // CHECKS NUEVO
     ["nuevoDia1","nuevoDia2","nuevoDia3"].forEach(id => {
-      document.getElementById(id)?.addEventListener("change", actualizarEstadoNuevo);
+      document.getElementById(id)
+        ?.addEventListener("change", actualizarEstadoNuevo);
     });
 
+    // CHECKS EDITAR
     ["dia1","dia2","dia3"].forEach(id => {
-      document.getElementById(id)?.addEventListener("change", actualizarEstado);
+      document.getElementById(id)
+        ?.addEventListener("change", actualizarEstado);
     });
 
     // FECHA AUTOMÁTICA
@@ -52,12 +55,7 @@ window.onload = async () => {
 // UTILIDADES
 //////////////////////////////////////////////////
 
-function cerrar(id = null) {
-  if (id) {
-    document.getElementById(id)?.classList.remove("show");
-    return;
-  }
-
+function cerrar() {
   document.querySelectorAll(".modal").forEach(m => {
     m.classList.remove("show");
   });
@@ -118,11 +116,11 @@ function renderJugadores() {
 }
 
 //////////////////////////////////////////////////
-// VALIDACIÓN
+// VALIDACIÓN DUPLICADO
 //////////////////////////////////////////////////
 
 async function existeAsistencia(jugadorId, semana, excludeId = null) {
-  let data = await window.getAsistenciaPorJugador(jugadorId);
+  const data = await window.getAsistenciaPorJugador(jugadorId);
 
   return data.some(a =>
     a.semana == semana && a.id != excludeId
@@ -139,31 +137,25 @@ function abrirModalNuevaAsistencia() {
 
   const select = document.getElementById("nuevoJugadorSelect");
 
-  select.innerHTML = `
-    <option value="">Seleccionar jugador</option>
-  ` + jugadores.map(j => `
-    <option value="${j.id}">
-      ${j.dni} - ${j.nombre} (${j.apodo || "-"})
-    </option>
-  `).join("");
+  select.innerHTML =
+    `<option value="">Seleccionar jugador</option>` +
+    jugadores.map(j => `
+      <option value="${j.id}">
+        ${j.dni} - ${j.nombre} (${j.apodo || "-"})
+      </option>
+    `).join("");
 
   cargarSemanas("nuevoSemana", 1);
-  actualizarFechaNueva();
+  document.getElementById("nuevoFecha").value = getFechaPorSemana(1);
 
   ["nuevoDia1","nuevoDia2","nuevoDia3"].forEach(id => {
     document.getElementById(id).checked = false;
   });
 
   document.getElementById("nuevoDetalle").value = "";
-
   actualizarEstadoNuevo();
 
   document.getElementById("modalNuevaAsistencia").classList.add("show");
-}
-
-function actualizarFechaNueva() {
-  let semana = document.getElementById("nuevoSemana").value;
-  document.getElementById("nuevoFecha").value = getFechaPorSemana(semana);
 }
 
 function actualizarEstadoNuevo() {
@@ -172,12 +164,10 @@ function actualizarEstadoNuevo() {
   let d2 = document.getElementById("nuevoDia2").checked;
   let d3 = document.getElementById("nuevoDia3").checked;
 
-  let estado =
+  document.getElementById("nuevoEstado").value =
     (d1 && d2 && d3) ? "🟢 COMPLETO" :
     (d1 || d2 || d3) ? "🟡 INCOMPLETO" :
     "🔴 NO ASISTIÓ";
-
-  document.getElementById("nuevoEstado").value = estado;
 }
 
 async function guardarNuevaAsistencia() {
@@ -217,16 +207,67 @@ async function guardarNuevaAsistencia() {
 }
 
 //////////////////////////////////////////////////
-// EDITAR
+// VER JUGADOR (FIX CRÍTICO)
+//////////////////////////////////////////////////
+
+async function verJugador(id) {
+
+  const jugador = jugadores.find(j => j.id == id);
+  const data = await window.getAsistenciaPorJugador(id);
+
+  const cont = document.getElementById("detalleJugador");
+
+  cont.innerHTML = `
+    <div class="card">
+      <h3>${jugador.nombre} (${jugador.apodo || "-"})</h3>
+      <p>DNI: ${jugador.dni}</p>
+    </div>
+  `;
+
+  if (!data.length) {
+    cont.innerHTML += "<p>Sin asistencias</p>";
+  } else {
+
+    cont.innerHTML += data.map(a => {
+      const fecha = new Date(a.fechaSemana).toLocaleDateString("es-AR");
+
+      return `
+        <div class="card">
+          <b>Semana ${a.semana} - ${fecha}</b>
+          <div>${a.estado}</div>
+
+          <button class="btn-editar" data-id="${a.id}">✏️</button>
+          <button class="btn-eliminar" data-id="${a.id}">🗑️</button>
+        </div>
+      `;
+    }).join("");
+
+    // ✅ EDITAR CORRECTO
+    cont.querySelectorAll(".btn-editar").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        const a = await window.getAsistenciaById(btn.dataset.id);
+        cerrar(); // evita conflicto visual
+        editarAsistencia(a);
+      });
+    });
+
+    // ✅ ELIMINAR
+    cont.querySelectorAll(".btn-eliminar").forEach(btn => {
+      btn.addEventListener("click", () => {
+        eliminarAsistencia(btn.dataset.id);
+      });
+    });
+  }
+
+  document.getElementById("modalJugador").classList.add("show");
+}
+
+//////////////////////////////////////////////////
+// EDITAR ASISTENCIA
 //////////////////////////////////////////////////
 
 function editarAsistencia(a) {
 
-  // 🔥 1. cerrar SOLO historial
-  document.getElementById("modalJugador")
-    ?.classList.remove("show");
-
-  // 🔥 2. preparar datos ANTES de abrir
   const jugador = jugadores.find(j => j.id == a.jugadorId);
 
   document.getElementById("jugadorIdHidden").value = a.jugadorId;
@@ -238,12 +279,9 @@ function editarAsistencia(a) {
   document.getElementById("jugadorDni").value =
     jugador?.dni || "";
 
-  // 🔥 3. cargar semanas
   cargarSemanas("semana", a.semana);
-
   document.getElementById("fechaSemana").value = a.fechaSemana;
 
-  // 🔥 4. checks
   document.getElementById("dia1").checked = a.dia1;
   document.getElementById("dia2").checked = a.dia2;
   document.getElementById("dia3").checked = a.dia3;
@@ -252,15 +290,12 @@ function editarAsistencia(a) {
 
   actualizarEstado();
 
-  // 🔥 5. abrir modal (SIN delay)
-  document.getElementById("modalAsistencia")
-    ?.classList.add("show");
+  document.getElementById("modalAsistencia").classList.add("show");
 }
 
-function actualizarFechaEditar() {
-  let semana = document.getElementById("semana").value;
-  document.getElementById("fechaSemana").value = getFechaPorSemana(semana);
-}
+//////////////////////////////////////////////////
+// GUARDAR EDITADO
+//////////////////////////////////////////////////
 
 async function guardarAsistencia() {
 
@@ -299,56 +334,6 @@ async function guardarAsistencia() {
 }
 
 //////////////////////////////////////////////////
-// VER JUGADOR
-//////////////////////////////////////////////////
-
-async function verJugador(id) {
-
-  let jugador = jugadores.find(j => j.id == id);
-  let data = await window.getAsistenciaPorJugador(id);
-
-  let cont = document.getElementById("detalleJugador");
-
-  cont.innerHTML = `
-    <div class="card">
-      <h3>${jugador.nombre} (${jugador.apodo || "-"})</h3>
-      <p>DNI: ${jugador.dni}</p>
-    </div>
-  `;
-
-  if (!data.length) {
-    cont.innerHTML += "<p>Sin asistencias</p>";
-  } else {
-
-    cont.innerHTML += data.map(a => {
-      const fecha = new Date(a.fechaSemana).toLocaleDateString("es-AR");
-
-      return `
-        <div class="card">
-          <b>Semana ${a.semana} - ${fecha}</b>
-          <div>${a.estado}</div>
-
-          <button class="btn-editar" data-id="${a.id}">✏️</button>
-          <button class="btn-eliminar" data-id="${a.id}">🗑️</button>
-        </div>
-      `;
-    }).join("");
-
- btn.addEventListener("click", async () => {
-  const a = await window.getAsistenciaById(btn.dataset.id);
-  editarAsistencia(a);
-});
-    cont.querySelectorAll(".btn-eliminar").forEach(btn => {
-      btn.addEventListener("click", () => {
-        eliminarAsistencia(btn.dataset.id);
-      });
-    });
-  }
-
-  document.getElementById("modalJugador").classList.add("show");
-}
-
-//////////////////////////////////////////////////
 // ELIMINAR
 //////////////////////////////////////////////////
 
@@ -374,11 +359,8 @@ function actualizarEstado() {
   let d2 = document.getElementById("dia2")?.checked;
   let d3 = document.getElementById("dia3")?.checked;
 
-  let estado =
+  document.getElementById("estadoSemana").value =
     (d1 && d2 && d3) ? "🟢 COMPLETO" :
     (d1 || d2 || d3) ? "🟡 INCOMPLETO" :
     "🔴 NO ASISTIÓ";
-
-  if (document.getElementById("estadoSemana"))
-    document.getElementById("estadoSemana").value = estado;
 }
