@@ -274,7 +274,7 @@ async function guardarAsistencia() {
   cerrar();
   jugadores = await window.getJugadores();
   renderJugadores();
-}
+
 
 //////////////////////////////////////////////////
 // ESTADO
