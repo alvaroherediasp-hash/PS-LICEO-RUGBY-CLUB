@@ -70,3 +70,11 @@ window.api = {
   deleteAsistencia: (id) =>
     deleteDoc(doc(db, "asistencia", id))
 };
+window.api = {
+  getJugadores,
+  addAsistencia: guardarAsistenciaFirebase,
+  getAsistenciaByJugador,
+  getAsistenciaById,
+  updateAsistencia: actualizarAsistenciaFirebase,
+  deleteAsistencia: eliminarAsistenciaFirebase
+};
