@@ -128,6 +128,10 @@ button:hover {
 /* =========================
    MODAL (MEJORADO PRO)
 ========================= */
+/* =========================
+   MODAL PRO (FIX COMPLETO)
+========================= */
+
 .modal {
   position: fixed;
   inset: 0;
@@ -143,192 +147,118 @@ button:hover {
   display: flex;
 }
 
+/* CONTENEDOR PRINCIPAL */
 .modal-box {
   background: #020617;
-  padding: 25px;
-  border-radius: 18px;
-
   width: min(95vw, 600px);
   max-height: 90vh;
   overflow-y: auto;
 
+  border-radius: 18px;
+  padding: 20px;
+
   display: flex;
   flex-direction: column;
+  gap: 15px;
 }
-.modal-body {
-  width: 100%;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-.form-group,
-.actions,
-textarea {
-  grid-column: 1 / -1;
-}
-/* HEADER MODAL */
+
+/* HEADER */
 .modal-head {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 15px;
 }
+
+/* BODY (FORMULARIO) */
+.modal-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* CAMPOS OCUPAN TODO EL ANCHO */
+.form-group,
+.modal-body textarea,
+.modal-actions {
+  grid-column: 1 / -1;
+}
+
+/* INPUTS UNIFICADOS */
 .modal-body input,
 .modal-body select,
 .modal-body textarea {
   width: 100%;
-  max-width: 420px;   /* 🔥 mismo ancho */
   padding: 12px;
   border-radius: 10px;
-  border: none;
-  background: #1e293b;
+  border: 1px solid #1e293b;
+  background: #0b1220;
   color: white;
   font-size: 14px;
+  outline: none;
   box-sizing: border-box;
 }
-.week-row{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-.week-date{
-  color:#94a3b8;
-  font-size:12px;
+
+/* TEXTAREA MÁS ALTO */
+.modal-body textarea {
+  min-height: 90px;
+  resize: vertical;
 }
 
+/* LABELS */
 .form-group label {
   font-size: 13px;
   color: #94a3b8;
-}
-/* =========================
-   INPUTS
-========================= */
-.modal-body input,
-.modal-body select,
-.modal-body textarea {
-  width: 100%;
-  margin-bottom: 12px;
-  padding: 12px;
-  border-radius: 10px;
-  border: 1px solid #1e293b;
-  background: #0b1220;
-  color: white;
-  outline: none;
+  display: block;
+  margin-bottom: 6px;
 }
 
-.modal-body input,
-.modal-body select,
-.modal-body textarea {
-  width: 100%;
-  padding: 12px;
-  border-radius: 10px;
-  border: 1px solid #1e293b;
-  background: #0b1220;
-  color: white;
-  font-size: 14px;
-  outline: none;
-  box-sizing: border-box;
-}
-/* =========================
-   ACCIONES
-========================= */
-.acciones {
+/* ACCIONES (BOTONES ABAJO) */
+.modal-actions {
   display: flex;
+  justify-content: flex-end;
   gap: 10px;
   margin-top: 10px;
 }
 
-#btnGuardar {
-  flex: 1;
-  background: linear-gradient(135deg, #22c55e, #16a34a);
-  color: white;
-  padding: 12px;
+/* BOTONES */
+.modal-actions button {
+  padding: 10px 14px;
   border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
 }
 
+/* BOTÓN GUARDAR */
+#btnGuardar {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+}
+
+/* BOTÓN EDITAR */
 #btnEditar {
   background: #f59e0b;
   color: white;
-  padding: 10px;
-  border-radius: 10px;
 }
 
+/* BOTÓN ELIMINAR */
 #btnEliminar {
   background: #ef4444;
   color: white;
-  padding: 10px;
-  border-radius: 10px;
 }
 
-/* =========================
-   DETALLE
-========================= */
-#detalle p {
-  margin: 6px 0;
-  font-size: 14px;
-  color: #cbd5e1;
-}
-
-/* =========================
-   CALENDARIO (BASE FUTURO PRO)
-========================= */
-#calendario {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 8px;
-  margin-top: 15px;
-}
-
-.dia {
-  padding: 10px;
-  border-radius: 10px;
-  text-align: center;
-  font-size: 12px;
-  background: #0b1220;
-  border: 1px solid #1e293b;
-}
-/* ===== NAVBAR PRO ===== */
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 30px;
-  background: #020617;
-  border-bottom: 1px solid #1e293b;
-}
-
-.navbar h1 {
-  font-size: 18px;
-  margin: 0;
-}
-
-.nav-right {
-  display: flex;
-  gap: 15px;
-}
-
-.nav-link {
-  text-decoration: none;
-  color: #94a3b8;
-  padding: 8px 14px;
-  border-radius: 10px;
-  transition: 0.2s;
-}
-
-.nav-link:hover {
+/* BOTÓN CANCELAR / CERRAR */
+.btn-cerrar,
+.btn-cancelar {
   background: #1e293b;
-  color: white;
+  color: #e5e7eb;
 }
 
-.nav-link.active {
-  background: #3b82f6;
-  color: white;
-}
+/* =========================
+   RESPONSIVE
+========================= */
 @media (max-width: 768px) {
   .modal-body {
     grid-template-columns: 1fr;
   }
 }
-.verde { background: rgba(34,197,94,0.15); border-color: #22c55e; }
-.amarillo { background: rgba(245,158,11,0.15); border-color: #f59e0b; }
-.rojo { background: rgba(239,68,68,0.15); border-color: #ef4444; }
