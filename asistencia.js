@@ -18,7 +18,7 @@ window.onload = async () => {
   document.getElementById("btnGuardar")
     ?.addEventListener("click", guardarAsistencia);
 
-  // EVENTOS DINÁMICOS (delegación global)
+  // CERRAR MODALES
   document.addEventListener("click", (e) => {
     if (
       e.target.classList.contains("btn-cerrar") ||
@@ -30,13 +30,13 @@ window.onload = async () => {
   });
 
   // CHECKBOX NUEVO
-  ["nuevoDia1","nuevoDia2","nuevoDia3"].forEach(id => {
+  ["nuevoDia1", "nuevoDia2", "nuevoDia3"].forEach(id => {
     document.getElementById(id)
       ?.addEventListener("change", actualizarEstadoNuevo);
   });
 
   // CHECKBOX EDITAR
-  ["dia1","dia2","dia3"].forEach(id => {
+  ["dia1", "dia2", "dia3"].forEach(id => {
     document.getElementById(id)
       ?.addEventListener("change", actualizarEstado);
   });
@@ -45,7 +45,10 @@ window.onload = async () => {
     ?.addEventListener("change", actualizarFechaNueva);
 
   document.getElementById("semana")
-    ?.addEventListener("change", actualizarFechaEditar);
+    ?.addEventListener("change", () => {
+      const s = document.getElementById("semana").value;
+      document.getElementById("fechaSemana").value = getFechaPorSemana(s);
+    });
 };
 
 //////////////////////////////////////////////////
@@ -96,7 +99,6 @@ function renderJugadores() {
         <b>${j.nombre} (${j.apodo || "-"})</b>
         <div>DNI: ${j.dni}</div>
       </div>
-
       <button class="btn-ver" data-id="${j.id}">👁 Ver</button>
     </div>
   `).join("");
@@ -126,7 +128,7 @@ function abrirModalNuevaAsistencia() {
   cargarSemanas("nuevoSemana", 1);
   document.getElementById("nuevoFecha").value = getFechaPorSemana(1);
 
-  ["nuevoDia1","nuevoDia2","nuevoDia3"].forEach(id => {
+  ["nuevoDia1", "nuevoDia2", "nuevoDia3"].forEach(id => {
     document.getElementById(id).checked = false;
   });
 
@@ -194,7 +196,9 @@ async function verJugador(id) {
     <div class="card">
       <b>Semana ${a.semana}</b>
       <div>${a.estado}</div>
+
       <button class="btn-editar" data-id="${a.id}">✏️</button>
+      <button class="btn-eliminar" data-id="${a.id}">🗑</button>
     </div>
   `).join("");
 
@@ -203,6 +207,12 @@ async function verJugador(id) {
       const a = await window.getAsistenciaById(btn.dataset.id);
       cerrar();
       setTimeout(() => editarAsistencia(a), 50);
+    });
+  });
+
+  cont.querySelectorAll(".btn-eliminar").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      eliminarAsistencia(btn.dataset.id);
     });
   });
 
@@ -234,14 +244,12 @@ function editarAsistencia(a) {
   document.getElementById("detalleSemana").value = a.detalle || "";
 
   actualizarEstado();
-
   document.getElementById("modalAsistencia").classList.add("show");
 }
 
 async function guardarAsistencia() {
   const id = document.getElementById("asistenciaId").value;
   const idJugador = document.getElementById("jugadorIdHidden").value;
-  const semana = Number(document.getElementById("semana").value);
 
   const jugador = jugadores.find(j => String(j.id) === String(idJugador));
 
@@ -251,7 +259,7 @@ async function guardarAsistencia() {
     nombre: jugador?.nombre || "",
     apodo: jugador?.apodo || "",
     dni: jugador?.dni || "",
-    semana,
+    semana: Number(document.getElementById("semana").value),
     fechaSemana: document.getElementById("fechaSemana").value,
     dia1: document.getElementById("dia1").checked,
     dia2: document.getElementById("dia2").checked,
@@ -267,14 +275,23 @@ async function guardarAsistencia() {
   renderJugadores();
 
   alert("✅ Modificación realizada correctamente");
-};
+}
 
-  await window.actualizarAsistenciaFirebase(data);
+//////////////////////////////////////////////////
+// ELIMINAR
+//////////////////////////////////////////////////
+
+async function eliminarAsistencia(id) {
+  if (!confirm("¿Seguro que querés eliminar esta asistencia?")) return;
+
+  await window.eliminarAsistenciaFirebase(id);
 
   cerrar();
   jugadores = await window.getJugadores();
   renderJugadores();
 
+  alert("🗑️ Asistencia eliminada");
+}
 
 //////////////////////////////////////////////////
 // ESTADO
