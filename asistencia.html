@@ -50,30 +50,30 @@
 
     <div class="modal-head">
       <h3 id="tituloModalAsistencia">Registrar asistencia</h3>
-      <button class="modal-close" onclick="cerrar()">×</button>
+
+      <!-- ✔ botón seguro -->
+      <button type="button" class="modal-close" onclick="cerrar()">
+        ×
+      </button>
     </div>
 
     <div class="modal-body">
 
-      <!-- 🔥 ID OCULTO -->
       <input type="hidden" id="asistenciaId">
 
-      <!-- DNI -->
       <div class="form-group">
         <label>DNI</label>
         <input id="jugadorDni" disabled>
       </div>
 
-      <!-- JUGADOR -->
       <div class="form-group">
         <label>Jugador</label>
         <input id="jugadorNombre" disabled>
       </div>
 
-      <!-- oculto -->
       <input type="hidden" id="jugadorSelect">
 
-      <!-- 🔥 SEMANA INFO (FIX PRO) -->
+      <!-- 🔥 SEMANA DISPLAY -->
       <div class="semana-info">
         <span>📆 Semana:</span>
         <span id="semanaLabel">-</span>
@@ -83,13 +83,13 @@
         <span id="fechaSemanaLabel">-</span>
       </div>
 
-      <!-- SEMANA REAL (SELECT) -->
+      <!-- ✔ SEMANA REAL -->
       <div class="form-group">
         <label>Semana</label>
         <select id="semana"></select>
       </div>
 
-      <!-- FECHA -->
+      <!-- ✔ FECHA REAL -->
       <div class="form-group">
         <label>Fecha (lunes de la semana)</label>
         <input type="date" id="fechaSemana">
@@ -102,23 +102,22 @@
         <label><input type="checkbox" id="dia3"> Partido</label>
       </div>
 
-      <!-- DETALLE -->
       <div class="form-group">
         <label>Detalle</label>
-        <textarea id="detalleSemana" placeholder="Ej: llegó tarde, lesionado, etc."></textarea>
+        <textarea id="detalleSemana"></textarea>
       </div>
 
-      <!-- ESTADO -->
       <div class="form-group">
         <label>Estado</label>
         <input id="estadoSemana" disabled>
       </div>
 
-      <!-- BOTONES -->
       <div class="actions">
-        <button class="btn btn-sec" onclick="cerrar()">Cancelar</button>
+        <button type="button" class="btn btn-sec" onclick="cerrar()">
+          Cancelar
+        </button>
 
-        <button class="btn btn-primary" onclick="guardarAsistencia()">
+        <button type="button" class="btn btn-primary" onclick="guardarAsistencia()">
           💾 Guardar
         </button>
       </div>
@@ -129,11 +128,15 @@
 
 <!-- ================= MODAL VER JUGADOR ================= -->
 <div class="modal" id="modalJugador">
+
   <div class="modal-box" style="max-width:900px">
 
     <div class="modal-head">
       <h3>📊 Historial del jugador</h3>
-      <button class="modal-close" onclick="cerrar()">×</button>
+
+      <button type="button" class="modal-close" onclick="cerrar()">
+        ×
+      </button>
     </div>
 
     <div class="modal-body">
