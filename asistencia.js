@@ -31,7 +31,7 @@ window.onload = async () => {
 /* =========================
    nueva asistencia
 ========================= */
-function abrirModalAsistenciaDesdeJugador(jugador) {
+window.abrirModalAsistenciaDesdeJugador = function(jugador) {
 
   cerrar();
 
@@ -45,7 +45,7 @@ function abrirModalAsistenciaDesdeJugador(jugador) {
 
   setFechaHoy();
   actualizarEstado();
-}
+};
 
 /* =========================
    RENDER
