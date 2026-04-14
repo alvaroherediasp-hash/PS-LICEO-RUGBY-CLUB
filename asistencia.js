@@ -251,6 +251,8 @@ function editarAsistencia(a) {
 
     document.getElementById("asistenciaId").value = a.id;
     document.getElementById("jugadorSelect").value = a.jugadorId;
+    document.getElementById("jugadorNombre").value = a.nombre || "";
+    document.getElementById("jugadorDni").value = a.dni || "";
 
     document.getElementById("semana").value = a.semana;
     document.getElementById("fechaSemana").value = a.fechaSemana;
