@@ -12,9 +12,7 @@
 
 <!-- ================= HEADER ================= -->
 <div class="header">
-  <div class="header-left">
-    <h1>🏉 Sistema de Asistencia</h1>
-  </div>
+  <h1>🏉 Sistema de Asistencia</h1>
 
   <button class="btn btn-sec" onclick="location.href='index.html'">
     ← Volver
@@ -23,70 +21,57 @@
 
 <!-- ================= TOOLBAR ================= -->
 <div class="toolbar">
-<button id="btnNuevaAsistencia" class="btn btn-primary">
-  ➕ Cargar asistencia
-</button>
+  <button id="btnNuevaAsistencia" class="btn btn-primary">
+    ➕ Cargar asistencia
+  </button>
 </div>
 
 <!-- ================= MAIN ================= -->
 <div class="main">
   <div class="card">
+    <h3>📊 Jugadores</h3>
 
-    <div class="card-head">
-      <h3>📊 Jugadores</h3>
-    </div>
-
-    <div id="tablaAsistencia" class="tabla">
+    <div id="tablaAsistencia">
       <p>Cargando jugadores...</p>
     </div>
-
   </div>
 </div>
-<!-- ================= MODAL NUEVA ASISTENCIA ================= -->
+
+<!-- ================= MODAL NUEVA ================= -->
 <div class="modal" id="modalNuevaAsistencia">
 
   <div class="modal-box">
 
     <div class="modal-head">
       <h3>➕ Nueva asistencia</h3>
-      <button class="btn-cerrar">❌</button>
+      <button type="button" class="btn-cerrar">❌</button>
     </div>
 
     <div class="modal-body">
 
-      <div class="form-group">
-        <label>Jugador</label>
-        <select id="nuevoJugadorSelect"></select>
-      </div>
+      <label>Jugador</label>
+      <select id="nuevoJugadorSelect"></select>
 
-      <div class="form-group">
-        <label>Semana</label>
-        <select id="nuevoSemana"></select>
-      </div>
+      <label>Semana</label>
+      <select id="nuevoSemana"></select>
 
-      <div class="form-group">
-        <label>Fecha</label>
-        <input type="date" id="nuevoFecha">
-      </div>
+      <label>Fecha</label>
+      <input type="date" id="nuevoFecha">
 
-      <div class="form-row">
+      <div>
         <label><input type="checkbox" id="nuevoDia1"> Día 1</label>
         <label><input type="checkbox" id="nuevoDia2"> Día 2</label>
         <label><input type="checkbox" id="nuevoDia3"> Partido</label>
       </div>
 
-      <div class="form-group">
-        <label>Detalle</label>
-        <textarea id="nuevoDetalle"></textarea>
-      </div>
+      <label>Detalle</label>
+      <textarea id="nuevoDetalle"></textarea>
 
-      <div class="form-group">
-        <label>Estado</label>
-        <input id="nuevoEstado" disabled>
-      </div>
+      <label>Estado</label>
+      <input id="nuevoEstado" disabled>
 
-      <div class="actions">
-        <button class="btn-cerrar">Cancelar</button>
+      <div>
+        <button type="button" class="btn-cerrar">Cancelar</button>
         <button id="btnGuardarNueva">💾 Guardar</button>
       </div>
 
@@ -94,95 +79,63 @@
   </div>
 </div>
 
-<!-- ================= MODAL CARGAR / EDITAR ================= -->
+<!-- ================= MODAL EDITAR ================= -->
 <div class="modal" id="modalAsistencia">
 
   <div class="modal-box">
 
     <div class="modal-head">
-      <h3 id="tituloModalAsistencia">Registrar asistencia</h3>
-
-      <!-- ✔ botón seguro -->
-      <button class="btn-cerrar">❌</button>
-
+      <h3>Editar asistencia</h3>
+      <button type="button" class="btn-cerrar">❌</button>
     </div>
 
     <div class="modal-body">
 
+      <!-- 🔥 IMPORTANTE -->
       <input type="hidden" id="asistenciaId">
+      <input type="hidden" id="jugadorIdHidden">
 
-      <div class="form-group">
-        <label>DNI</label>
-        <input id="jugadorDni" disabled>
-      </div>
+      <label>DNI</label>
+      <input id="jugadorDni" disabled>
 
-      <div class="form-group">
-        <label>Jugador</label>
-        <input id="jugadorNombre" disabled>
-      </div>
+      <label>Jugador</label>
+      <input id="jugadorNombre" disabled>
 
-      <input type="hidden" id="jugadorSelect">
+      <label>Semana</label>
+      <select id="semana"></select>
 
-      <!-- 🔥 SEMANA DISPLAY -->
-      <div class="semana-info">
-        <span>📆 Semana:</span>
-        <span id="semanaLabel">-</span>
+      <label>Fecha</label>
+      <input type="date" id="fechaSemana">
 
-        <span style="margin:0 6px;">|</span>
-
-        <span id="fechaSemanaLabel">-</span>
-      </div>
-
-      <!-- ✔ SEMANA REAL -->
-      <div class="form-group">
-        <label>Semana</label>
-        <select id="semana"></select>
-      </div>
-
-      <!-- ✔ FECHA REAL -->
-      <div class="form-group">
-        <label>Fecha (lunes de la semana)</label>
-        <input type="date" id="fechaSemana">
-      </div>
-
-      <!-- CHECKS -->
-      <div class="form-row">
+      <div>
         <label><input type="checkbox" id="dia1"> Día 1</label>
         <label><input type="checkbox" id="dia2"> Día 2</label>
         <label><input type="checkbox" id="dia3"> Partido</label>
       </div>
 
-      <div class="form-group">
-        <label>Detalle</label>
-        <textarea id="detalleSemana"></textarea>
-      </div>
+      <label>Detalle</label>
+      <textarea id="detalleSemana"></textarea>
 
-      <div class="form-group">
-        <label>Estado</label>
-        <input id="estadoSemana" disabled>
-      </div>
+      <label>Estado</label>
+      <input id="estadoSemana" disabled>
 
-      <div class="actions">
-       <button class="btn-cerrar">Cancelar</button>
-
-        <button id="btnGuardar"> 💾 Guardar</button>
-         
-       
+      <div>
+        <button type="button" class="btn-cerrar">Cancelar</button>
+        <button id="btnGuardar">💾 Guardar</button>
       </div>
 
     </div>
   </div>
 </div>
 
-<!-- ================= MODAL VER JUGADOR ================= -->
+<!-- ================= MODAL HISTORIAL ================= -->
 <div class="modal" id="modalJugador">
 
   <div class="modal-box" style="max-width:900px">
 
     <div class="modal-head">
       <h3>📊 Historial del jugador</h3>
-
-         <button class="btn-cerrar">❌</button>
+      <button type="button" class="btn-cerrar">❌</button>
     </div>
 
     <div class="modal-body">
