@@ -16,7 +16,8 @@ window.addEventListener("DOMContentLoaded", async () => {
 
   renderJugadores();
   poblarSelectJugadores();
-  cargarSemanas();
+  cargarSemanas("nuevoSemana", 1);
+  cargarSemanas("semana", 1);
 
   // eventos
   document.getElementById("btnNuevaAsistencia")
@@ -32,7 +33,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     b.addEventListener("click", cerrar)
   );
 
-  // auto estado checks
+  // auto estado
   ["nuevoDia1","nuevoDia2","nuevoDia3"].forEach(id =>
     document.getElementById(id)?.addEventListener("change", actualizarEstadoNuevo)
   );
@@ -40,14 +41,17 @@ window.addEventListener("DOMContentLoaded", async () => {
   ["dia1","dia2","dia3"].forEach(id =>
     document.getElementById(id)?.addEventListener("change", actualizarEstadoEdit)
   );
+
+  // auto fecha semana
+  document.getElementById("nuevoSemana")
+    ?.addEventListener("change", actualizarFechaSemana);
 });
 
 /* =========================
-   JUGADORES LISTA
+   JUGADORES
 ========================= */
 function renderJugadores() {
   const cont = document.getElementById("tablaAsistencia");
-
   if (!cont) return;
 
   cont.innerHTML = jugadores.map(j => `
@@ -56,7 +60,6 @@ function renderJugadores() {
         <b>${j.dni} - ${j.nombre}</b>
         <div style="opacity:.7">${j.apodo || "-"}</div>
       </div>
-
       <button onclick="ver('${j.id}')">Ver</button>
     </div>
   `).join("");
@@ -81,8 +84,8 @@ function poblarSelectJugadores() {
 /* =========================
    SEMANAS
 ========================= */
-function cargarSemanas() {
-  const sel = document.getElementById("nuevoSemana");
+function cargarSemanas(id, selected = 1) {
+  const sel = document.getElementById(id);
   if (!sel) return;
 
   sel.innerHTML = "";
@@ -91,11 +94,11 @@ function cargarSemanas() {
     sel.innerHTML += `<option value="${i}">Semana ${i}</option>`;
   }
 
-  sel.value = 1;
+  sel.value = selected;
 }
 
 /* =========================
-   NUEVA ASISTENCIA
+   NUEVA
 ========================= */
 function abrirNueva() {
   cerrar();
@@ -112,7 +115,6 @@ function abrirNueva() {
 async function guardarNueva() {
 
   const jugadorId = document.getElementById("nuevoJugadorSelect").value;
-
   if (!jugadorId) return alert("Seleccioná jugador");
 
   const data = {
@@ -132,7 +134,7 @@ async function guardarNueva() {
 }
 
 /* =========================
-   VER HISTORIAL
+   VER
 ========================= */
 window.ver = async function(id) {
 
@@ -151,7 +153,6 @@ window.ver = async function(id) {
     <div class="card">
       <b>Semana ${a.semana}</b>
       <div>${a.estado}</div>
-
       <button onclick="editar('${a.id}')">✏️</button>
       <button onclick="eliminar('${a.id}')">🗑</button>
     </div>
@@ -174,7 +175,8 @@ window.editar = async function(id) {
   document.getElementById("editNombre").value = a.nombre || "";
   document.getElementById("editApodo").value = a.apodo || "";
 
-  document.getElementById("semana").value = a.semana;
+  cargarSemanas("semana", a.semana);
+
   document.getElementById("fechaSemana").value = a.fechaSemana || "";
 
   document.getElementById("dia1").checked = a.dia1;
@@ -208,7 +210,7 @@ async function guardarEdit() {
 }
 
 /* =========================
-   ESTADO CHECKS
+   ESTADO
 ========================= */
 function getEstado(prefix) {
 
@@ -249,10 +251,10 @@ function hoy() {
   return new Date().toISOString().split("T")[0];
 }
 
-/* auto fecha semana */
-document.getElementById("nuevoSemana")?.addEventListener("change", (e) => {
-  const base = new Date();
+/* fecha automática */
+function actualizarFechaSemana(e) {
   const week = Number(e.target.value);
+  const base = new Date();
   const fecha = new Date(base.getFullYear(), 0, 1 + (week - 1) * 7);
   document.getElementById("nuevoFecha").value = fecha.toISOString().split("T")[0];
-});
+}
