@@ -12,65 +12,61 @@ import {
   getDoc
 } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
-const firebaseConfig = {
+const app = initializeApp({
   apiKey: "AIzaSyCZ5_7V6-s4mOOgdkGOIi5YfInLCM-kl4I",
   authDomain: "liceo-rugby.firebaseapp.com",
   projectId: "liceo-rugby",
   storageBucket: "liceo-rugby.firebasestorage.app",
   messagingSenderId: "592245047553",
   appId: "1:592245047553:web:1a8b64aa53bdc18be7db00"
-};
+});
 
-const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-/* EXPORT GLOBAL */
-window.db = db;
+/* =========================
+   API GLOBAL (UNA SOLA)
+========================= */
+window.api = {
 
-/* ================= JUGADORES ================= */
+  /* JUGADORES */
+  getJugadores: async () => {
+    const snap = await getDocs(collection(db, "jugadores"));
+    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  },
 
-window.getJugadores = async () => {
-  const snap = await getDocs(collection(db, "jugadores"));
-  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
-};
+  addJugador: (data) =>
+    addDoc(collection(db, "jugadores"), data),
 
-window.guardarJugadorFirebase = async (data) => {
-  return await addDoc(collection(db, "jugadores"), data);
-};
+  updateJugador: (data) => {
+    const { id, ...clean } = data;
+    return updateDoc(doc(db, "jugadores", id), clean);
+  },
 
-window.actualizarJugadorFirebase = async (data) => {
-  const { id, ...clean } = data;
-  await updateDoc(doc(db, "jugadores", id), clean);
-};
+  deleteJugador: (id) =>
+    deleteDoc(doc(db, "jugadores", id)),
 
-window.eliminarJugadorFirebase = async (id) => {
-  await deleteDoc(doc(db, "jugadores", id));
-};
+  /* ASISTENCIA */
+  addAsistencia: (data) =>
+    addDoc(collection(db, "asistencia"), data),
 
-/* ================= ASISTENCIA ================= */
+  getAsistenciaByJugador: async (id) => {
+    const q = query(collection(db, "asistencia"), where("jugadorId", "==", id));
+    const snap = await getDocs(q);
 
-window.guardarAsistenciaFirebase = async (data) => {
-  return await addDoc(collection(db, "asistencia"), data);
-};
+    return snap.docs.map(d => ({ id: d.id, ...d.data() }))
+      .sort((a, b) => Number(a.semana) - Number(b.semana));
+  },
 
-window.getAsistenciaPorJugador = async (jugadorId) => {
-  const q = query(collection(db, "asistencia"), where("jugadorId", "==", jugadorId));
-  const snap = await getDocs(q);
+  getAsistenciaById: async (id) => {
+    const snap = await getDoc(doc(db, "asistencia", id));
+    return snap.exists() ? { id: snap.id, ...snap.data() } : null;
+  },
 
-  return snap.docs.map(d => ({ id: d.id, ...d.data() }))
-    .sort((a, b) => Number(a.semana) - Number(b.semana));
-};
+  updateAsistencia: (data) => {
+    const { id, ...clean } = data;
+    return updateDoc(doc(db, "asistencia", id), clean);
+  },
 
-window.getAsistenciaById = async (id) => {
-  const snap = await getDoc(doc(db, "asistencia", id));
-  return snap.exists() ? { id: snap.id, ...snap.data() } : null;
-};
-
-window.actualizarAsistenciaFirebase = async (data) => {
-  const { id, ...clean } = data;
-  await updateDoc(doc(db, "asistencia", id), clean);
-};
-
-window.eliminarAsistenciaFirebase = async (id) => {
-  await deleteDoc(doc(db, "asistencia", id));
+  deleteAsistencia: (id) =>
+    deleteDoc(doc(db, "asistencia", id))
 };
