@@ -1,6 +1,9 @@
 let jugadores = [];
 let partidos = [];
 
+let jugadorActual = null;
+let partidoActual = null;
+
 // =========================
 // CARGAR TODO
 // =========================
@@ -14,24 +17,19 @@ async function cargarTodo() {
   jugadores = await window.api.getJugadores();
   partidos = await window.api.getPartidos();
 
-  console.log("Jugadores:", jugadores);
-  console.log("Partidos:", partidos);
-
   renderTabla();
 }
 
 // =========================
-// NUEVO PARTIDO (ABRE MODAL)
+// NUEVO PARTIDO
 // =========================
 function nuevoPartido() {
-  const modal = document.getElementById("modalPartido");
-
   document.getElementById("fechaPartido").value =
     new Date().toISOString().split("T")[0];
 
   document.getElementById("tituloPartido").value = "";
 
-  modal.showModal();
+  document.getElementById("modalPartido").showModal();
 }
 
 // =========================
@@ -54,7 +52,54 @@ async function guardarPartido() {
   });
 
   document.getElementById("modalPartido").close();
+  cargarTodo();
+}
 
+// =========================
+// ABRIR MODAL PAGO
+// =========================
+function abrirPago(jugadorId, partidoId) {
+
+  jugadorActual = jugadorId;
+  partidoActual = partidoId;
+
+  const jugador = jugadores.find(j => j.id === jugadorId);
+
+  document.getElementById("infoJugador").innerText =
+    `${jugador.nombre} (${jugador.dni})`;
+
+  document.getElementById("importePago").value = "";
+  document.getElementById("formaPago").value = "efectivo";
+
+  document.getElementById("modalPago").showModal();
+}
+
+// =========================
+// GUARDAR PAGO
+// =========================
+async function guardarPago() {
+
+  const importe = parseFloat(document.getElementById("importePago").value);
+  const forma = document.getElementById("formaPago").value;
+
+  if (!importe || importe <= 0) {
+    alert("Ingresá un importe válido");
+    return;
+  }
+
+  const partido = partidos.find(p => p.id === partidoActual);
+
+  if (!partido.pagos) partido.pagos = {};
+
+  partido.pagos[jugadorActual] = {
+    pagado: true,
+    importe: importe,
+    forma: forma
+  };
+
+  await window.api.updatePago(partidoActual, partido.pagos);
+
+  document.getElementById("modalPago").close();
   cargarTodo();
 }
 
@@ -77,18 +122,21 @@ function renderTabla() {
   html += "</tr></thead><tbody>";
 
   jugadores.forEach(j => {
+
     html += `<tr><td>${j.nombre} (${j.dni})</td>`;
 
     partidos.forEach(p => {
+
       const pago = p.pagos?.[j.id];
+      const pagado = pago?.pagado;
 
       html += `
         <td>
           <button 
             class="btn-pago"
-            style="background:${pago ? 'green' : 'red'}; color:white; border:none; padding:5px; cursor:pointer;"
-            onclick="abrirPago('${j.id}','${p.id}')"
-            ${pago ? 'Pagado' : 'Debe'}
+            style="background:${pagado ? 'green' : 'red'}; color:white; border:none; padding:5px; cursor:pointer;"
+            onclick="abrirPago('${j.id}','${p.id}')">
+            ${pagado ? '$' + pago.importe : 'Debe'}
           </button>
         </td>
       `;
@@ -97,25 +145,31 @@ function renderTabla() {
     html += "</tr>";
   });
 
+  // =========================
+  // TOTAL POR PARTIDO
+  // =========================
+  html += "<tr><td><b>Total</b></td>";
+
+  partidos.forEach(p => {
+
+    let total = 0;
+
+    if (p.pagos) {
+      Object.values(p.pagos).forEach(pago => {
+        if (pago?.importe) {
+          total += pago.importe;
+        }
+      });
+    }
+
+    html += `<td><b>$${total}</b></td>`;
+  });
+
+  html += "</tr>";
+
   html += "</tbody></table>";
 
   document.getElementById("tablaJugadores").innerHTML = html;
-}
-
-// =========================
-// PAGAR
-// =========================
-window.pagar = async function(jugadorId, partidoId) {
-
-  const partido = partidos.find(p => p.id === partidoId);
-
-  if (!partido.pagos) partido.pagos = {};
-
-  partido.pagos[jugadorId] = !partido.pagos[jugadorId];
-
-  await window.api.updatePago(partidoId, partido.pagos);
-
-  cargarTodo();
 }
 
 // =========================
@@ -128,6 +182,9 @@ window.addEventListener("load", () => {
 
   document.getElementById("btnGuardarPartido")
     .addEventListener("click", guardarPartido);
+
+  document.getElementById("btnGuardarPago")
+    .addEventListener("click", guardarPago);
 
   cargarTodo();
 });
