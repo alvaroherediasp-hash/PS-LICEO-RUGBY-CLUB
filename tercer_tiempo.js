@@ -191,7 +191,7 @@ function renderTabla() {
   html += "</tbody></table>";
 
   document.getElementById("tablaJugadores").innerHTML = html;
-}
+
 
 // =========================
 // EVENTOS
