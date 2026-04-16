@@ -31,6 +31,20 @@
 <div class="tabla" id="tablaJugadores">
   <p>Cargando...</p>
 </div>
+  <dialog id="modalPartido">
+  <h3>Nuevo Partido</h3>
+
+  <label>Fecha:</label>
+  <input type="date" id="fechaPartido">
+
+  <label>Título:</label>
+  <input type="text" id="tituloPartido" placeholder="Ej: Fecha 1">
+
+  <br><br>
+
+  <button id="btnGuardarPartido">Guardar</button>
+  <button onclick="document.getElementById('modalPartido').close()">Cancelar</button>
+</dialog>
 
 <!-- 🔥 IMPORTANTE: ambos como module -->
 <script type="module" src="firebase.js"></script>
