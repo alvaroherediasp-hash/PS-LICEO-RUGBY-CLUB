@@ -1,29 +1,44 @@
-
 let jugadores = [];
 let partidos = [];
 
-// Cargar jugadores desde Firebase
-async function cargarJugadores() {
-  const db = window.db;
-  const snapshot = await db.collection("jugadores").get();
-
-  jugadores = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+// =========================
+// CARGAR TODO (Firebase)
+// =========================
+async function cargarTodo() {
+  jugadores = await window.api.getJugadores();
+  partidos = await window.api.getPartidos();
 
   renderTabla();
 }
 
-// Crear nuevo partido
-function nuevoPartido() {
-  const fecha = new Date().toLocaleDateString();
-  partidos.push({ fecha });
-  renderTabla();
+// =========================
+// NUEVO PARTIDO (Firebase)
+// =========================
+async function nuevoPartido() {
+  const fecha = new Date().toISOString().split("T")[0];
+
+  await window.api.addPartido({
+    fecha,
+    pagos: {}
+  });
+
+  cargarTodo();
 }
 
-// Render tabla
+// =========================
+// RENDER TABLA
+// =========================
 function renderTabla() {
+
+  if (partidos.length === 0) {
+    document.getElementById("tablaJugadores").innerHTML =
+      "<p>No hay partidos. Creá uno con 'Nuevo Partido'</p>";
+    return;
+  }
+
   let html = "<table><thead><tr><th>Jugador</th>";
 
-  partidos.forEach((p, i) => {
+  partidos.forEach(p => {
     html += `<th>${p.fecha}</th>`;
   });
 
@@ -32,8 +47,20 @@ function renderTabla() {
   jugadores.forEach(j => {
     html += `<tr><td>${j.nombre} (${j.dni})</td>`;
 
-    partidos.forEach((p, i) => {
-      html += `<td><button class='btn-pago' onclick="pagar('${j.id}', ${i})">Pago</button></td>`;
+    partidos.forEach(p => {
+
+      const pago = p.pagos?.[j.id];
+
+      html += `
+        <td>
+          <button 
+            class="btn-pago"
+            style="background:${pago ? 'green' : 'red'}"
+            onclick="pagar('${j.id}','${p.id}')">
+            ${pago ? 'Pagado' : 'Debe'}
+          </button>
+        </td>
+      `;
     });
 
     html += "</tr>";
@@ -44,14 +71,32 @@ function renderTabla() {
   document.getElementById("tablaJugadores").innerHTML = html;
 }
 
-// Acción pagar
-function pagar(jugadorId, partidoIndex) {
-  alert("Pago registrado para jugador " + jugadorId + " en partido " + partidoIndex);
+// =========================
+// PAGAR (Firebase)
+// =========================
+async function pagar(jugadorId, partidoId) {
+
+  const partido = partidos.find(p => p.id === partidoId);
+
+  if (!partido.pagos) partido.pagos = {};
+
+  // toggle
+  partido.pagos[jugadorId] = !partido.pagos[jugadorId];
+
+  await window.api.updatePago(partidoId, partido.pagos);
+
+  cargarTodo();
 }
 
-// Eventos
+// =========================
+// EVENTOS
+// =========================
+document.getElementById("btnNuevoPartido")
+  .addEventListener("click", nuevoPartido);
 
-document.getElementById("btnNuevoPartido").addEventListener("click", nuevoPartido);
-
-// Inicializar
-cargarJugadores();
+// =========================
+// INIT
+// =========================
+window.addEventListener("load", () => {
+  cargarTodo();
+});
