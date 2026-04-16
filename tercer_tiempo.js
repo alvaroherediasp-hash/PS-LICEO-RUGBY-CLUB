@@ -181,3 +181,6 @@ window.addEventListener("load", () => {
 
   cargarTodo();
 });
+
+// 👇 IMPORTANTE (esto soluciona tu error)
+window.abrirPago = abrirPago;
