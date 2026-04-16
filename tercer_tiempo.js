@@ -87,7 +87,7 @@ function renderTabla() {
           <button 
             class="btn-pago"
             style="background:${pago ? 'green' : 'red'}; color:white; border:none; padding:5px; cursor:pointer;"
-            onclick="pagar('${j.id}','${p.id}')">
+            onclick="abrirPago('${j.id}','${p.id}')"
             ${pago ? 'Pagado' : 'Debe'}
           </button>
         </td>
