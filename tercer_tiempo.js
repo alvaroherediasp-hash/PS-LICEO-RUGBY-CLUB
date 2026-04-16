@@ -110,7 +110,7 @@ function renderTabla() {
 
   let html = "<table border='1'><thead><tr><th>Jugador</th>";
 
-  // ENCABEZADOS (SOLO TITULO + FECHA)
+  // ENCABEZADOS
   partidos.forEach(p => {
     html += `
       <th>
@@ -122,7 +122,7 @@ function renderTabla() {
 
   html += "</tr></thead><tbody>";
 
-  // FILAS DE JUGADORES
+  // FILAS
   jugadores.forEach(j => {
 
     html += `<tr><td>${j.nombre} (${j.dni})</td>`;
@@ -135,8 +135,7 @@ function renderTabla() {
       html += `
         <td>
           <button 
-            class="btn-pago"
-            style="background:${pagado ? 'green' : 'red'}; color:white; border:none; padding:5px; cursor:pointer;"
+            style="background:${pagado ? 'green' : 'red'}; color:white;"
             onclick="abrirPago('${j.id}','${p.id}')">
             ${pagado ? '$' + pago.importe : 'Debe'}
           </button>
@@ -147,18 +146,15 @@ function renderTabla() {
     html += "</tr>";
   });
 
-  // TOTAL POR PARTIDO
+  // TOTAL
   html += "<tr><td><b>Total</b></td>";
 
   partidos.forEach(p => {
-
     let total = 0;
 
     if (p.pagos) {
       Object.values(p.pagos).forEach(pago => {
-        if (pago?.importe) {
-          total += pago.importe;
-        }
+        if (pago?.importe) total += pago.importe;
       });
     }
 
@@ -166,12 +162,10 @@ function renderTabla() {
   });
 
   html += "</tr>";
-
   html += "</tbody></table>";
 
   document.getElementById("tablaJugadores").innerHTML = html;
 }
-
   // =========================
   // TOTAL POR PARTIDO
   // =========================
