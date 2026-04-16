@@ -45,6 +45,25 @@
   <button id="btnGuardarPartido">Guardar</button>
   <button onclick="document.getElementById('modalPartido').close()">Cancelar</button>
 </dialog>
+  <dialog id="modalPago">
+  <h3>Registrar Pago</h3>
+
+  <p id="infoJugador"></p>
+
+  <label>Importe:</label>
+  <input type="number" id="importePago">
+
+  <label>Forma de pago:</label>
+  <select id="formaPago">
+    <option value="efectivo">Efectivo</option>
+    <option value="transferencia">Transferencia</option>
+  </select>
+
+  <br><br>
+
+  <button id="btnGuardarPago">Guardar</button>
+  <button onclick="document.getElementById('modalPago').close()">Cancelar</button>
+</dialog>
 
 <!-- 🔥 IMPORTANTE: ambos como module -->
 <script type="module" src="firebase.js"></script>
