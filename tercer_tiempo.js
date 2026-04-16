@@ -22,8 +22,12 @@ async function cargarTodo() {
   partidos = await window.api.getPartidos();
 
   irAUltimaPagina();
-renderTabla();
+  renderTabla();
 }
+
+// =========================
+// IR A ÚLTIMA PÁGINA
+// =========================
 function irAUltimaPagina() {
 
   if (partidos.length <= partidosPorVista) {
@@ -31,8 +35,8 @@ function irAUltimaPagina() {
     return;
   }
 
-  // calcular última "página"
-  inicioPartidos = Math.floor((partidos.length - 1) / partidosPorVista) * partidosPorVista;
+  inicioPartidos =
+    Math.floor((partidos.length - 1) / partidosPorVista) * partidosPorVista;
 }
 
 // =========================
@@ -67,9 +71,22 @@ async function guardarPartido() {
   });
 
   document.getElementById("modalPartido").close();
+
   await cargarTodo();
-irAUltimaPagina();
-renderTabla();
+}
+
+// =========================
+// ELIMINAR PARTIDO
+// =========================
+async function eliminarPartido(partidoId) {
+
+  const ok = confirm("¿Eliminar este partido?");
+
+  if (!ok) return;
+
+  await window.api.deletePartido(partidoId);
+
+  await cargarTodo();
 }
 
 // =========================
@@ -88,8 +105,11 @@ function abrirPago(jugadorId, partidoId) {
   const partido = partidos.find(p => p.id === partidoId);
   const pagoExistente = partido?.pagos?.[jugadorId];
 
-  document.getElementById("importePago").value = pagoExistente?.importe || "";
-  document.getElementById("formaPago").value = pagoExistente?.forma || "efectivo";
+  document.getElementById("importePago").value =
+    pagoExistente?.importe || "";
+
+  document.getElementById("formaPago").value =
+    pagoExistente?.forma || "efectivo";
 
   document.getElementById("modalPago").showModal();
 }
@@ -120,7 +140,8 @@ async function guardarPago() {
   await window.api.updatePago(partidoActual, partido.pagos);
 
   document.getElementById("modalPago").close();
-  cargarTodo();
+
+  await cargarTodo();
 }
 
 // =========================
@@ -128,7 +149,6 @@ async function guardarPago() {
 // =========================
 function renderTabla() {
 
-  // 👇 cortar partidos visibles
   const partidosVisibles = partidos.slice(
     inicioPartidos,
     inicioPartidos + partidosPorVista
@@ -139,7 +159,23 @@ function renderTabla() {
   // ENCABEZADOS
   partidosVisibles.forEach(p => {
     html += `
-      <th>
+      <th style="position:relative;">
+        <button 
+          onclick="eliminarPartido('${p.id}')"
+          style="
+            position:absolute;
+            top:2px;
+            right:2px;
+            background:red;
+            color:white;
+            border:none;
+            cursor:pointer;
+            padding:2px 5px;
+            font-size:12px;
+          ">
+          ❌
+        </button>
+
         ${p.titulo || 'Sin título'}<br>
         <small>${p.fecha}</small>
       </th>
@@ -151,7 +187,12 @@ function renderTabla() {
   // FILAS
   jugadores.forEach(j => {
 
-    html += `<tr><td><b>${j.nombre}</b><br><small>${j.dni}</small></td>`;
+    html += `<tr>
+      <td>
+        <b>${j.nombre}</b><br>
+        <small>${j.dni}</small>
+      </td>
+    `;
 
     partidosVisibles.forEach(p => {
 
@@ -195,7 +236,6 @@ function renderTabla() {
   });
 
   html += "</tr>";
-
   html += "</tbody></table>";
 
   document.getElementById("tablaJugadores").innerHTML = html;
@@ -215,7 +255,6 @@ window.addEventListener("load", () => {
   document.getElementById("btnGuardarPago")
     .addEventListener("click", guardarPago);
 
-  // 👉 navegación
   document.getElementById("btnAnterior").addEventListener("click", () => {
     if (inicioPartidos > 0) {
       inicioPartidos -= partidosPorVista;
@@ -235,3 +274,4 @@ window.addEventListener("load", () => {
 
 // 👉 necesario por type="module"
 window.abrirPago = abrirPago;
+window.eliminarPartido = eliminarPartido;
