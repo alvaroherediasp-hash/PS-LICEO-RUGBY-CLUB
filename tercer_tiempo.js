@@ -68,8 +68,11 @@ function abrirPago(jugadorId, partidoId) {
   document.getElementById("infoJugador").innerText =
     `${jugador.nombre} (${jugador.dni})`;
 
-  document.getElementById("importePago").value = "";
-  document.getElementById("formaPago").value = "efectivo";
+  const partido = partidos.find(p => p.id === partidoId);
+  const pagoExistente = partido?.pagos?.[jugadorId];
+
+  document.getElementById("importePago").value = pagoExistente?.importe || "";
+  document.getElementById("formaPago").value = pagoExistente?.forma || "efectivo";
 
   document.getElementById("modalPago").showModal();
 }
@@ -135,7 +138,13 @@ function renderTabla() {
       html += `
         <td>
           <button 
-            style="background:${pagado ? 'green' : 'red'}; color:white;"
+            style="
+              background:${pagado ? (pago.forma === 'transferencia' ? '#007bff' : 'green') : 'red'};
+              color:white;
+              border:none;
+              padding:5px;
+              cursor:pointer;
+            "
             onclick="abrirPago('${j.id}','${p.id}')">
             ${pagado ? '$' + pago.importe : 'Debe'}
           </button>
@@ -146,10 +155,11 @@ function renderTabla() {
     html += "</tr>";
   });
 
-  // TOTAL
+  // TOTAL POR PARTIDO
   html += "<tr><td><b>Total</b></td>";
 
   partidos.forEach(p => {
+
     let total = 0;
 
     if (p.pagos) {
@@ -162,36 +172,11 @@ function renderTabla() {
   });
 
   html += "</tr>";
+
   html += "</tbody></table>";
 
   document.getElementById("tablaJugadores").innerHTML = html;
 }
-  // =========================
-  // TOTAL POR PARTIDO
-  // =========================
-  html += "<tr><td><b>Total</b></td>";
-
-  partidos.forEach(p => {
-
-    let total = 0;
-
-    if (p.pagos) {
-      Object.values(p.pagos).forEach(pago => {
-        if (pago?.importe) {
-          total += pago.importe;
-        }
-      });
-    }
-
-    html += `<td><b>$${total}</b></td>`;
-  });
-
-  html += "</tr>";
-
-  html += "</tbody></table>";
-
-  document.getElementById("tablaJugadores").innerHTML = html;
-
 
 // =========================
 // EVENTOS
