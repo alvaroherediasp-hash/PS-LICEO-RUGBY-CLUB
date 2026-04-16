@@ -111,13 +111,16 @@ function renderTabla() {
   let html = "<table border='1'><thead><tr><th>Jugador</th>";
 
   partidos.forEach(p => {
-    html += `
-      <th>
-        ${p.titulo || 'Sin título'}<br>
-        <small>${p.fecha}</small>
-      </th>
-    `;
-  });
+   html += `
+  <td>
+    <button 
+      class="btn-pago"
+      style="background:${pagado ? 'green' : 'red'}; color:white;"
+      onclick="abrirPago('${j.id}','${p.id}')">
+      ${pagado ? '$' + pago.importe : 'Debe'}
+    </button>
+  </td>
+`;
 
   html += "</tr></thead><tbody>";
 
