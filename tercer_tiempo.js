@@ -68,11 +68,8 @@ function abrirPago(jugadorId, partidoId) {
   document.getElementById("infoJugador").innerText =
     `${jugador.nombre} (${jugador.dni})`;
 
-  const partido = partidos.find(p => p.id === partidoId);
-  const pagoExistente = partido?.pagos?.[jugadorId];
-
-  document.getElementById("importePago").value = pagoExistente?.importe || "";
-  document.getElementById("formaPago").value = pagoExistente?.forma || "efectivo";
+  document.getElementById("importePago").value = "";
+  document.getElementById("formaPago").value = "efectivo";
 
   document.getElementById("modalPago").showModal();
 }
@@ -113,7 +110,6 @@ function renderTabla() {
 
   let html = "<table border='1'><thead><tr><th>Jugador</th>";
 
-  // ENCABEZADOS
   partidos.forEach(p => {
     html += `
       <th>
@@ -125,7 +121,6 @@ function renderTabla() {
 
   html += "</tr></thead><tbody>";
 
-  // FILAS
   jugadores.forEach(j => {
 
     html += `<tr><td>${j.nombre} (${j.dni})</td>`;
@@ -138,13 +133,7 @@ function renderTabla() {
       html += `
         <td>
           <button 
-            style="
-              background:${pagado ? (pago.forma === 'transferencia' ? '#007bff' : 'green') : 'red'};
-              color:white;
-              border:none;
-              padding:5px;
-              cursor:pointer;
-            "
+            style="background:${pagado ? 'green' : 'red'}; color:white;"
             onclick="abrirPago('${j.id}','${p.id}')">
             ${pagado ? '$' + pago.importe : 'Debe'}
           </button>
@@ -155,11 +144,10 @@ function renderTabla() {
     html += "</tr>";
   });
 
-  // TOTAL POR PARTIDO
+  // TOTAL
   html += "<tr><td><b>Total</b></td>";
 
   partidos.forEach(p => {
-
     let total = 0;
 
     if (p.pagos) {
@@ -172,7 +160,6 @@ function renderTabla() {
   });
 
   html += "</tr>";
-
   html += "</tbody></table>";
 
   document.getElementById("tablaJugadores").innerHTML = html;
