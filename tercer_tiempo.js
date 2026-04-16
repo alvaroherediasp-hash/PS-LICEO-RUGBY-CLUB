@@ -21,7 +21,18 @@ async function cargarTodo() {
   jugadores = await window.api.getJugadores();
   partidos = await window.api.getPartidos();
 
-  renderTabla();
+  irAUltimaPagina();
+renderTabla();
+}
+function irAUltimaPagina() {
+
+  if (partidos.length <= partidosPorVista) {
+    inicioPartidos = 0;
+    return;
+  }
+
+  // calcular última "página"
+  inicioPartidos = Math.floor((partidos.length - 1) / partidosPorVista) * partidosPorVista;
 }
 
 // =========================
@@ -56,7 +67,9 @@ async function guardarPartido() {
   });
 
   document.getElementById("modalPartido").close();
-  cargarTodo();
+  await cargarTodo();
+irAUltimaPagina();
+renderTabla();
 }
 
 // =========================
