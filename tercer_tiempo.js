@@ -2,17 +2,20 @@ let jugadores = [];
 let partidos = [];
 
 // =========================
-// CARGAR TODO (Firebase)
+// CARGAR TODO
 // =========================
 async function cargarTodo() {
   jugadores = await window.api.getJugadores();
   partidos = await window.api.getPartidos();
 
+  console.log("Jugadores:", jugadores);
+  console.log("Partidos:", partidos);
+
   renderTabla();
 }
 
 // =========================
-// NUEVO PARTIDO (Firebase)
+// NUEVO PARTIDO
 // =========================
 async function nuevoPartido() {
   const fecha = new Date().toISOString().split("T")[0];
@@ -26,7 +29,7 @@ async function nuevoPartido() {
 }
 
 // =========================
-// RENDER TABLA
+// RENDER
 // =========================
 function renderTabla() {
 
@@ -72,7 +75,7 @@ function renderTabla() {
 }
 
 // =========================
-// PAGAR (Firebase)
+// PAGAR
 // =========================
 async function pagar(jugadorId, partidoId) {
 
@@ -80,7 +83,6 @@ async function pagar(jugadorId, partidoId) {
 
   if (!partido.pagos) partido.pagos = {};
 
-  // toggle
   partido.pagos[jugadorId] = !partido.pagos[jugadorId];
 
   await window.api.updatePago(partidoId, partido.pagos);
