@@ -5,6 +5,12 @@ let partidos = [];
 // CARGAR TODO
 // =========================
 async function cargarTodo() {
+
+  if (!window.api) {
+    console.error("API no cargada");
+    return;
+  }
+
   jugadores = await window.api.getJugadores();
   partidos = await window.api.getPartidos();
 
@@ -33,12 +39,6 @@ async function nuevoPartido() {
 // =========================
 function renderTabla() {
 
-  if (partidos.length === 0) {
-    document.getElementById("tablaJugadores").innerHTML =
-      "<p>No hay partidos. Creá uno con 'Nuevo Partido'</p>";
-    return;
-  }
-
   let html = "<table><thead><tr><th>Jugador</th>";
 
   partidos.forEach(p => {
@@ -51,7 +51,6 @@ function renderTabla() {
     html += `<tr><td>${j.nombre} (${j.dni})</td>`;
 
     partidos.forEach(p => {
-
       const pago = p.pagos?.[j.id];
 
       html += `
@@ -77,7 +76,7 @@ function renderTabla() {
 // =========================
 // PAGAR
 // =========================
-async function pagar(jugadorId, partidoId) {
+window.pagar = async function(jugadorId, partidoId) {
 
   const partido = partidos.find(p => p.id === partidoId);
 
@@ -93,12 +92,10 @@ async function pagar(jugadorId, partidoId) {
 // =========================
 // EVENTOS
 // =========================
-document.getElementById("btnNuevoPartido")
-  .addEventListener("click", nuevoPartido);
-
-// =========================
-// INIT
-// =========================
 window.addEventListener("load", () => {
+
+  document.getElementById("btnNuevoPartido")
+    .addEventListener("click", nuevoPartido);
+
   cargarTodo();
 });
