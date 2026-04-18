@@ -50,6 +50,11 @@ function configurarEventos() {
         inicioPartidos -= partidosPorVista;
         renderTabla();
       }
+ document.getElementById("buscadorJugadores")
+  ?.addEventListener("input", (e) => {
+    filtroJugador = e.target.value.toLowerCase();
+    renderTabla();
+  });
     });
 
   document.getElementById("btnSiguiente")
@@ -226,29 +231,14 @@ function renderTabla() {
 
   html += "</tr></thead><tbody>";
 
-  jugadores.forEach(j => {
+  const jugadoresFiltrados = jugadores.filter(j => {
+  const nombre = (j.nombre || "").toLowerCase();
+  const dni = (j.dni || "").toString();
 
-    html += `<tr>
-      <td><b>${j.nombre}</b><br><small>${j.dni}</small></td>
-    `;
+  return nombre.includes(filtroJugador) || dni.includes(filtroJugador);
+});
 
-    visibles.forEach(p => {
-
-      const pago = p.pagos?.[j.id];
-      const pagado = pago?.pagado;
-
-      html += `
-        <td>
-          <button onclick="abrirPago('${j.id}','${p.id}')"
-            style="background:${pagado ? (pago.forma === 'transferencia' ? '#007bff' : 'green') : 'red'};color:white;">
-            ${pagado ? '$' + pago.importe : 'Debe'}
-          </button>
-        </td>
-      `;
-    });
-
-    html += "</tr>";
-  });
+jugadoresFiltrados.forEach(j => {
 
   // TOTAL
   html += "<tr><td><b>Total</b></td>";
