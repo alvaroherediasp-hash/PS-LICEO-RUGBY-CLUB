@@ -114,15 +114,17 @@ window.api = {
   deleteAsistencia: (id) =>
     deleteDoc(doc(db, "asistencia", id)),
 
-  /* 🔥 TERCER TIEMPO */
-  addPartido: (data) =>
-    addDoc(collection(db, "tercer_tiempo"), data),
+/* 🔥 TERCER TIEMPO */
+addPartido: (data) =>
+  addDoc(collection(db, "tercer_tiempo"), data),
 
-  getPartidos: async () => {
-    const snap = await getDocs(collection(db, "tercer_tiempo"));
-    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
-  },
+getPartidos: async () => {
+  const snap = await getDocs(collection(db, "tercer_tiempo"));
+  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+},
 
-  updatePago: (partidoId, pagos) =>
-    updateDoc(doc(db, "tercer_tiempo", partidoId), { pagos })
-};
+updatePago: (partidoId, pagos) =>
+  updateDoc(doc(db, "tercer_tiempo", partidoId), { pagos }),
+
+deletePartido: (id) =>
+  deleteDoc(doc(db, "tercer_tiempo", id)),
