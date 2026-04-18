@@ -12,8 +12,9 @@ import {
   getDoc
 } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
+// 🔥 CONFIG FIREBASE
 const app = initializeApp({
-  apiKey: "AIzaSyCZ5_7V6-s4mOOgdkGOIi5YfInLCM-kl4I",
+  apiKey: "AIzaSyCZ5_7V6-s4mOOgdkGOIi5YfInLCM-kl4m",
   authDomain: "liceo-rugby.firebaseapp.com",
   projectId: "liceo-rugby",
   storageBucket: "liceo-rugby.firebasestorage.app",
@@ -24,7 +25,7 @@ const app = initializeApp({
 const db = getFirestore(app);
 
 /* =========================
-   API GLOBAL (UNA SOLA)
+   API GLOBAL
 ========================= */
 window.api = {
 
@@ -89,7 +90,6 @@ window.api = {
   updatePago: (partidoId, pagos) =>
     updateDoc(doc(db, "tercer_tiempo", partidoId), { pagos }),
 
-  // 🔥 SOLUCIÓN: ahora sí elimina
   deletePartido: (id) =>
     deleteDoc(doc(db, "tercer_tiempo", id))
 };
