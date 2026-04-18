@@ -12,8 +12,9 @@ import {
   getDoc
 } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
+// 🔥 CONFIG FIREBASE
 const app = initializeApp({
-  apiKey: "AIzaSyCZ5_7V6-s4mOOgdkGOIi5YfInLCM-kl4I",
+  apiKey: "AIzaSyCZ5_7V6-s4mOOgdkGOIi5YfInLCM-kl4m",
   authDomain: "liceo-rugby.firebaseapp.com",
   projectId: "liceo-rugby",
   storageBucket: "liceo-rugby.firebasestorage.app",
@@ -24,11 +25,13 @@ const app = initializeApp({
 const db = getFirestore(app);
 
 /* =========================
-   API GLOBAL (UNA SOLA)
+   API GLOBAL
 ========================= */
 window.api = {
 
-  /* JUGADORES */
+  /* =========================
+     JUGADORES
+  ========================= */
   getJugadores: async () => {
     const snap = await getDocs(collection(db, "jugadores"));
     return snap.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -45,7 +48,9 @@ window.api = {
   deleteJugador: (id) =>
     deleteDoc(doc(db, "jugadores", id)),
 
-  /* ASISTENCIA */
+  /* =========================
+     ASISTENCIA
+  ========================= */
   addAsistencia: (data) =>
     addDoc(collection(db, "asistencia"), data),
 
@@ -53,51 +58,8 @@ window.api = {
     const q = query(collection(db, "asistencia"), where("jugadorId", "==", id));
     const snap = await getDocs(q);
 
-    return snap.docs.map(d => ({ id: d.id, ...d.data() }))
-      .sort((a, b) => Number(a.semana) - Number(b.semana));
-  },
-
-  getAsistenciaById: async (id) => {
-    const snap = await getDoc(doc(db, "asistencia", id));
-    return snap.exists() ? { id: snap.id, ...snap.data() } : null;
-  },
-
-  updateAsistencia: (data) => {
-    const { id, ...clean } = data;
-    return updateDoc(doc(db, "asistencia", id), clean);
-  },
-
-  deleteAsistencia: (id) =>
-    deleteDoc(doc(db, "asistencia", id))
-};
-window.api = {
-
-  /* JUGADORES */
-  getJugadores: async () => {
-    const snap = await getDocs(collection(db, "jugadores"));
-    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
-  },
-
-  addJugador: (data) =>
-    addDoc(collection(db, "jugadores"), data),
-
-  updateJugador: (data) => {
-    const { id, ...clean } = data;
-    return updateDoc(doc(db, "jugadores", id), clean);
-  },
-
-  deleteJugador: (id) =>
-    deleteDoc(doc(db, "jugadores", id)),
-
-  /* ASISTENCIA */
-  addAsistencia: (data) =>
-    addDoc(collection(db, "asistencia"), data),
-
-  getAsistenciaByJugador: async (id) => {
-    const q = query(collection(db, "asistencia"), where("jugadorId", "==", id));
-    const snap = await getDocs(q);
-
-    return snap.docs.map(d => ({ id: d.id, ...d.data() }))
+    return snap.docs
+      .map(d => ({ id: d.id, ...d.data() }))
       .sort((a, b) => Number(a.semana) - Number(b.semana));
   },
 
@@ -114,17 +76,20 @@ window.api = {
   deleteAsistencia: (id) =>
     deleteDoc(doc(db, "asistencia", id)),
 
-/* 🔥 TERCER TIEMPO */
-addPartido: (data) =>
-  addDoc(collection(db, "tercer_tiempo"), data),
+  /* =========================
+     TERCER TIEMPO (PARTIDOS)
+  ========================= */
+  addPartido: (data) =>
+    addDoc(collection(db, "tercer_tiempo"), data),
 
-getPartidos: async () => {
-  const snap = await getDocs(collection(db, "tercer_tiempo"));
-  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
-},
+  getPartidos: async () => {
+    const snap = await getDocs(collection(db, "tercer_tiempo"));
+    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  },
 
-updatePago: (partidoId, pagos) =>
-  updateDoc(doc(db, "tercer_tiempo", partidoId), { pagos }),
+  updatePago: (partidoId, pagos) =>
+    updateDoc(doc(db, "tercer_tiempo", partidoId), { pagos }),
 
-deletePartido: (id) =>
-  deleteDoc(doc(db, "tercer_tiempo", id)),
+  deletePartido: (id) =>
+    deleteDoc(doc(db, "tercer_tiempo", id))
+};
