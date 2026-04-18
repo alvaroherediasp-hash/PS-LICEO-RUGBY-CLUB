@@ -4,16 +4,18 @@ let partidos = [];
 let jugadorActual = null;
 let partidoActual = null;
 
-// 👉 navegación
 let inicioPartidos = 0;
 const partidosPorVista = 3;
+
+// 🔍 filtro
+let filtroJugador = "";
 
 /* =========================
    INIT
 ========================= */
 window.addEventListener("load", async () => {
 
-  await esperarAPI(); // 🔥 clave
+  await esperarAPI();
 
   configurarEventos();
   await cargarTodo();
@@ -24,10 +26,8 @@ window.addEventListener("load", async () => {
 ========================= */
 async function esperarAPI() {
   while (!window.api) {
-    console.log("⏳ Esperando API...");
     await new Promise(r => setTimeout(r, 100));
   }
-  console.log("✅ API lista");
 }
 
 /* =========================
@@ -50,11 +50,6 @@ function configurarEventos() {
         inicioPartidos -= partidosPorVista;
         renderTabla();
       }
- document.getElementById("buscadorJugadores")
-  ?.addEventListener("input", (e) => {
-    filtroJugador = e.target.value.toLowerCase();
-    renderTabla();
-  });
     });
 
   document.getElementById("btnSiguiente")
@@ -64,10 +59,17 @@ function configurarEventos() {
         renderTabla();
       }
     });
+
+  // 🔥 BUSCADOR
+  document.getElementById("buscadorJugadores")
+    ?.addEventListener("input", (e) => {
+      filtroJugador = e.target.value.toLowerCase();
+      renderTabla();
+    });
 }
 
 /* =========================
-   CARGAR TODO
+   CARGAR
 ========================= */
 async function cargarTodo() {
   try {
@@ -76,8 +78,9 @@ async function cargarTodo() {
 
     irAUltimaPagina();
     renderTabla();
+
   } catch (err) {
-    console.error("Error cargando datos:", err);
+    console.error("Error cargando:", err);
   }
 }
 
@@ -98,6 +101,7 @@ function irAUltimaPagina() {
    PARTIDOS
 ========================= */
 function nuevoPartido() {
+
   document.getElementById("fechaPartido").value =
     new Date().toISOString().split("T")[0];
 
@@ -107,6 +111,7 @@ function nuevoPartido() {
 }
 
 async function guardarPartido() {
+
   const fecha = document.getElementById("fechaPartido").value;
   const titulo = document.getElementById("tituloPartido").value;
 
@@ -127,11 +132,12 @@ async function guardarPartido() {
 
   } catch (err) {
     console.error(err);
-    alert("Error al guardar partido");
+    alert("Error al guardar");
   }
 }
 
 async function eliminarPartido(partidoId) {
+
   const ok = confirm("¿Eliminar este partido?");
   if (!ok) return;
 
@@ -140,7 +146,7 @@ async function eliminarPartido(partidoId) {
     await cargarTodo();
   } catch (err) {
     console.error(err);
-    alert("Error al eliminar partido");
+    alert("Error al eliminar");
   }
 }
 
@@ -175,7 +181,7 @@ async function guardarPago() {
   const forma = document.getElementById("formaPago").value;
 
   if (!importe || importe <= 0) {
-    alert("Ingresá un importe válido");
+    alert("Importe inválido");
     return;
   }
 
@@ -214,6 +220,14 @@ function renderTabla() {
     inicioPartidos + partidosPorVista
   );
 
+  // 🔍 FILTRO JUGADORES
+  const jugadoresFiltrados = jugadores.filter(j => {
+    const nombre = (j.nombre || "").toLowerCase();
+    const dni = (j.dni || "").toString();
+
+    return nombre.includes(filtroJugador) || dni.includes(filtroJugador);
+  });
+
   let html = "<table border='1'><thead><tr><th>Jugador</th>";
 
   visibles.forEach(p => {
@@ -231,14 +245,33 @@ function renderTabla() {
 
   html += "</tr></thead><tbody>";
 
-  const jugadoresFiltrados = jugadores.filter(j => {
-  const nombre = (j.nombre || "").toLowerCase();
-  const dni = (j.dni || "").toString();
+  jugadoresFiltrados.forEach(j => {
 
-  return nombre.includes(filtroJugador) || dni.includes(filtroJugador);
-});
+    html += `
+      <tr>
+        <td>
+          <b>${j.nombre}</b><br>
+          <small>${j.dni}</small>
+        </td>
+    `;
 
-jugadoresFiltrados.forEach(j => {
+    visibles.forEach(p => {
+
+      const pago = p.pagos?.[j.id];
+      const pagado = pago?.pagado;
+
+      html += `
+        <td>
+          <button onclick="abrirPago('${j.id}','${p.id}')"
+            style="background:${pagado ? (pago.forma === 'transferencia' ? '#007bff' : 'green') : 'red'};color:white;border:none;padding:5px;">
+            ${pagado ? '$' + pago.importe : 'Debe'}
+          </button>
+        </td>
+      `;
+    });
+
+    html += "</tr>";
+  });
 
   // TOTAL
   html += "<tr><td><b>Total</b></td>";
@@ -261,7 +294,7 @@ jugadoresFiltrados.forEach(j => {
 }
 
 /* =========================
-   GLOBAL (para botones HTML)
+   GLOBAL
 ========================= */
 window.abrirPago = abrirPago;
 window.eliminarPartido = eliminarPartido;
