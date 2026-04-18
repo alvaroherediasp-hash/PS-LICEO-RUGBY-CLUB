@@ -1,95 +1,277 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-import {
-  getFirestore,
-  collection,
-  getDocs,
-  addDoc,
-  deleteDoc,
-  doc,
-  updateDoc,
-  query,
-  where,
-  getDoc
-} from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+let jugadores = [];
+let partidos = [];
 
-// 🔥 CONFIG FIREBASE
-const app = initializeApp({
-  apiKey: "AIzaSyCZ5_7V6-s4mOOgdkGOIi5YfInLCM-kl4m",
-  authDomain: "liceo-rugby.firebaseapp.com",
-  projectId: "liceo-rugby",
-  storageBucket: "liceo-rugby.firebasestorage.app",
-  messagingSenderId: "592245047553",
-  appId: "1:592245047553:web:1a8b64aa53bdc18be7db00"
-});
+let jugadorActual = null;
+let partidoActual = null;
 
-const db = getFirestore(app);
+// 👉 navegación
+let inicioPartidos = 0;
+const partidosPorVista = 3;
 
 /* =========================
-   API GLOBAL
+   INIT
 ========================= */
-window.api = {
+window.addEventListener("load", async () => {
 
-  /* =========================
-     JUGADORES
-  ========================= */
-  getJugadores: async () => {
-    const snap = await getDocs(collection(db, "jugadores"));
-    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
-  },
+  await esperarAPI(); // 🔥 clave
 
-  addJugador: (data) =>
-    addDoc(collection(db, "jugadores"), data),
+  configurarEventos();
+  await cargarTodo();
+});
 
-  updateJugador: (data) => {
-    const { id, ...clean } = data;
-    return updateDoc(doc(db, "jugadores", id), clean);
-  },
+/* =========================
+   ESPERAR API
+========================= */
+async function esperarAPI() {
+  while (!window.api) {
+    console.log("⏳ Esperando API...");
+    await new Promise(r => setTimeout(r, 100));
+  }
+  console.log("✅ API lista");
+}
 
-  deleteJugador: (id) =>
-    deleteDoc(doc(db, "jugadores", id)),
+/* =========================
+   EVENTOS
+========================= */
+function configurarEventos() {
 
-  /* =========================
-     ASISTENCIA
-  ========================= */
-  addAsistencia: (data) =>
-    addDoc(collection(db, "asistencia"), data),
+  document.getElementById("btnNuevoPartido")
+    ?.addEventListener("click", nuevoPartido);
 
-  getAsistenciaByJugador: async (id) => {
-    const q = query(collection(db, "asistencia"), where("jugadorId", "==", id));
-    const snap = await getDocs(q);
+  document.getElementById("btnGuardarPartido")
+    ?.addEventListener("click", guardarPartido);
 
-    return snap.docs
-      .map(d => ({ id: d.id, ...d.data() }))
-      .sort((a, b) => Number(a.semana) - Number(b.semana));
-  },
+  document.getElementById("btnGuardarPago")
+    ?.addEventListener("click", guardarPago);
 
-  getAsistenciaById: async (id) => {
-    const snap = await getDoc(doc(db, "asistencia", id));
-    return snap.exists() ? { id: snap.id, ...snap.data() } : null;
-  },
+  document.getElementById("btnAnterior")
+    ?.addEventListener("click", () => {
+      if (inicioPartidos > 0) {
+        inicioPartidos -= partidosPorVista;
+        renderTabla();
+      }
+    });
 
-  updateAsistencia: (data) => {
-    const { id, ...clean } = data;
-    return updateDoc(doc(db, "asistencia", id), clean);
-  },
+  document.getElementById("btnSiguiente")
+    ?.addEventListener("click", () => {
+      if (inicioPartidos + partidosPorVista < partidos.length) {
+        inicioPartidos += partidosPorVista;
+        renderTabla();
+      }
+    });
+}
 
-  deleteAsistencia: (id) =>
-    deleteDoc(doc(db, "asistencia", id)),
+/* =========================
+   CARGAR TODO
+========================= */
+async function cargarTodo() {
+  try {
+    jugadores = await window.api.getJugadores();
+    partidos = await window.api.getPartidos();
 
-  /* =========================
-     TERCER TIEMPO (PARTIDOS)
-  ========================= */
-  addPartido: (data) =>
-    addDoc(collection(db, "tercer_tiempo"), data),
+    irAUltimaPagina();
+    renderTabla();
+  } catch (err) {
+    console.error("Error cargando datos:", err);
+  }
+}
 
-  getPartidos: async () => {
-    const snap = await getDocs(collection(db, "tercer_tiempo"));
-    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
-  },
+/* =========================
+   PAGINACIÓN
+========================= */
+function irAUltimaPagina() {
+  if (partidos.length <= partidosPorVista) {
+    inicioPartidos = 0;
+    return;
+  }
 
-  updatePago: (partidoId, pagos) =>
-    updateDoc(doc(db, "tercer_tiempo", partidoId), { pagos }),
+  inicioPartidos =
+    Math.floor((partidos.length - 1) / partidosPorVista) * partidosPorVista;
+}
 
-  deletePartido: (id) =>
-    deleteDoc(doc(db, "tercer_tiempo", id))
-};
+/* =========================
+   PARTIDOS
+========================= */
+function nuevoPartido() {
+  document.getElementById("fechaPartido").value =
+    new Date().toISOString().split("T")[0];
+
+  document.getElementById("tituloPartido").value = "";
+
+  document.getElementById("modalPartido").showModal();
+}
+
+async function guardarPartido() {
+  const fecha = document.getElementById("fechaPartido").value;
+  const titulo = document.getElementById("tituloPartido").value;
+
+  if (!fecha || !titulo) {
+    alert("Completá fecha y título");
+    return;
+  }
+
+  try {
+    await window.api.addPartido({
+      fecha,
+      titulo,
+      pagos: {}
+    });
+
+    document.getElementById("modalPartido").close();
+    await cargarTodo();
+
+  } catch (err) {
+    console.error(err);
+    alert("Error al guardar partido");
+  }
+}
+
+async function eliminarPartido(partidoId) {
+  const ok = confirm("¿Eliminar este partido?");
+  if (!ok) return;
+
+  try {
+    await window.api.deletePartido(partidoId);
+    await cargarTodo();
+  } catch (err) {
+    console.error(err);
+    alert("Error al eliminar partido");
+  }
+}
+
+/* =========================
+   PAGOS
+========================= */
+function abrirPago(jugadorId, partidoId) {
+
+  jugadorActual = jugadorId;
+  partidoActual = partidoId;
+
+  const jugador = jugadores.find(j => j.id === jugadorId);
+  const partido = partidos.find(p => p.id === partidoId);
+
+  document.getElementById("infoJugador").innerText =
+    `${jugador?.nombre || ""} (${jugador?.dni || ""})`;
+
+  const pago = partido?.pagos?.[jugadorId];
+
+  document.getElementById("importePago").value =
+    pago?.importe || "";
+
+  document.getElementById("formaPago").value =
+    pago?.forma || "efectivo";
+
+  document.getElementById("modalPago").showModal();
+}
+
+async function guardarPago() {
+
+  const importe = parseFloat(document.getElementById("importePago").value);
+  const forma = document.getElementById("formaPago").value;
+
+  if (!importe || importe <= 0) {
+    alert("Ingresá un importe válido");
+    return;
+  }
+
+  try {
+    const partido = partidos.find(p => p.id === partidoActual);
+
+    if (!partido.pagos) partido.pagos = {};
+
+    partido.pagos[jugadorActual] = {
+      pagado: true,
+      importe,
+      forma
+    };
+
+    await window.api.updatePago(partidoActual, partido.pagos);
+
+    document.getElementById("modalPago").close();
+    await cargarTodo();
+
+  } catch (err) {
+    console.error(err);
+    alert("Error al guardar pago");
+  }
+}
+
+/* =========================
+   RENDER
+========================= */
+function renderTabla() {
+
+  const contenedor = document.getElementById("tablaJugadores");
+  if (!contenedor) return;
+
+  const visibles = partidos.slice(
+    inicioPartidos,
+    inicioPartidos + partidosPorVista
+  );
+
+  let html = "<table border='1'><thead><tr><th>Jugador</th>";
+
+  visibles.forEach(p => {
+    html += `
+      <th style="position:relative;">
+        <button onclick="eliminarPartido('${p.id}')"
+          style="position:absolute;top:2px;right:2px;background:red;color:white;border:none;">
+          ❌
+        </button>
+        ${p.titulo || 'Sin título'}<br>
+        <small>${p.fecha}</small>
+      </th>
+    `;
+  });
+
+  html += "</tr></thead><tbody>";
+
+  jugadores.forEach(j => {
+
+    html += `<tr>
+      <td><b>${j.nombre}</b><br><small>${j.dni}</small></td>
+    `;
+
+    visibles.forEach(p => {
+
+      const pago = p.pagos?.[j.id];
+      const pagado = pago?.pagado;
+
+      html += `
+        <td>
+          <button onclick="abrirPago('${j.id}','${p.id}')"
+            style="background:${pagado ? (pago.forma === 'transferencia' ? '#007bff' : 'green') : 'red'};color:white;">
+            ${pagado ? '$' + pago.importe : 'Debe'}
+          </button>
+        </td>
+      `;
+    });
+
+    html += "</tr>";
+  });
+
+  // TOTAL
+  html += "<tr><td><b>Total</b></td>";
+
+  visibles.forEach(p => {
+    let total = 0;
+
+    if (p.pagos) {
+      Object.values(p.pagos).forEach(x => {
+        if (x?.importe) total += x.importe;
+      });
+    }
+
+    html += `<td><b>$${total}</b></td>`;
+  });
+
+  html += "</tr></tbody></table>";
+
+  contenedor.innerHTML = html;
+}
+
+/* =========================
+   GLOBAL (para botones HTML)
+========================= */
+window.abrirPago = abrirPago;
+window.eliminarPartido = eliminarPartido;
