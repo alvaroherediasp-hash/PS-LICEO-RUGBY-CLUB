@@ -17,7 +17,7 @@ const app = initializeApp({
   apiKey: "AIzaSyCZ5_7V6-s4mOOgdkGOIi5YfInLCM-kl4m",
   authDomain: "liceo-rugby.firebaseapp.com",
   projectId: "liceo-rugby",
-  storageBucket: "liceo-rugby.firebasestorage.app",
+  storageBucket: "liceo-rugby.appspot.com",
   messagingSenderId: "592245047553",
   appId: "1:592245047553:web:1a8b64aa53bdc18be7db00"
 });
