@@ -157,7 +157,10 @@ async function eliminarJugador() {
   cerrar();
   cargar();
 }
-
+function showMsg(msg) {
+  const el = document.getElementById("estado");
+  if (el) el.innerText = msg;
+}
 /* =========================
    INIT
 ========================= */
@@ -171,3 +174,5 @@ document.getElementById("buscar").oninput = render;
 document.getElementById("btnCerrarVer").onclick = cerrar;
 
 window.onload = cargar;
+
+
