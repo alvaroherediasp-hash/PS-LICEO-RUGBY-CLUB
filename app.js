@@ -54,6 +54,14 @@ function initEventos() {
   document.getElementById("btnReload")?.addEventListener("click", cargar);
   document.getElementById("buscar")?.addEventListener("input", render);
   document.getElementById("btnCerrarVer")?.addEventListener("click", cerrar);
+
+   document.addEventListener("click", (e) => {
+  const btn = e.target.closest(".btn-ver");
+  if (btn) {
+    const id = btn.dataset.id;
+    verJugador(id);
+  }
+});
 }
 
 /* =========================
@@ -125,7 +133,7 @@ function render() {
 
         </div>
 
-        <button onclick="verJugador('${j.id}')">👁</button>
+        <button class="btn-ver" data-id="${j.id}">👁</button>
 
       </div>
     `;
