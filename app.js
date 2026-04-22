@@ -120,7 +120,7 @@ async function subirImagen(file) {
 
   const formData = new FormData();
   formData.append("file", file);
-  formData.append("upload_preset", "jugadores");
+  formData.append("upload_preset", "rhnqv3op"); // 👈 TU PRESET
 
   const res = await fetch("https://api.cloudinary.com/v1_1/dzeysfmy/image/upload", {
     method: "POST",
@@ -129,7 +129,12 @@ async function subirImagen(file) {
 
   const data = await res.json();
 
-  // optimiza tamaño automáticamente
+  if (!data.secure_url) {
+    console.error("Error Cloudinary:", data);
+    throw new Error("No se pudo subir la imagen");
+  }
+
+  // 🔥 optimización automática
   return data.secure_url.replace("/upload/", "/upload/w_200,h_200,c_fill/");
 }
 
@@ -170,7 +175,7 @@ async function guardar() {
 
   } catch (e) {
     console.error(e);
-    alert("❌ Error guardando");
+    alert("❌ Error guardando o subiendo imagen");
   }
 }
 
