@@ -3,13 +3,14 @@ let jugadorActual = null;
 let iniciado = false;
 
 /* =========================
-   CLOUDINARY IMG
+   CLOUDINARY IMG (SIN 404)
 ========================= */
 function getFoto(url) {
 
-  const defaultImg = "https://res.cloudinary.com/dzeysfmyu/image/upload/w_200,h_200,c_fill/v1/default_user.png";
+  // fallback público (NO falla nunca)
+  const fallback = "https://i.pravatar.cc/200";
 
-  if (!url) return defaultImg;
+  if (!url) return fallback;
 
   return url.replace("/upload/", "/upload/w_200,h_200,c_fill/");
 }
@@ -58,7 +59,6 @@ async function cargar() {
 
   try {
     const jugadores = await window.api.getJugadores();
-
     datos.jugadores = jugadores || [];
 
     render();
