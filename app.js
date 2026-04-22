@@ -47,7 +47,7 @@ function render() {
         <img src="${j.foto || 'https://via.placeholder.com/40'}"
              style="width:40px;height:40px;border-radius:50%;object-fit:cover;">
         <div>
-          <b>${j.nombre}</b>
+          <b>${j.nombre} - ${j.apodo}</b>
           <div style="font-size:12px">DNI: ${j.dni}</div>
         </div>
       </div>
