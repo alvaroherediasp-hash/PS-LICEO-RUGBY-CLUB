@@ -6,10 +6,19 @@ let jugadorActual = null;
 ========================= */
 async function cargar() {
 
+function esperarAPI() {
+
   if (!window.api) {
-    console.error("API no cargada");
+    console.log("⏳ Esperando Firebase...");
+    setTimeout(esperarAPI, 100);
     return;
   }
+
+  console.log("✅ Firebase listo");
+  cargar();
+}
+
+esperarAPI();
 
   showMsg("⏳ Cargando...");
 
