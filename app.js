@@ -129,12 +129,13 @@ async function subirImagen(file) {
 
   const data = await res.json();
 
-  if (!data.secure_url) {
-    console.error("Error Cloudinary:", data);
-    throw new Error("No se pudo subir la imagen");
+  // 👇 MOSTRAR ERROR REAL
+  if (!res.ok) {
+    console.error("Cloudinary ERROR COMPLETO:", data);
+    alert(data.error?.message || "Error subiendo imagen");
+    throw new Error("Cloudinary error");
   }
 
-  // 🔥 optimiza imagen
   return data.secure_url.replace("/upload/", "/upload/w_200,h_200,c_fill/");
 }
 
