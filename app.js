@@ -1,34 +1,62 @@
 let datos = { jugadores: [] };
 let jugadorActual = null;
+let iniciado = false;
+
+/* =========================
+   INIT SEGURO
+========================= */
+function iniciarApp() {
+
+  if (!window.api) {
+    console.log("⏳ Esperando Firebase...");
+    setTimeout(iniciarApp, 100);
+    return;
+  }
+
+  if (iniciado) return;
+  iniciado = true;
+
+  console.log("✅ Firebase listo");
+
+  initEventos();
+  initPreview();
+  cargar();
+}
+
+/* =========================
+   EVENTOS
+========================= */
+function initEventos() {
+  document.getElementById("btnNuevo")?.addEventListener("click", abrirModal);
+  document.getElementById("btnCerrar")?.addEventListener("click", cerrar);
+  document.getElementById("btnGuardar")?.addEventListener("click", guardar);
+  document.getElementById("btnEditar")?.addEventListener("click", editarJugador);
+  document.getElementById("btnEliminar")?.addEventListener("click", eliminarJugador);
+  document.getElementById("btnReload")?.addEventListener("click", cargar);
+  document.getElementById("buscar")?.addEventListener("input", render);
+  document.getElementById("btnCerrarVer")?.addEventListener("click", cerrar);
+}
 
 /* =========================
    CARGAR
 ========================= */
 async function cargar() {
 
-function esperarAPI() {
-
-  if (!window.api) {
-    console.log("⏳ Esperando Firebase...");
-    setTimeout(esperarAPI, 100);
-    return;
-  }
-
-  console.log("✅ Firebase listo");
-  cargar();
-}
-
-esperarAPI();
-
   showMsg("⏳ Cargando...");
 
   try {
-    datos.jugadores = await window.api.getJugadores();
+    const jugadores = await window.api.getJugadores();
+
+    if (!jugadores) throw new Error("No se recibieron datos");
+
+    datos.jugadores = jugadores;
+
     render();
     showMsg("✅ Datos cargados");
+
   } catch (e) {
-    console.error(e);
-    showMsg("❌ Error cargando");
+    console.error("🔥 ERROR FIREBASE:", e);
+    showMsg("❌ Error cargando datos");
   }
 }
 
@@ -52,26 +80,25 @@ function render() {
 
   cont.innerHTML = lista.map(j => {
 
-    // 👇 armar string de puestos limpio
     const puestos = [
       j.puesto1,
       j.puesto2,
       j.puesto3
-    ].filter(p => p && p !== "").join(" / ");
+    ].filter(p => p).join(" / ");
 
     return `
       <div class="fila">
-        
+
         <div style="display:flex;align-items:center;gap:10px">
-          
-          <img src="${j.foto || 'https://via.placeholder.com/40'}"
+
+          <img src="${j.foto || 'img/user.png'}"
                style="width:40px;height:40px;border-radius:50%;object-fit:cover;">
 
           <div>
             <b>${j.nombre} ${j.apodo ? `(${j.apodo})` : ""}</b>
 
             <div style="font-size:12px;opacity:.7">
-              DNI: ${j.dni}
+              DNI: ${j.dni || "-"}
             </div>
 
             <div style="font-size:12px;color:#007bff;font-weight:bold">
@@ -101,8 +128,7 @@ window.verJugador = function(id) {
   document.getElementById("detalle").innerHTML = `
     ${j.foto ? `<img src="${j.foto}" style="width:200px;border-radius:10px;margin-bottom:10px;">` : ""}
     <p><b>Nombre:</b> ${j.nombre}</p>
-    <p><b>Apodo:</b> ${j.apodo}</p>
-    
+    <p><b>Apodo:</b> ${j.apodo || "-"}</p>
     <p><b>DNI:</b> ${j.dni}</p>
   `;
 
@@ -122,6 +148,7 @@ function abrirModal() {
   preview.src = "";
   preview.style.display = "none";
 
+  document.getElementById("tituloModal").innerText = "Nuevo Jugador";
   document.getElementById("modal").classList.add("show");
 }
 
@@ -147,7 +174,7 @@ function initPreview() {
 }
 
 /* =========================
-   SUBIR IMAGEN (Cloudinary)
+   SUBIR IMAGEN
 ========================= */
 async function subirImagen(file) {
 
@@ -163,12 +190,9 @@ async function subirImagen(file) {
   const data = await res.json();
 
   if (!res.ok) {
-    console.error("Cloudinary ERROR:", data);
-    alert(data.error?.message || "Error subiendo imagen");
-    throw new Error("Cloudinary error");
+    throw new Error(data.error?.message || "Error subiendo imagen");
   }
 
-  // optimiza imagen
   return data.secure_url.replace("/upload/", "/upload/w_200,h_200,c_fill/");
 }
 
@@ -177,10 +201,10 @@ async function subirImagen(file) {
 ========================= */
 async function guardar() {
 
-  const file = document.getElementById("foto").files[0];
-  let fotoURL = jugadorActual?.foto || "";
-
   try {
+
+    const file = document.getElementById("foto").files[0];
+    let fotoURL = jugadorActual?.foto || "";
 
     if (file) {
       showMsg("📤 Subiendo imagen...");
@@ -224,26 +248,20 @@ async function guardar() {
 ========================= */
 function editarJugador() {
 
-  if (!jugadorActual) {
-    alert("Seleccioná un jugador primero");
-    return;
-  }
+  if (!jugadorActual) return alert("Seleccioná un jugador");
 
   cerrar();
 
-  // inputs
   document.getElementById("dni").value = jugadorActual.dni || "";
   document.getElementById("nombre").value = jugadorActual.nombre || "";
   document.getElementById("apodo").value = jugadorActual.apodo || "";
   document.getElementById("celular").value = jugadorActual.celular || "";
   document.getElementById("correo").value = jugadorActual.correo || "";
 
-  // selects
   document.getElementById("p1").value = jugadorActual.puesto1 || "";
   document.getElementById("p2").value = jugadorActual.puesto2 || "";
   document.getElementById("p3").value = jugadorActual.puesto3 || "";
 
-  // foto
   const preview = document.getElementById("previewFoto");
 
   if (jugadorActual.foto) {
@@ -256,10 +274,13 @@ function editarJugador() {
   document.getElementById("tituloModal").innerText = "Editar Jugador";
   document.getElementById("modal").classList.add("show");
 }
+
 /* =========================
    ELIMINAR
 ========================= */
 async function eliminarJugador() {
+
+  if (!jugadorActual) return;
 
   if (!confirm("¿Eliminar jugador?")) return;
 
@@ -277,20 +298,6 @@ function showMsg(msg) {
 }
 
 /* =========================
-   INIT
+   START
 ========================= */
-window.addEventListener("DOMContentLoaded", () => {
-
-  initPreview();
-
-  document.getElementById("btnNuevo")?.addEventListener("click", abrirModal);
-  document.getElementById("btnCerrar")?.addEventListener("click", cerrar);
-  document.getElementById("btnGuardar")?.addEventListener("click", guardar);
-  document.getElementById("btnEditar")?.addEventListener("click", editarJugador);
-  document.getElementById("btnEliminar")?.addEventListener("click", eliminarJugador);
-  document.getElementById("btnReload")?.addEventListener("click", cargar);
-  document.getElementById("buscar")?.addEventListener("input", render);
-  document.getElementById("btnCerrarVer")?.addEventListener("click", cerrar);
-
-  cargar();
-});
+window.addEventListener("DOMContentLoaded", iniciarApp);
