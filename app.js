@@ -1,9 +1,3 @@
-import {
-  ref,
-  uploadBytes,
-  getDownloadURL
-} from "https://www.gstatic.com/firebasejs/12.12.0/firebase-storage.js";
-
 let datos = { jugadores: [] };
 let jugadorActual = null;
 
@@ -22,6 +16,7 @@ async function cargar() {
   try {
     datos.jugadores = await window.api.getJugadores();
     render();
+    showMsg("✅ Datos cargados");
   } catch (e) {
     console.error(e);
     showMsg("❌ Error cargando");
@@ -73,7 +68,7 @@ window.verJugador = function(id) {
   jugadorActual = j;
 
   document.getElementById("detalle").innerHTML = `
-    ${j.foto ? `<img src="${j.foto}" style="width:200px;border-radius:10px;">` : ""}
+    ${j.foto ? `<img src="${j.foto}" style="width:200px;border-radius:10px;margin-bottom:10px;">` : ""}
     <p><b>Nombre:</b> ${j.nombre}</p>
     <p><b>DNI:</b> ${j.dni}</p>
   `;
@@ -119,17 +114,23 @@ function initPreview() {
 }
 
 /* =========================
-   SUBIR IMAGEN
+   SUBIR IMAGEN (Cloudinary)
 ========================= */
 async function subirImagen(file) {
 
-  const storageRef = ref(
-    window.firebaseStorage,
-    "jugadores/" + Date.now() + "_" + file.name
-  );
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", "jugadores");
 
-  await uploadBytes(storageRef, file);
-  return await getDownloadURL(storageRef);
+  const res = await fetch("https://api.cloudinary.com/v1_1/dzeysfmy/image/upload", {
+    method: "POST",
+    body: formData
+  });
+
+  const data = await res.json();
+
+  // optimiza tamaño automáticamente
+  return data.secure_url.replace("/upload/", "/upload/w_200,h_200,c_fill/");
 }
 
 /* =========================
