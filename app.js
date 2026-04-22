@@ -122,20 +122,20 @@ async function subirImagen(file) {
   formData.append("file", file);
   formData.append("upload_preset", "jugadores");
 
-  const res = await fetch("https://api.cloudinary.com/v1_1/dzeysfmy/image/upload", {
+  const res = await fetch("https://api.cloudinary.com/v1_1/dzeysfmyu/image/upload", {
     method: "POST",
     body: formData
   });
 
   const data = await res.json();
 
-  // 👇 MOSTRAR ERROR REAL
   if (!res.ok) {
-    console.error("Cloudinary ERROR COMPLETO:", data);
+    console.error("Cloudinary ERROR:", data);
     alert(data.error?.message || "Error subiendo imagen");
     throw new Error("Cloudinary error");
   }
 
+  // optimiza imagen
   return data.secure_url.replace("/upload/", "/upload/w_200,h_200,c_fill/");
 }
 
@@ -176,7 +176,7 @@ async function guardar() {
 
   } catch (e) {
     console.error(e);
-    alert("❌ Error guardando o subiendo imagen");
+    alert("❌ Error guardando");
   }
 }
 
