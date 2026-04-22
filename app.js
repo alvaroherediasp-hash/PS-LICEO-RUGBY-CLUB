@@ -120,7 +120,7 @@ async function subirImagen(file) {
 
   const formData = new FormData();
   formData.append("file", file);
-  formData.append("upload_preset", "rhnqv3op"); // 👈 TU PRESET
+  formData.append("upload_preset", "jugadores");
 
   const res = await fetch("https://api.cloudinary.com/v1_1/dzeysfmy/image/upload", {
     method: "POST",
@@ -134,7 +134,7 @@ async function subirImagen(file) {
     throw new Error("No se pudo subir la imagen");
   }
 
-  // 🔥 optimización automática
+  // 🔥 optimiza imagen
   return data.secure_url.replace("/upload/", "/upload/w_200,h_200,c_fill/");
 }
 
@@ -203,6 +203,9 @@ function editarJugador() {
    ELIMINAR
 ========================= */
 async function eliminarJugador() {
+
+  if (!confirm("¿Eliminar jugador?")) return;
+
   await window.api.deleteJugador(jugadorActual.id);
   cerrar();
   cargar();
