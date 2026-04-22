@@ -3,6 +3,18 @@ let jugadorActual = null;
 let iniciado = false;
 
 /* =========================
+   CLOUDINARY IMG
+========================= */
+function getFoto(url) {
+
+  const defaultImg = "https://res.cloudinary.com/dzeysfmyu/image/upload/w_200,h_200,c_fill/v1/default_user.png";
+
+  if (!url) return defaultImg;
+
+  return url.replace("/upload/", "/upload/w_200,h_200,c_fill/");
+}
+
+/* =========================
    INIT SEGURO
 ========================= */
 function iniciarApp() {
@@ -47,9 +59,7 @@ async function cargar() {
   try {
     const jugadores = await window.api.getJugadores();
 
-    if (!jugadores) throw new Error("No se recibieron datos");
-
-    datos.jugadores = jugadores;
+    datos.jugadores = jugadores || [];
 
     render();
     showMsg("✅ Datos cargados");
@@ -91,7 +101,7 @@ function render() {
 
         <div style="display:flex;align-items:center;gap:10px">
 
-          <img src="${j.foto || 'img/user.png'}"
+          <img src="${getFoto(j.foto)}"
                style="width:40px;height:40px;border-radius:50%;object-fit:cover;">
 
           <div>
@@ -126,7 +136,7 @@ window.verJugador = function(id) {
   jugadorActual = j;
 
   document.getElementById("detalle").innerHTML = `
-    ${j.foto ? `<img src="${j.foto}" style="width:200px;border-radius:10px;margin-bottom:10px;">` : ""}
+    <img src="${getFoto(j.foto)}" style="width:200px;border-radius:10px;margin-bottom:10px;">
     <p><b>Nombre:</b> ${j.nombre}</p>
     <p><b>Apodo:</b> ${j.apodo || "-"}</p>
     <p><b>DNI:</b> ${j.dni}</p>
