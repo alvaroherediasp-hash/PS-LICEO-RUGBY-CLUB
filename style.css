@@ -1,5 +1,5 @@
 /* =========================================
-   🎨 PALETA DE COLORES
+   🎨 COLORES
 ========================================= */
 :root {
   --azul-principal: #1c3557;
@@ -15,15 +15,13 @@
 ========================================= */
 * {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
 }
 
 body {
-  font-family: "Poppins", "Segoe UI", Arial, sans-serif;
+  margin: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
   background: var(--gris-fondo);
   color: var(--texto);
-  line-height: 1.5;
 }
 
 /* =========================================
@@ -31,7 +29,7 @@ body {
 ========================================= */
 .navbar {
   background: var(--azul-principal);
-  color: var(--blanco);
+  color: white;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -39,42 +37,19 @@ body {
 }
 
 .navbar h1 {
-  font-size: 22px;
+  margin: 0;
+  font-size: 20px;
 }
 
 .nav-link {
-  color: var(--blanco);
+  color: white;
   text-decoration: none;
   margin-left: 20px;
   font-weight: 600;
-  transition: all 0.3s ease;
-}
-
-.nav-link:hover {
-  opacity: 0.8;
 }
 
 .nav-link.active {
-  border-bottom: 2px solid var(--blanco);
-}
-
-/* =========================================
-   🖼️ BANNER
-========================================= */
-.banner {
-  width: 100%;
-  height: 220px;
-  background: var(--azul-principal);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-}
-
-.banner img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  border-bottom: 2px solid white;
 }
 
 /* =========================================
@@ -82,19 +57,11 @@ body {
 ========================================= */
 .header {
   background: var(--azul-secundario);
-  color: var(--blanco);
+  color: white;
   padding: 20px 25px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-
-.header div {
-  flex: 1;
-}
-
-.btn-nuevo {
-  margin-left: auto; /* 🔥 fuerza a la derecha */
 }
 
 .sub {
@@ -105,14 +72,10 @@ body {
 /* =========================================
    🔘 BOTONES
 ========================================= */
-button {
-  transition: all 0.3s ease;
-}
-
 .btn-nuevo,
 .btn-primary {
   background: var(--azul-claro);
-  color: var(--blanco);
+  color: white;
   border: none;
   padding: 10px 15px;
   border-radius: 8px;
@@ -123,12 +86,11 @@ button {
 .btn-nuevo:hover,
 .btn-primary:hover {
   background: var(--azul-principal);
-  transform: scale(1.05);
 }
 
 .btn-icon {
   background: var(--azul-secundario);
-  color: var(--blanco);
+  color: white;
   border: none;
   padding: 10px;
   border-radius: 8px;
@@ -139,7 +101,7 @@ button {
    🔍 TOOLBAR
 ========================================= */
 .toolbar {
-  background: var(--blanco);
+  background: white;
   padding: 15px 25px;
   display: flex;
   gap: 10px;
@@ -160,6 +122,11 @@ button {
   padding: 20px;
 }
 
+.estado {
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
 /* =========================================
    👥 LISTA DE JUGADORES
 ========================================= */
@@ -169,37 +136,40 @@ button {
   gap: 12px;
 }
 
+/* tarjeta jugador */
 .jugador {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: var(--blanco);
-  padding: 15px 20px;
-  border-radius: 12px;
-  margin-bottom: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background: white;
+  padding: 12px 15px;
+  border-radius: 10px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.06);
+  transition: 0.2s;
 }
 
 .jugador:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.1);
 }
 
+/* info izquierda */
 .jugador-info {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
+/* foto */
 .jugador img {
-  width: 55px;
-  height: 55px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid var(--azul-claro);
 }
 
+/* texto */
 .jugador-nombre {
   font-weight: bold;
   font-size: 15px;
@@ -210,11 +180,17 @@ button {
   color: #666;
 }
 
+/* acciones derecha */
+.jugador-acciones {
+  display: flex;
+  align-items: center;
+}
+
+/* botón ver */
 .jugador-acciones button {
-  margin-left: 5px;
   border: none;
   background: var(--azul-claro);
-  color: var(--blanco);
+  color: white;
   padding: 6px 10px;
   border-radius: 6px;
   cursor: pointer;
@@ -240,17 +216,16 @@ button {
 }
 
 .modal-box {
-  background: var(--blanco);
-  border-radius: 16px;
-  padding: 25px;
-  width: 420px;
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  width: 400px;
   max-width: 95%;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
 }
 
 .modal-head {
   background: var(--azul-principal);
-  color: var(--blanco);
+  color: white;
   padding: 10px;
   border-radius: 8px;
   display: flex;
@@ -260,7 +235,7 @@ button {
 .modal-close {
   background: none;
   border: none;
-  color: var(--blanco);
+  color: white;
   font-size: 18px;
   cursor: pointer;
 }
@@ -268,9 +243,9 @@ button {
 .modal-body input,
 .modal-body select {
   width: 100%;
-  margin-top: 12px;
-  padding: 12px;
-  border-radius: 10px;
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 8px;
   border: 1px solid #ccc;
 }
 
@@ -279,41 +254,18 @@ button {
   text-align: right;
 }
 
-/* Ajustes específicos para el modal de detalle */
-#modalVer .acciones {
-  margin-top: 20px;
-  display: flex;
-  justify-content: space-between; /* 🔥 distribuye los botones */
-  gap: 10px;
-}
-
-#modalVer .acciones button {
-  flex: 1;
-  border: none;
-  background: var(--azul-claro);
-  color: var(--blanco);
-  padding: 10px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: all 0.3s ease;
-}
-
-#modalVer .acciones button:hover {
-  background: var(--azul-principal);
-  transform: scale(1.05);
-}
-
 /* =========================================
    📱 RESPONSIVE
 ========================================= */
 @media (max-width: 600px) {
   .header {
-    flex-direction: row; /* 🔥 mantiene título y botón en fila */
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
     gap: 10px;
   }
 
   .navbar {
     flex-direction: column;
-    align-items: flex-start
+    align-items: flex-start;
+  }
+}
