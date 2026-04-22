@@ -3,25 +3,30 @@ let jugadorActual = null;
 let iniciado = false;
 
 /* =========================
-   CLOUDINARY IMG (SIN 404)
+   IMG SEGURA (SIN 404)
 ========================= */
 function getFoto(url) {
-
-  // fallback público (NO falla nunca)
   const fallback = "https://i.pravatar.cc/200";
 
-  if (!url) return fallback;
+  if (!url || url === "" || url === "default_user.png") {
+    return fallback;
+  }
 
-  return url.replace("/upload/", "/upload/w_200,h_200,c_fill/");
+  try {
+    return url.includes("cloudinary")
+      ? url.replace("/upload/", "/upload/w_200,h_200,c_fill/")
+      : url;
+  } catch {
+    return fallback;
+  }
 }
 
 /* =========================
-   INIT SEGURO
+   INIT
 ========================= */
 function iniciarApp() {
 
   if (!window.api) {
-    console.log("⏳ Esperando Firebase...");
     setTimeout(iniciarApp, 100);
     return;
   }
@@ -40,6 +45,7 @@ function iniciarApp() {
    EVENTOS
 ========================= */
 function initEventos() {
+
   document.getElementById("btnNuevo")?.addEventListener("click", abrirModal);
   document.getElementById("btnCerrar")?.addEventListener("click", cerrar);
   document.getElementById("btnGuardar")?.addEventListener("click", guardar);
@@ -58,11 +64,12 @@ async function cargar() {
   showMsg("⏳ Cargando...");
 
   try {
+
     const jugadores = await window.api.getJugadores();
-    datos.jugadores = jugadores || [];
+    datos.jugadores = Array.isArray(jugadores) ? jugadores : [];
 
     render();
-    showMsg("✅ Datos cargados");
+    showMsg(`✅ ${datos.jugadores.length} jugadores cargados`);
 
   } catch (e) {
     console.error("🔥 ERROR FIREBASE:", e);
@@ -90,11 +97,9 @@ function render() {
 
   cont.innerHTML = lista.map(j => {
 
-    const puestos = [
-      j.puesto1,
-      j.puesto2,
-      j.puesto3
-    ].filter(p => p).join(" / ");
+    const puestos = [j.puesto1, j.puesto2, j.puesto3]
+      .filter(p => p)
+      .join(" / ");
 
     return `
       <div class="fila">
@@ -102,10 +107,12 @@ function render() {
         <div style="display:flex;align-items:center;gap:10px">
 
           <img src="${getFoto(j.foto)}"
+               onerror="this.src='https://i.pravatar.cc/200'"
                style="width:40px;height:40px;border-radius:50%;object-fit:cover;">
 
           <div>
-            <b>${j.nombre} ${j.apodo ? `(${j.apodo})` : ""}</b>
+            <b>${j.nombre || "-"}</b>
+            ${j.apodo ? `<span>(${j.apodo})</span>` : ""}
 
             <div style="font-size:12px;opacity:.7">
               DNI: ${j.dni || "-"}
@@ -136,10 +143,12 @@ window.verJugador = function(id) {
   jugadorActual = j;
 
   document.getElementById("detalle").innerHTML = `
-    <img src="${getFoto(j.foto)}" style="width:200px;border-radius:10px;margin-bottom:10px;">
-    <p><b>Nombre:</b> ${j.nombre}</p>
+    <img src="${getFoto(j.foto)}"
+         onerror="this.src='https://i.pravatar.cc/200'"
+         style="width:200px;border-radius:10px;margin-bottom:10px;">
+    <p><b>Nombre:</b> ${j.nombre || "-"}</p>
     <p><b>Apodo:</b> ${j.apodo || "-"}</p>
-    <p><b>DNI:</b> ${j.dni}</p>
+    <p><b>DNI:</b> ${j.dni || "-"}</p>
   `;
 
   document.getElementById("modalVer").classList.add("show");
@@ -168,7 +177,7 @@ function cerrar() {
 }
 
 /* =========================
-   PREVIEW FOTO
+   PREVIEW
 ========================= */
 function initPreview() {
   document.getElementById("foto")?.addEventListener("change", e => {
@@ -199,11 +208,13 @@ async function subirImagen(file) {
 
   const data = await res.json();
 
+  console.log("📸 Cloudinary:", data);
+
   if (!res.ok) {
     throw new Error(data.error?.message || "Error subiendo imagen");
   }
 
-  return data.secure_url.replace("/upload/", "/upload/w_200,h_200,c_fill/");
+  return data.secure_url;
 }
 
 /* =========================
@@ -222,11 +233,11 @@ async function guardar() {
     }
 
     const data = {
-      dni: document.getElementById("dni").value,
-      nombre: document.getElementById("nombre").value,
-      apodo: document.getElementById("apodo").value,
-      celular: document.getElementById("celular").value,
-      correo: document.getElementById("correo").value,
+      dni: document.getElementById("dni").value.trim(),
+      nombre: document.getElementById("nombre").value.trim(),
+      apodo: document.getElementById("apodo").value.trim(),
+      celular: document.getElementById("celular").value.trim(),
+      correo: document.getElementById("correo").value.trim(),
       puesto1: document.getElementById("p1").value,
       puesto2: document.getElementById("p2").value,
       puesto3: document.getElementById("p3").value,
@@ -262,23 +273,19 @@ function editarJugador() {
 
   cerrar();
 
-  document.getElementById("dni").value = jugadorActual.dni || "";
-  document.getElementById("nombre").value = jugadorActual.nombre || "";
-  document.getElementById("apodo").value = jugadorActual.apodo || "";
-  document.getElementById("celular").value = jugadorActual.celular || "";
-  document.getElementById("correo").value = jugadorActual.correo || "";
+  ["dni","nombre","apodo","celular","correo"].forEach(id => {
+    document.getElementById(id).value = jugadorActual[id] || "";
+  });
 
-  document.getElementById("p1").value = jugadorActual.puesto1 || "";
-  document.getElementById("p2").value = jugadorActual.puesto2 || "";
-  document.getElementById("p3").value = jugadorActual.puesto3 || "";
+  ["p1","p2","p3"].forEach((id,i) => {
+    document.getElementById(id).value = jugadorActual["puesto"+(i+1)] || "";
+  });
 
   const preview = document.getElementById("previewFoto");
 
   if (jugadorActual.foto) {
     preview.src = jugadorActual.foto;
     preview.style.display = "block";
-  } else {
-    preview.style.display = "none";
   }
 
   document.getElementById("tituloModal").innerText = "Editar Jugador";
