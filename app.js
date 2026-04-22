@@ -70,6 +70,8 @@ window.verJugador = function(id) {
   document.getElementById("detalle").innerHTML = `
     ${j.foto ? `<img src="${j.foto}" style="width:200px;border-radius:10px;margin-bottom:10px;">` : ""}
     <p><b>Nombre:</b> ${j.nombre}</p>
+    <p><b>Apodo:</b> ${j.apodo}</p>
+    
     <p><b>DNI:</b> ${j.dni}</p>
   `;
 
