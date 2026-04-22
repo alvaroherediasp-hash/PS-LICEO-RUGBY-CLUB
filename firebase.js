@@ -1,6 +1,6 @@
 // firebase.js
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
 
 import {
   getFirestore,
@@ -13,11 +13,11 @@ import {
   query,
   where,
   getDoc
-} from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
 
 import {
   getStorage
-} from "https://www.gstatic.com/firebasejs/12.12.0/firebase-storage.js";
+} from "https://www.gstatic.com/firebasejs/9.22.2/firebase-storage.js";
 
 /* =========================
    CONFIG
