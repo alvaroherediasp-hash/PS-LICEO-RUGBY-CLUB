@@ -136,8 +136,7 @@ body {
   gap: 12px;
 }
 
-/* tarjeta jugador */
-.jugador {
+.fila {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -148,46 +147,13 @@ body {
   transition: 0.2s;
 }
 
-.jugador:hover {
+.fila:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 14px rgba(0,0,0,0.1);
 }
 
-/* info izquierda */
-.jugador-info {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-/* foto */
-.jugador img {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid var(--azul-claro);
-}
-
-/* texto */
-.jugador-nombre {
-  font-weight: bold;
-  font-size: 15px;
-}
-
-.jugador-detalle {
-  font-size: 13px;
-  color: #666;
-}
-
-/* acciones derecha */
-.jugador-acciones {
-  display: flex;
-  align-items: center;
-}
-
 /* botón ver */
-.jugador-acciones button {
+.fila button {
   border: none;
   background: var(--azul-claro);
   color: white;
@@ -196,12 +162,12 @@ body {
   cursor: pointer;
 }
 
-.jugador-acciones button:hover {
+.fila button:hover {
   background: var(--azul-principal);
 }
 
 /* =========================================
-   🧾 MODAL
+   🧾 MODAL (FIX + MEJORA)
 ========================================= */
 .modal {
   display: none;
@@ -210,9 +176,19 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0,0,0,0.6);
+
   justify-content: center;
   align-items: center;
+
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+
+  z-index: 999;
+}
+
+/* 🔥 CLAVE PARA QUE FUNCIONE */
+.modal.show {
+  display: flex;
 }
 
 .modal-box {
@@ -221,8 +197,13 @@ body {
   padding: 20px;
   width: 400px;
   max-width: 95%;
+
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+
+  animation: modalIn 0.25s ease;
 }
 
+/* HEADER */
 .modal-head {
   background: var(--azul-principal);
   color: white;
@@ -230,8 +211,10 @@ body {
   border-radius: 8px;
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
+/* BOTÓN CERRAR */
 .modal-close {
   background: none;
   border: none;
@@ -240,6 +223,7 @@ body {
   cursor: pointer;
 }
 
+/* BODY */
 .modal-body input,
 .modal-body select {
   width: 100%;
@@ -249,9 +233,23 @@ body {
   border: 1px solid #ccc;
 }
 
+/* ACCIONES */
 .acciones {
   margin-top: 15px;
-  text-align: right;
+  display: flex;
+  gap: 10px;
+}
+
+/* ANIMACIÓN */
+@keyframes modalIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 /* =========================================
