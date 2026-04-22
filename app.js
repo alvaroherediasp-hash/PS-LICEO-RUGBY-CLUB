@@ -187,28 +187,39 @@ async function guardar() {
 ========================= */
 function editarJugador() {
 
+  if (!jugadorActual) {
+    alert("Seleccioná un jugador primero");
+    return;
+  }
+
   cerrar();
 
-  document.getElementById("dni").value = jugadorActual.dni;
-  document.getElementById("nombre").value = jugadorActual.nombre;
-  document.getElementById("apodo").value = jugadorActual.apodo;
-  document.getElementById("celular").value = jugadorActual.celular;
-  document.getElementById("correo").value = jugadorActual.correo;
-  document.getElementById("puesto1").value = jugadorActual.puesto1;
-  document.getElementById("puesto2").value = jugadorActual.puesto2;
-  document.getElementById("puesto3").value = jugadorActual.puesto3;
-   
-   
-   
-   
+  // inputs
+  document.getElementById("dni").value = jugadorActual.dni || "";
+  document.getElementById("nombre").value = jugadorActual.nombre || "";
+  document.getElementById("apodo").value = jugadorActual.apodo || "";
+  document.getElementById("celular").value = jugadorActual.celular || "";
+  document.getElementById("correo").value = jugadorActual.correo || "";
 
+  // selects (CORREGIDO)
+  document.getElementById("p1").value = jugadorActual.puesto1 || "";
+  document.getElementById("p2").value = jugadorActual.puesto2 || "";
+  document.getElementById("p3").value = jugadorActual.puesto3 || "";
+
+  // foto preview
   const preview = document.getElementById("previewFoto");
 
   if (jugadorActual.foto) {
     preview.src = jugadorActual.foto;
     preview.style.display = "block";
+  } else {
+    preview.style.display = "none";
   }
 
+  // título opcional
+  document.getElementById("tituloModal").innerText = "Editar Jugador";
+
+  // abrir modal
   document.getElementById("modal").classList.add("show");
 }
 
