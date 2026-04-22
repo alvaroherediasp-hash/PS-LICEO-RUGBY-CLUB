@@ -106,7 +106,7 @@ function render() {
 
         <div style="display:flex;align-items:center;gap:10px">
 
-          <img src="${getFoto(j.foto)}"
+          <img src="${getFoto(j.foto, j.id)}"
                onerror="this.src='https://i.pravatar.cc/200'"
                style="width:40px;height:40px;border-radius:50%;object-fit:cover;">
 
@@ -143,7 +143,7 @@ window.verJugador = function(id) {
   jugadorActual = j;
 
   document.getElementById("detalle").innerHTML = `
-    <img src="${getFoto(j.foto)}"
+    <img src="${getFoto(j.foto, j.id)}"
          onerror="this.src='https://i.pravatar.cc/200'"
          style="width:200px;border-radius:10px;margin-bottom:10px;">
     <p><b>Nombre:</b> ${j.nombre || "-"}</p>
