@@ -57,17 +57,19 @@ body {
 ========================================= */
 .banner {
   width: 100%;
-  height: 150px; /* 🔥 más chico */
+  height: 180px;
+  background: #1c3557; /* mismo azul del club */
+  display: flex;
+  justify-content: center;
+  align-items: center;
   overflow: hidden;
-  border-bottom: 3px solid var(--azul-principal);
 }
 
 .banner img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain; /* 🔥 CLAVE: NO recorta */
 }
-
 /* =========================================
    🟦 HEADER
 ========================================= */
@@ -155,8 +157,7 @@ body {
   background: white;
   padding: 12px 15px;
   border-radius: 10px;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.06);
-  transition: 0.2s;
+  margin-bottom: 10px;
 }
 
 .jugador:hover {
