@@ -41,20 +41,42 @@ function render() {
     return;
   }
 
-  cont.innerHTML = lista.map(j => `
-    <div class="fila">
-      <div style="display:flex;align-items:center;gap:10px">
-        <img src="${j.foto || 'https://via.placeholder.com/40'}"
-             style="width:40px;height:40px;border-radius:50%;object-fit:cover;">
-        <div>
-          <b>${j.nombre} - ${j.apodo}</b>
-          <div style="font-size:12px">DNI: ${j.dni}</div>
-        </div>
-      </div>
+  cont.innerHTML = lista.map(j => {
 
-      <button onclick="verJugador('${j.id}')">👁</button>
-    </div>
-  `).join("");
+    // 👇 armar string de puestos limpio
+    const puestos = [
+      j.puesto1,
+      j.puesto2,
+      j.puesto3
+    ].filter(p => p && p !== "").join(" / ");
+
+    return `
+      <div class="fila">
+        
+        <div style="display:flex;align-items:center;gap:10px">
+          
+          <img src="${j.foto || 'https://via.placeholder.com/40'}"
+               style="width:40px;height:40px;border-radius:50%;object-fit:cover;">
+
+          <div>
+            <b>${j.nombre} ${j.apodo ? `(${j.apodo})` : ""}</b>
+
+            <div style="font-size:12px;opacity:.7">
+              DNI: ${j.dni}
+            </div>
+
+            <div style="font-size:12px;color:#007bff;font-weight:bold">
+              ${puestos || "Sin puestos"}
+            </div>
+          </div>
+
+        </div>
+
+        <button onclick="verJugador('${j.id}')">👁</button>
+
+      </div>
+    `;
+  }).join("");
 }
 
 /* =========================
@@ -159,6 +181,12 @@ async function guardar() {
     const data = {
       dni: document.getElementById("dni").value,
       nombre: document.getElementById("nombre").value,
+      apodo: document.getElementById("apodo").value,
+      celular: document.getElementById("celular").value,
+      correo: document.getElementById("correo").value,
+      puesto1: document.getElementById("p1").value,
+      puesto2: document.getElementById("p2").value,
+      puesto3: document.getElementById("p3").value,
       foto: fotoURL
     };
 
@@ -201,12 +229,12 @@ function editarJugador() {
   document.getElementById("celular").value = jugadorActual.celular || "";
   document.getElementById("correo").value = jugadorActual.correo || "";
 
-  // selects (CORREGIDO)
+  // selects
   document.getElementById("p1").value = jugadorActual.puesto1 || "";
   document.getElementById("p2").value = jugadorActual.puesto2 || "";
   document.getElementById("p3").value = jugadorActual.puesto3 || "";
 
-  // foto preview
+  // foto
   const preview = document.getElementById("previewFoto");
 
   if (jugadorActual.foto) {
@@ -216,13 +244,9 @@ function editarJugador() {
     preview.style.display = "none";
   }
 
-  // título opcional
   document.getElementById("tituloModal").innerText = "Editar Jugador";
-
-  // abrir modal
   document.getElementById("modal").classList.add("show");
 }
-
 /* =========================
    ELIMINAR
 ========================= */
