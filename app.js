@@ -1,3 +1,9 @@
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL
+} from "https://www.gstatic.com/firebasejs/12.12.0/firebase-storage.js";
+
 let datos = { jugadores: [] };
 let jugadorActual = null;
 
@@ -5,9 +11,21 @@ let jugadorActual = null;
    CARGAR
 ========================= */
 async function cargar() {
+
+  if (!window.api) {
+    console.error("API no cargada");
+    return;
+  }
+
   showMsg("⏳ Cargando...");
-  datos.jugadores = await window.api.getJugadores();
-  render();
+
+  try {
+    datos.jugadores = await window.api.getJugadores();
+    render();
+  } catch (e) {
+    console.error(e);
+    showMsg("❌ Error cargando");
+  }
 }
 
 /* =========================
@@ -23,10 +41,16 @@ function render() {
     (j.dni || "").includes(filtro)
   );
 
+  if (!lista.length) {
+    cont.innerHTML = "<p style='opacity:.6'>No hay jugadores</p>";
+    return;
+  }
+
   cont.innerHTML = lista.map(j => `
     <div class="fila">
       <div style="display:flex;align-items:center;gap:10px">
-        <img src="${j.foto || ''}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;">
+        <img src="${j.foto || 'https://via.placeholder.com/40'}"
+             style="width:40px;height:40px;border-radius:50%;object-fit:cover;">
         <div>
           <b>${j.nombre}</b>
           <div style="font-size:12px">DNI: ${j.dni}</div>
@@ -44,12 +68,14 @@ function render() {
 window.verJugador = function(id) {
 
   const j = datos.jugadores.find(x => x.id == id);
+  if (!j) return;
+
   jugadorActual = j;
 
   document.getElementById("detalle").innerHTML = `
     ${j.foto ? `<img src="${j.foto}" style="width:200px;border-radius:10px;">` : ""}
-    <p>${j.nombre}</p>
-    <p>${j.dni}</p>
+    <p><b>Nombre:</b> ${j.nombre}</p>
+    <p><b>DNI:</b> ${j.dni}</p>
   `;
 
   document.getElementById("modalVer").classList.add("show");
@@ -65,36 +91,42 @@ function abrirModal() {
   document.querySelectorAll("#modal input").forEach(i => i.value = "");
 
   const preview = document.getElementById("previewFoto");
+  preview.src = "";
   preview.style.display = "none";
 
   document.getElementById("modal").classList.add("show");
 }
 
 function cerrar() {
-  document.querySelectorAll(".modal").forEach(m => m.classList.remove("show"));
+  document.querySelectorAll(".modal")
+    .forEach(m => m.classList.remove("show"));
 }
 
 /* =========================
    PREVIEW FOTO
 ========================= */
-document.getElementById("foto").addEventListener("change", e => {
-  const file = e.target.files[0];
-  const preview = document.getElementById("previewFoto");
+function initPreview() {
+  document.getElementById("foto")?.addEventListener("change", e => {
 
-  if (file) {
-    preview.src = URL.createObjectURL(file);
-    preview.style.display = "block";
-  }
-});
+    const file = e.target.files[0];
+    const preview = document.getElementById("previewFoto");
+
+    if (file) {
+      preview.src = URL.createObjectURL(file);
+      preview.style.display = "block";
+    }
+  });
+}
 
 /* =========================
    SUBIR IMAGEN
 ========================= */
 async function subirImagen(file) {
 
-  const { ref, uploadBytes, getDownloadURL } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js");
-
-  const storageRef = ref(window.firebaseStorage, "jugadores/" + Date.now() + "_" + file.name);
+  const storageRef = ref(
+    window.firebaseStorage,
+    "jugadores/" + Date.now() + "_" + file.name
+  );
 
   await uploadBytes(storageRef, file);
   return await getDownloadURL(storageRef);
@@ -108,25 +140,37 @@ async function guardar() {
   const file = document.getElementById("foto").files[0];
   let fotoURL = jugadorActual?.foto || "";
 
-  if (file) {
-    fotoURL = await subirImagen(file);
+  try {
+
+    if (file) {
+      showMsg("📤 Subiendo imagen...");
+      fotoURL = await subirImagen(file);
+    }
+
+    const data = {
+      dni: document.getElementById("dni").value,
+      nombre: document.getElementById("nombre").value,
+      foto: fotoURL
+    };
+
+    if (!data.dni || !data.nombre) {
+      return alert("⚠️ Completa DNI y Nombre");
+    }
+
+    if (jugadorActual?.id) {
+      data.id = jugadorActual.id;
+      await window.api.updateJugador(data);
+    } else {
+      await window.api.addJugador(data);
+    }
+
+    cerrar();
+    cargar();
+
+  } catch (e) {
+    console.error(e);
+    alert("❌ Error guardando");
   }
-
-  const data = {
-    dni: document.getElementById("dni").value,
-    nombre: document.getElementById("nombre").value,
-    foto: fotoURL
-  };
-
-  if (jugadorActual?.id) {
-    data.id = jugadorActual.id;
-    await window.api.updateJugador(data);
-  } else {
-    await window.api.addJugador(data);
-  }
-
-  cerrar();
-  cargar();
 }
 
 /* =========================
@@ -157,22 +201,30 @@ async function eliminarJugador() {
   cerrar();
   cargar();
 }
+
+/* =========================
+   UI
+========================= */
 function showMsg(msg) {
   const el = document.getElementById("estado");
   if (el) el.innerText = msg;
 }
+
 /* =========================
    INIT
 ========================= */
-document.getElementById("btnNuevo").onclick = abrirModal;
-document.getElementById("btnCerrar").onclick = cerrar;
-document.getElementById("btnGuardar").onclick = guardar;
-document.getElementById("btnEditar").onclick = editarJugador;
-document.getElementById("btnEliminar").onclick = eliminarJugador;
-document.getElementById("btnReload").onclick = cargar;
-document.getElementById("buscar").oninput = render;
-document.getElementById("btnCerrarVer").onclick = cerrar;
+window.addEventListener("DOMContentLoaded", () => {
 
-window.onload = cargar;
+  initPreview();
 
+  document.getElementById("btnNuevo")?.addEventListener("click", abrirModal);
+  document.getElementById("btnCerrar")?.addEventListener("click", cerrar);
+  document.getElementById("btnGuardar")?.addEventListener("click", guardar);
+  document.getElementById("btnEditar")?.addEventListener("click", editarJugador);
+  document.getElementById("btnEliminar")?.addEventListener("click", eliminarJugador);
+  document.getElementById("btnReload")?.addEventListener("click", cargar);
+  document.getElementById("buscar")?.addEventListener("input", render);
+  document.getElementById("btnCerrarVer")?.addEventListener("click", cerrar);
 
+  cargar();
+});
